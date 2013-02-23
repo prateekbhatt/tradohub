@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1 #{title}
+  p Welcome to #{title}
+  unless user
+    a(href="/login") Login
+  else
+    p Logged in as #{user.email}
+    br
+    a(href="/account") Account
+    br
+    a(href="/logout") Logout
