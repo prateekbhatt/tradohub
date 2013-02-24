@@ -1,0 +1,48 @@
+extends layout
+
+block style
+  style
+    .side-nav {
+      padding: 10px 10px 10px;
+      margin: 0 auto 10px;
+      background-color: #fff;
+      border: 1px solid #e5e5e5;
+      -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+         -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+              box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    }
+    .form-signin .form-signin-heading,
+    .form-signin .checkbox {
+      margin-bottom: 10px;
+    }
+    .form-signin input[type="text"],
+    .form-signin input[type="password"] {
+      font-size: 16px;
+      height: auto;
+      margin-bottom: 15px;
+      padding: 7px 9px;
+    }
+
+block content
+  .row
+    .span2.well
+      ul.nav.nav-list
+        - var navObj = { 
+                        'Orders': { 'RFQ': '#' }
+                        , 'Settings': { 'Account': '/account' } 
+                        }
+                        
+        li.nav-header  Orders
+        li
+          a(href="#") Request For Quote
+        li
+          a(href="#") Make Order
+        li
+          a(href="#") Order Status
+        li
+          a(href="#") Payment Status
+        li.nav-header  Settings
+        li
+          a(href="#") Account
+    .span9.well
+      p Hey there.
