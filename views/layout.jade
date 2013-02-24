@@ -1,7 +1,51 @@
 doctype 5
-html
+html(lang="en")
   head
+    meta(charset="utf-8")
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/stylesheets/less/bootstrap.css')
+    style
+      body {
+        padding-top: 15px;
+        padding-bottom: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
+        background-color: #f5f5f5;
+      }
+      /* Custom container */
+      .container {
+        margin: 0 auto;
+        max-width: 1000px;
+      }
+      .container > hr {
+        margin: 60px 0;
+      }
+
+    block style
   body
-    block content
+    .container
+      .navbar
+        .navbar-inner
+          a(href='/').brand #{title}
+          ul.nav
+            - var obj = { '/':'Home', 'about':'About' }
+              - each val, key in obj      
+                  li
+                    a(href='#{key}') #{val}
+
+          ul.nav.pull-right           
+            unless user
+              - var navObj = { '/login':'Login', '/register':'Register' }
+            else
+              - var navObj = { '/account':'Account', '/logout':'Logout' }
+              li(style="padding:10px 15px 10px;")  Welcome, #{user.email}
+            - each val, key in navObj
+              li
+                a(href='#{key}') #{val}
+    .container
+      block content
+      hr
+  footer
+    .container
+      p &copy; 2013 #{title}

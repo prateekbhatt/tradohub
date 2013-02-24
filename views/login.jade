@@ -1,9 +1,40 @@
 extends layout
 
+block style
+  style
+    .form-signin {
+      max-width: 300px;
+      padding: 19px 29px 29px;
+      margin: 0 auto 20px;
+      background-color: #fff;
+      border: 1px solid #e5e5e5;
+      -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+         -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+              box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    }
+    .form-signin .form-signin-heading,
+    .form-signin .checkbox {
+      margin-bottom: 10px;
+    }
+    .form-signin input[type="text"],
+    .form-signin input[type="password"] {
+      font-size: 16px;
+      height: auto;
+      margin-bottom: 15px;
+      padding: 7px 9px;
+    }
+
 block content
-  h1= title
-  p Log in to #{title}
-  form(method="post", action="/login")
-    input#username(type="text", name="username", placeholder="username")
-    input#password(type="password", name="password", placeholder="password")
-    input(type="submit", value="Submit")
+  form.form-signin(method="post", action="/login")
+    h3.form-signin-heading Log in to #{title}
+    input.input-block-level#email(type="text", name="username", placeholder="email")
+    br
+    input.input-block-level#password(type="password", name="password", placeholder="password")
+    br
+    label.checkbox
+      input#rememberme(type="checkbox", name="rememberme", value="remember-me")
+      | Remember Me
+    input.btn.btn-large.btn-primary(type="submit", value="Submit")
+    hr
+    p Don't have an account ?&nbsp;
+      a(href="/register") Register
