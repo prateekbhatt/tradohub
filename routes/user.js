@@ -1,6 +1,5 @@
 var mongoose = require('mongoose')
-    , user_controller = require('../controllers/user_controller')
-    , userSchema = user_controller.userSchema;
+    , user_controller = require('../controllers/user_controller');
 
 
 // Remember Me middleware
@@ -20,7 +19,7 @@ exports.rememberme = function (req, res, next) {
 };
 
 exports.login = function (req, res) {
-  res.render('login', { 'user': req.user });
+  res.render('login');
 };
 
 exports.logout = function (req, res) {
@@ -29,12 +28,15 @@ exports.logout = function (req, res) {
 };
 
 exports.register = function (req, res) {
-  res.render('register', { 'user': req.user });
+  res.render('register');
 };
 
+
+// TODO : add checks, validations, errors such as check if user already exists
+// and if the passwords match etc.
 exports.registerPost = function (req, res, next) {
   console.log('INSIDE REGISTER POST');
-  for (var i in req.body) { console.log(i+' : '+req.body['email']); }
+  // for (var i in req.body) { console.log(i+' : '+req.body[i]); }
   if (req.body['email'] && req.body['password'] && req.body['confirmPassword']) {
     console.log('PASSWORD AND CONFIRM_PASSWORD MATCH\n');
     var user = new user_controller.userModel({ email: req.body['email'], password: req.body['password'] });
@@ -60,6 +62,7 @@ exports.registerPost = function (req, res, next) {
 //   login page.
 exports.ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
+    console.log('INSIDE isAuthenticated in user.js');
     return next();
   } else {
     res.redirect('/login');

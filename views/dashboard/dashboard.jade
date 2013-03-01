@@ -1,4 +1,4 @@
-extends layout
+extends ../layout
 
 block style
   style
@@ -26,23 +26,24 @@ block style
 block content
   .row
     .span2.well
-      ul.nav.nav-list
-        - var navObj = { 
-                        'Orders': { 'RFQ': '#' }
-                        , 'Settings': { 'Account': '/account' } 
-                        }
-                        
-        li.nav-header  Orders
+      ul.nav.nav-list(style="padding:0;")
+        li.nav-header  Catalog
         li
-          a(href="#") Request For Quote
+          a(href="#")  Products
+        if user
+          li.nav-header  Orders
+          li
+            a(href="#") Request For Quote
+          li
+            a(href="#") Make Purchase Order
+          li
+            a(href="#") Order Status
+          li.nav-header  Settings
+          li
+            a(href="#") Account
+        li.divider
         li
-          a(href="#") Make Order
-        li
-          a(href="#") Order Status
-        li
-          a(href="#") Payment Status
-        li.nav-header  Settings
-        li
-          a(href="#") Account
+          a(href="#") Frequently Asked Questions
     .span9.well
-      p Hey there.
+      block leftbar
+        p Hey there!

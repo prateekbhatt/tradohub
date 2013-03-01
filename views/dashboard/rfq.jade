@@ -1,0 +1,72 @@
+extends dashboard
+
+block leftbar
+  h4 Request For Quote
+  .row
+    form.form-horizontal
+
+      .control-group
+        label.control-label(for="description") RFQ Description
+        .controls
+          textarea(type="text", id="description", rows="3", name="description", placeholder="RFQ Description")
+      .control-group
+        label.control-label(for="quoteDueDate") Quote Due Date
+        .controls
+          input(type="date", id="quoteDueDate", name="quoteDueDate")
+      .control-group
+        .controls
+          label.checkbox
+            input(type="checkbox", id="urgentQuote", name="urgentQuote")
+            | Urgent
+      .control-group
+        label.control-label(for="moreInfo") More Information
+        .controls
+          textarea(type="text", id="moreInfo", rows="3", name="moreInfo", placeholder="More Information")
+      
+      h4(style="padding-left: 19px;") Product Info
+
+      .control-group
+        label.control-label(for="productName") Product Name
+        .controls
+          input(type="text", id="productName", name="productName", placeholder="Product Name")
+      .control-group
+        label.control-label(for="productQuantity") Product Quantity
+        .controls
+          input(type="text", id="productQuantity", name="productQuantity", placeholder="Product Quantity")
+
+      h4(style="padding-left: 19px;") Shipping Address
+      
+      .control-group
+        label.control-label(for="shippingStreet") Street
+        .controls
+          input(type="text", id="shippingStreet", name="shippingStreet", placeholder="Street")
+      .control-group
+        label.control-label(for="shippingCity") City
+        .controls
+          input(type="text", id="shippingCity", name="shippingCity", placeholder="City")
+      .control-group
+        label.control-label(for="shippingProvince") Province
+        .controls
+          input(type="text", id="shippingProvince", name="shippingProvince", placeholder="Province")
+      .control-group
+        label.control-label(for="shippingZipCode") ZipCode
+        .controls
+          input(type="text", id="shippingZipCode", name="shippingZipCode", placeholder="ZipCode")
+      .control-group
+        label.control-label(for="shippingCountry") Country
+        .controls
+          input(type="text", id="shippingCountry", name="shippingCountry", placeholder="Country")
+      
+      h4(style="padding-left: 19px;") Contact Info
+      
+      .control-group
+        label.control-label(for="phoneNumber") Phone Number
+        .controls
+          input(type="text", id="phoneNumber", name="phoneNumber", placeholder="Phone Number")
+      .control-group
+        label.control-label(for="emailAddress") Email Address
+        .controls
+          input(type="text", id="emailAddress", name="emailAddress", placeholder="Email Address")
+      .control-group
+        .controls
+          input.btn.btn-primary(type="submit", value="Submit")

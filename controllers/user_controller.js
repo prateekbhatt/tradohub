@@ -65,14 +65,15 @@ passport.use(new LocalStrategy(function(email, password, done) {
 
 // User Schema
 
-var userSchema = exports.userSchema = mongoose.Schema({
-  email: { type: String, required: true, unique: true }
+var userSchema = mongoose.Schema({
+    email: { type: String, required: true, unique: true }
   , password: { type: String, required: true }
   , accessToken: { type: String } // Used for Remember Me
 });
 
 // Bcrypt middleware
 userSchema.pre('save', function(next) {
+  console.log('CREATING USER FOR: ' + this);
   var user = this;
 
   if(!user.isModified('password')) return next();
@@ -109,12 +110,14 @@ userSchema.methods.generateRandomToken = function () {
 };
 
 // Seed a user
-var User = exports.userModel = mongoose.model('User', userSchema);
-var user1 = new User({ email: 'prat', password: 'p' });
-user1.save(function(err, user) {
-  if(err) {
-    console.log(err);
-  } else {
-    console.log('user: ' + user.email + ' is saved!');
-  }
-});
+var User = mongoose.model('User', userSchema);
+if ( !User.findOne({ email: 'prat' })) {
+  var user1 = new User({ email: 'prat', password: 'p' });
+  user1.save(function(err, user) {
+    if(err) {
+      console.log(err);
+    } else {
+      console.log('user: ' + user.email + ' is saved!');
+    }
+  });
+}
