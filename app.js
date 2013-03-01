@@ -1,35 +1,47 @@
 
 // Module dependencies
-
-var express = require('express')
-  , db = require('./db')
-  , routes = require('./routes')
-  , user_controller = require('./controllers/user_controller')
-  , user = require('./routes/user')
-  , dashboard = require('./routes/dashboard')
+var express = require('express')  
   , http = require('http')
   , path = require('path')
+  , less = require('less')
   , passport = require('passport')
-  , less = require('less');
+  , util = require('util');
 
 // Create app
-
 var app = express();
 
-// Config settings
+// Import the data layer
+var mongoose = require('mongoose')
+  , dbPath = 'mongodb://localhost/amdavad'
+  , db = require('./db')(mongoose, dbPath)
 
+// Import the models
+var models = {
+    User: require('./models/User')(mongoose, passport)
+  , Product: require('./models/Product')(mongoose)
+}
+
+// Import the routes
+var routes = {
+    index: require('./routes')
+  , user: require('./routes/user')(mongoose, models.User)
+  , dashboard: require('./routes/dashboard')(models.Product)
+}
+
+// Config settings
 app.configure(function(){
   app.set('port', process.env.PORT || 8000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon());
   app.use(express.logger('dev'));
+  app.use(express.limit('1mb'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser('secretofthedarkhorse'));
   app.use(express.session());
   // Remember me middleware
-  app.use(user.rememberme);
+  // app.use(user.rememberme);
   // Initialize Passport!  Also use passport.session() middleware, to support
   // persistent login sessions (recommended).
   app.use(passport.initialize());
@@ -103,15 +115,15 @@ app.locals({
 //   for (var i in app.locals) { console.log(i+' : '+app.locals.i); }
 //   next();
 // });
-app.get('/', routes.index);
-app.get('/register', user.register);
-app.get('/login', user.login);
-app.get('/dashboard', user.ensureAuthenticated, dashboard.index);
-app.get('/products/:product_url?', dashboard.products);
-app.get('/rfq', dashboard.rfq);
-app.get('/logout', user.logout);
+app.get('/', routes.index.index);
+app.get('/register', routes.user.register);
+app.get('/login', routes.user.login);
+app.get('/dashboard', routes.user.ensureAuthenticated, routes.dashboard.index);
+app.get('/products/:product_url?', routes.dashboard.products);
+app.get('/rfq', routes.dashboard.rfq);
+app.get('/logout', routes.user.logout);
 
-app.post('/register', user.registerPost);
+app.post('/register', routes.user.registerPost);
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
@@ -119,7 +131,6 @@ app.post('/login',
   });
 
 // Start server
-
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Amdavad server listening on port " + app.get('port'));
 });

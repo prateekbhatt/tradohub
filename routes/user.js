@@ -1,70 +1,76 @@
-var mongoose = require('mongoose')
-    , user_controller = require('../controllers/user_controller');
+
+module.exports = function (mongoose, User) {
+  // var util = require('util');
+  // console.log('User INSIDE user route: ' + util.inspect(User, false, null));
+  // Remember Me middleware
+  // var rememberme = function (req, res, next) {
+  //   if ( req.method == 'POST' && req.url == '/login' ) {
+  //     if ( req.body.rememberme ) {
+  //       req.session.cookie.maxAge = 2592000000; // 30*24*60*60*1000 Rememeber 'me' for 30 days
+  //     } else {
+  //       req.session.cookie.expires = false;
+  //     }
+  //   }
+  //   next();
+  // };
+
+  var login = function (req, res) {
+    res.render('login');
+  };
+
+  var logout = function (req, res) {
+    req.logout();
+    res.redirect('/');
+  };
+
+  var register = function (req, res) {
+    res.render('register');
+  };
 
 
-// Remember Me middleware
-exports.rememberme = function (req, res, next) {
-  if ( req.method == 'POST' && req.url == '/login' ) {
-    if ( req.body.rememberme ) {
-      req.session.cookie.maxAge = 2592000000; // 30*24*60*60*1000 Rememeber 'me' for 30 days
-      // console.log('INSIDE rememberme: '+req+'\n\n');
-      // for (var i in req.session.cookie) {
-      //   console.log(i+' : '+req.session.cookie[i]);
-      // }
-    } else {
-      req.session.cookie.expires = false;
-    }
-  }
-  next();
-};
-
-exports.login = function (req, res) {
-  res.render('login');
-};
-
-exports.logout = function (req, res) {
-  req.logout();
-  res.redirect('/');
-};
-
-exports.register = function (req, res) {
-  res.render('register');
-};
-
-
-// TODO : add checks, validations, errors such as check if user already exists
-// and if the passwords match etc.
-exports.registerPost = function (req, res, next) {
-  console.log('INSIDE REGISTER POST');
-  // for (var i in req.body) { console.log(i+' : '+req.body[i]); }
-  if (req.body['email'] && req.body['password'] && req.body['confirmPassword']) {
-    console.log('PASSWORD AND CONFIRM_PASSWORD MATCH\n');
-    var user = new user_controller.userModel({ email: req.body['email'], password: req.body['password'] });
-    user.save(function (err, user) {
+  // TODO : add checks, validations, errors such as check if user already exists
+  // and if the passwords match etc.
+  var registerPost = function (req, res, next) {
+    console.log('INSIDE REGISTER POST');
+    // for (var i in req.body) { console.log(i+' : '+req.body[i]); }
+    var registerObj = {
+        email: req.body.email
+      , password: req.body.password
+      , confirmPassword: req.body.confirmPassword
+    };
+    User.register(registerObj, function (err, registerSuccess) {
       if (err) {
-        console.log(err);
-        res.redirect('/register');
+        console.log ('ERROR WHILE REGISTERING USER' + err);
+        res.redirect ('/register');
       } else {
-        console.log('user: ' + user.email + ' is saved!');
-        res.redirect('/login');
-      }
+        console.log ('User successfully registered');
+        res.redirect ('/login');
+      } 
     });
-  } else {
-    console.log('ERROR DURING REGISTRATION');
-    res.redirect('/register');
-  }
-};
+    
+  };
 
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-exports.ensureAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated()) {
-    console.log('INSIDE isAuthenticated in user.js');
-    return next();
-  } else {
-    res.redirect('/login');
+  // Simple route middleware to ensure user is authenticated.
+  //   Use this route middleware on any resource that needs to be protected.  If
+  //   the request is authenticated (typically via a persistent login session),
+  //   the request will proceed.  Otherwise, the user will be redirected to the
+  //   login page.
+  var ensureAuthenticated = function (req, res, next) {
+    if (req.isAuthenticated()) {
+      console.log('INSIDE isAuthenticated in user.js');
+      return next();
+    } else {
+      res.redirect('/login');
+    }
+  };
+
+  return {
+      login: login
+    , logout: logout
+    , register: register
+    , registerPost: registerPost
+    , ensureAuthenticated: ensureAuthenticated
   }
-};
+
+
+}
