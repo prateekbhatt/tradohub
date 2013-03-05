@@ -1,8 +1,10 @@
 body {
-  padding-top: 20px;
-  padding-bottom: 60px;
+  padding-top: 15px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #f5f5f5;
 }
-
 /* Custom container */
 .container {
   margin: 0 auto;
@@ -38,32 +40,25 @@ body {
   margin-top: 28px;
 }
 
-
-/* Customize the navbar links to be fill the entire space of the .navbar 
-.navbar .navbar-inner {
-  padding: 0;
+/* login/register template css */
+.form-signin {
+  max-width: 300px;
+  padding: 19px 29px 29px;
+  margin: 0 auto 20px;
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+          box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
-.navbar .nav {
-  margin: 0;
-  display: table;
-  width: 100%;
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
 }
-.navbar .nav li {
-  display: table-cell;
-  width: 1%;
-  float: none;
+.form-signin input[type="text"],
+.form-signin input[type="password"] {
+  font-size: 16px;
+  height: auto;
+  margin-bottom: 15px;
+  padding: 7px 9px;
 }
-.navbar .nav li a {
-  font-weight: bold;
-  text-align: center;
-  border-left: 1px solid rgba(255,255,255,.75);
-  border-right: 1px solid rgba(0,0,0,.1);
-}
-.navbar .nav li:first-child a {
-  border-left: 0;
-  border-radius: 3px 0 0 3px;
-}
-.navbar .nav li:last-child a {
-  border-right: 0;
-  border-radius: 0 3px 3px 0;
-}*/

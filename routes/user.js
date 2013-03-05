@@ -1,5 +1,5 @@
 
-module.exports = function (mongoose, User) {
+module.exports = function (User) {
   // var util = require('util');
   // console.log('User INSIDE user route: ' + util.inspect(User, false, null));
   // Remember Me middleware
@@ -14,18 +14,18 @@ module.exports = function (mongoose, User) {
   //   next();
   // };
 
-  var login = function (req, res) {
-    res.render('login');
-  };
+  // var login = function (req, res) {
+  //   res.render('login');
+  // };
 
   var logout = function (req, res) {
     req.logout();
-    res.redirect('/');
+    res.json(200, 'User logged out successfully');
   };
 
-  var register = function (req, res) {
-    res.render('register');
-  };
+  // var register = function (req, res) {
+  //   res.render('register');
+  // };
 
 
   // TODO : add checks, validations, errors such as check if user already exists
@@ -64,12 +64,21 @@ module.exports = function (mongoose, User) {
     }
   };
 
+  var isLoggedIn = function (req, res) {
+    if (req.isAuthenticated()) {
+      res.json(200, { user: { email: req.user.email, _id: req.user._id, isLoggedIn: true }});
+    } else {
+      res.json(401, { user: { email: null, _id: null, isLoggedIn: false }});
+    }
+  };
+
   return {
-      login: login
-    , logout: logout
-    , register: register
+      // login: login
+    // , register: register
+      logout: logout
     , registerPost: registerPost
     , ensureAuthenticated: ensureAuthenticated
+    , isLoggedIn: isLoggedIn
   }
 
 

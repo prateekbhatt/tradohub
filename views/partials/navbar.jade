@@ -1,0 +1,20 @@
+.container
+  .navbar(ng-controller="NavbarCtrl")
+    .navbar-inner
+      a(href='/').brand #{title}
+    
+      ul.nav.pull-right(ng-show="isLoggedIn()")
+        li(style="padding:10px 15px 10px;")  Welcome, {{getEmail()}}
+        li
+          a(href='/dashboard') Dashboard
+        li
+          a(href='/logout') Logout
+      ul.nav.pull-right(ng-show="!isLoggedIn()")
+        li
+          a(href='/login') Login
+        li
+          a(href='/register') Register
+
+      ul.nav.pull-right
+        li
+          a(href="/products") Products

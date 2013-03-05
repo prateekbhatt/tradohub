@@ -1,55 +1,13 @@
 doctype 5
-html(lang="en")
+html(lang="en", ng-app="amdavad")
   head
     meta(charset="utf-8")
     title= title
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='/stylesheets/less/bootstrap.css')
-    style
-      body {
-        padding-top: 15px;
-        padding-bottom: 20px;
-        padding-left: 10px;
-        padding-right: 10px;
-        background-color: #f5f5f5;
-      }
-      /* Custom container */
-      .container {
-        margin: 0 auto;
-        max-width: 1000px;
-      }
-      .container > hr {
-        margin: 60px 0;
-      }
+    link(rel='stylesheet', href='/stylesheets/custom.css')
 
-    block style
+    block head
+    
   body
-    .container
-      .navbar
-        .navbar-inner
-          a(href='/').brand #{title}
-
-          ul.nav.pull-right
-            li
-              a(href="/products") Products
-            if !user
-              - var navObj = { '/login':'Login', '/register':'Register' }
-            else
-              - var navObj = { '/dashboard':'Dashboard', '/logout':'Logout' }
-              li(style="padding:10px 15px 10px;")  Welcome, #{user.email}
-            - each val, key in navObj
-              li
-                a(href='#{key}') #{val}
-    .container
-      block content
-      hr
-  footer
-    .container
-      ul.inline
-        li &copy; 2013 
-        li 
-          a(href="/") #{title}
-        li
-          a(href="#") About
-        li
-          a(href="/products") Products
+    block body

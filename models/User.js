@@ -56,11 +56,11 @@ module.exports = function (mongoose, passport) {
   User.findOne ({ email: 'prat' }, function (err, user) {
     if (!err) {
       var user1 = new User({ email: 'prat', password: 'p' });
-      user1.save(function(err, user) {
-        if(err) {
-          console.log(err);
+      user1.save(function (err, user) {
+        if (err) {
+          console.log (err);
         } else {
-          console.log('user: ' + user.email + ' is saved!');
+          console.log ('user: ' + user.email + ' is saved!');
         }
       });
     }
@@ -107,7 +107,12 @@ module.exports = function (mongoose, passport) {
   //   credentials (in this case, a email and password), and invoke a callback
   //   with a user object.  In the real world, this would query a database;
   //   however, in this example we are using a baked-in set of users.
-  passport.use(new LocalStrategy(function(email, password, done) {
+  passport.use(new LocalStrategy({
+      usernameField: 'email',
+      passwordField: 'password'
+    }, 
+    function(email, password, done) {
+    console.log ("INSIDE Passport LocalStrategy: " + email + ' : ' + password);
     User.findOne({ email: email }, function(err, user) {
       console.log('USER FOUND YO');
       if (err) { return done(err); }

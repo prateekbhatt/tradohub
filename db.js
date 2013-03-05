@@ -9,7 +9,7 @@
 //   console.log('Connected to DB');
 // });
 
-module.exports = function db_connect (mongoose, dbPath) {
+module.exports = function dbConnect (mongoose, dbPath) {
   mongoose.connect(dbPath, function onMongooseError (err) {
     if (err) {
       console.log ('DB CONNECTION ERROR: ' + err);
@@ -17,7 +17,7 @@ module.exports = function db_connect (mongoose, dbPath) {
   });
   var db = mongoose.connection;
   db.on('error', console.error.bind(console, 'connection error:'));
-  db.once('open', function db_callback() {
+  db.once('open', function dbCallback() {
     console.log('CONNECTED TO DB');
   });
   return { db: db }

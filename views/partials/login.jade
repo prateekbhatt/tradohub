@@ -1,0 +1,32 @@
+form.form-signin(name="loginForm", ng-controller="LoginCtrl", ng-submit="submitLogin()")
+
+  h3.form-signin-heading Log In print isLoggedIn {{ User.isLoggedIn() }}
+
+  div.alert.alert-error(ng-show="invalidEmailPassword")
+    span Email / password not correct
+  
+  input.input-block-level(type="text", name="email", placeholder="email", ng-model="form.email", required)
+
+  div.alert.alert-error(ng-show="loginForm.email.$dirty && loginForm.email.$invalid")
+    span.error(ng-show="loginForm.email.$error.required") Email Required
+
+  br
+
+  input.input-block-level(type="password", name="password", placeholder="password", ng-model="form.password", required)
+
+  div.alert.alert-error(ng-show="loginForm.password.$dirty && loginForm.password.$invalid")
+    span.error(ng-show="loginForm.password.$error.required") Password Required
+
+  br
+
+  //label.checkbox
+  //  input(type="checkbox", name="rememberme", value="remember-me")
+  //  | Remember Me
+
+  button.btn.btn-large.btn-primary(type="submit", ng-disabled="loginForm.$invalid")
+    span Submit
+
+  hr
+
+  p 
+    a(href="/register") Don't have an account ? Register

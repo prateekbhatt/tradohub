@@ -1,0 +1,35 @@
+form.form-signin(name="registerForm", ng-controller="RegisterCtrl", ng-submit="submitRegister()")
+
+  h3.form-signin-heading Register Account
+
+  div.alert.alert-error(ng-show="errorMessage")
+    span {{errorMessage}}
+
+  input.input-block-level(type="text", name="email", placeholder="email", ng-model="form.email", required)
+
+  div.alert.alert-error(ng-show="registerForm.email.$dirty && registerForm.email.$invalid")
+    span(ng-show="registerForm.email.$error.required") Email Required
+
+  br
+
+  input.input-block-level(type="password", name="password", placeholder="password", ng-model="form.password", required)
+  
+  div.alert.alert-error(ng-show="registerForm.password.$dirty && registerForm.password.$invalid")
+    span(ng-show="registerForm.password.$error.required") Password Required
+
+  br
+
+  input.input-block-level(type="password",name="confirmPassword", placeholder="confirm password", ng-model="form.confirmPassword", required)
+
+  div.alert.alert-error(ng-show="registerForm.confirmPassword.$dirty && registerForm.confirmPassword.$invalid")
+    span(mg-show="registerForm.confirmPassword.$error.required") Confirm Password Required
+
+  br
+
+  button.btn.btn-large.btn-primary(type="submit")
+    span Submit
+
+  hr
+
+  p 
+    a(href="/login") Already have an account ? Login

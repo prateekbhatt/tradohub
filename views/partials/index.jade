@@ -1,9 +1,26 @@
-p There are {{posts.length}} posts
-div(ng-repeat='post in posts')
-  h3 {{post.title}}
-  div {{post.text}}
-  a(href='/readPost/{{post.id}}') More
-  |  - 
-  a(href='/editPost/{{post.id}}') Edit
-  |  - 
-  a(href='/deletePost/{{post.id}}') Delete
+.jumbotron
+  h1 Marketing stuff!
+  p.lead 
+    Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+  a.btn.btn-large.btn-success(href="/register") Get started now
+
+hr
+.row
+  .span4
+    h2  Heading
+    p  Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+
+    p
+      a.btn(href="#") View details &raquo;
+
+  .span4
+    h2  Heading
+    p  Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+
+    p
+      a.btn(href="#") View details &raquo;
+  .span4
+    h2  Heading
+    p  Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.
+    p
+      a.btn(href="#") View details &raquo;

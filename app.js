@@ -13,20 +13,21 @@ var app = express();
 // Import the data layer
 var mongoose = require('mongoose')
   , dbPath = 'mongodb://localhost/amdavad'
-  , db = require('./db')(mongoose, dbPath)
+  , db = require('./db')(mongoose, dbPath);
 
 // Import the models
 var models = {
     User: require('./models/User')(mongoose, passport)
   , Product: require('./models/Product')(mongoose)
-}
+};
 
 // Import the routes
 var routes = {
     index: require('./routes')
-  , user: require('./routes/user')(mongoose, models.User)
+  , user: require('./routes/user')(models.User)
   , dashboard: require('./routes/dashboard')(models.Product)
-}
+  , productApi: require('./routes/productApi')(models.Product)
+};
 
 // Config settings
 app.configure(function(){
@@ -47,12 +48,13 @@ app.configure(function(){
   app.use(passport.initialize());
   app.use(passport.session());
   // add user to res.locals to make it available in layout.jade
-  app.use(function(req, res, next){
+  app.use(function (req, res, next) {
     res.locals.user = req.user;
     next();
   });
   app.use(app.router);
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
+  app.use(express.compress());
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
@@ -61,20 +63,17 @@ app.configure('development', function(){
 });
 
 app.use(function(req, res, next){
-  res.status(404);
-  
+  res.status(404);  
   // respond with html page
   if (req.accepts('html')) {
     res.render('404', { url: req.url });
     return;
   }
-
   // respond with json
   if (req.accepts('json')) {
     res.send({ error: 'Not found' });
     return;
   }
-
   // default to plain-text. send()
   res.type('txt').send('Not found');
 });
@@ -108,26 +107,29 @@ app.locals({
 // console.log('PRINTING app.locals.user : '+app.locals.user);
 
 // Routes are defined here
-
-// app.all('*', function (req, res, next) {
-//   app.locals.user = req.user;
-//   console.log('INSIDE app.all set user printing title: '+app.locals['title']);
-//   for (var i in app.locals) { console.log(i+' : '+app.locals.i); }
-//   next();
-// });
 app.get('/', routes.index.index);
-app.get('/register', routes.user.register);
-app.get('/login', routes.user.login);
+app.get('/partials/:name', routes.index.partials);
+
+// TODO : use regex
+app.get('/register', routes.index.index);
+app.get('/login', routes.index.index);
+
 app.get('/dashboard', routes.user.ensureAuthenticated, routes.dashboard.index);
 app.get('/products/:product_url?', routes.dashboard.products);
 app.get('/rfq', routes.dashboard.rfq);
 app.get('/logout', routes.user.logout);
+app.get('/me', routes.user.isLoggedIn);
+
+app.get('/api/products', routes.productApi.products);
+app.get('/api/products/:product_url', routes.productApi.product)
+
 
 app.post('/register', routes.user.registerPost);
 app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/login' }),
+  passport.authenticate('local', {}),
   function(req, res) {
-    res.redirect('/dashboard');
+    // console.log('PRINTING req.user: '+util.inspect(req.user));
+    res.json({ email: req.user.email, _id: req.user._id });
   });
 
 // Start server
