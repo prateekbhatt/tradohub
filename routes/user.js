@@ -1,4 +1,4 @@
-
+'use strict';
 module.exports = function (User) {
   // var util = require('util');
   // console.log('User INSIDE user route: ' + util.inspect(User, false, null));
@@ -14,72 +14,108 @@ module.exports = function (User) {
   //   next();
   // };
 
-  // var login = function (req, res) {
-  //   res.render('login');
-  // };
-
   var logout = function (req, res) {
     req.logout();
     res.json(200, 'User logged out successfully');
   };
 
-  // var register = function (req, res) {
-  //   res.render('register');
-  // };
-
-
   // TODO : add checks, validations, errors such as check if user already exists
   // and if the passwords match etc.
   var registerPost = function (req, res, next) {
-    console.log('INSIDE REGISTER POST');
-    // for (var i in req.body) { console.log(i+' : '+req.body[i]); }
-    var registerObj = {
+    var user = {
         email: req.body.email
       , password: req.body.password
       , confirmPassword: req.body.confirmPassword
     };
-    User.register(registerObj, function (err, registerSuccess) {
+    User.addUser(user, function (err, isRegistered) {
       if (err) {
-        console.log ('ERROR WHILE REGISTERING USER' + err);
-        res.redirect ('/register');
-      } else {
+        console.log(err);
+        res.json(500);
+      }
+      if (isRegistered) {
+        res.json(400, new Error('User Not Registered. Check all input fields.'))
+      }
+       else {
         console.log ('User successfully registered');
-        res.redirect ('/login');
+        res.redirect (200);
       } 
+    });    
+  };
+
+  /*
+  * POST /password_rest
+  */
+
+  var passwordReset = function passwordReset (req, res) {
+    req.onValidationError(function (msg) {
+      //Redirect to `/password_rest` if email is bogus
+      return res.redirect('/password_rest');
     });
-    
+    req.check('email', 'Please enter a valid email').len(1).isEmail();
+    // get the user
+    User.getUserByEmail(req.body.email, function (err, usr) {
+      if (err) {
+        // TODO return error
+      }
+      if (!usr) {
+        // TODO return message if user is not found
+      }
+      // Create a token UserToken
+      UserToken.new(usr._id, function (err, token) {
+        // build the rest url:
+        // http://localhost:3000/password_rest/12345TOKEN
+        var resetUrl = req.protocol + '://' + req.host + '/password_rest/' + token.token;
+        // Create the template vars 
+        var locals = {
+          resetUrl: resetUrl,
+          // TODO confirm that the user has email prior to sending this.
+          email: usr.email
+        };
+        mailer.sendOne(locals, function (err, respMs) {
+          // TODO add success message.
+          // redirect to password_rest success page.
+          return req.redirect('/');
+        });
+      });
+    });
   };
 
-  // Simple route middleware to ensure user is authenticated.
-  //   Use this route middleware on any resource that needs to be protected.  If
-  //   the request is authenticated (typically via a persistent login session),
-  //   the request will proceed.  Otherwise, the user will be redirected to the
-  //   login page.
-  var ensureAuthenticated = function (req, res, next) {
-    if (req.isAuthenticated()) {
-      console.log('INSIDE isAuthenticated in user.js');
-      return next();
-    } else {
-      res.redirect('/login');
-    }
-  };
+/*
+* POST /password_rest/<token>
+*
+*/
 
-  var isLoggedIn = function (req, res) {
-    if (req.isAuthenticated()) {
-      res.json(200, { user: { email: req.user.email, _id: req.user._id, isLoggedIn: true }});
-    } else {
-      res.json(401, { user: { email: null, _id: null, isLoggedIn: false }});
+var passwordResetCheck = function passwordResetCheck (req, res) {
+  // Check for a UserToken using the supplied token.
+  UserToken({token: req.params.token}, function (err, token) {
+    if (err) {
+      // TODO return error
     }
-  };
+    if (!token) {
+      // TODO return message if token is not found
+    }
+    // get the user
+    User.findOne({_id: token.userId}, function (err, user) {
+      if (err) {
+        // TODO return error
+      }
+      if (!user) {
+        // TODO return message if token is not found
+      }
+      // log the user in
+      req.logIn(user, function (err) {
+        if (err) {
+          // TODO return error
+        }
+        // redirect the user to a password reset form
+        return res.redirect('/account/password');
+      });
+    });
+  });
+};
 
   return {
-      // login: login
-    // , register: register
       logout: logout
     , registerPost: registerPost
-    , ensureAuthenticated: ensureAuthenticated
-    , isLoggedIn: isLoggedIn
   }
-
-
 }

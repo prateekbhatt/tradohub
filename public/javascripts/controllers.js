@@ -1,29 +1,24 @@
 'use strict';
-
-/* Controllers */
-
-function IndexCtrl($scope, $http, $location, User) {
-  // console.log('CHECKING IF USER loggedIn: ');
-  User.userCheck();
+function IndexCtrl(Auth) {
+  Auth.userCheck();
 };
 
 function LoginCtrl($scope, $http, $location) {
-  console.log('LOGIN TRY ');
   $scope.form = {};
   $scope.invalidEmailPassword = false;
   $scope.submitLogin = function () {
     $http.post('/login', $scope.form).
-      success(function(data, status, headers, config) {
+      success(function() {
         $scope.invalidEmailPassword = false;
-        $location.path('/');
+        $location.path('/products');
       }).
-      error(function(data, status, headers, config) {
+      error(function() {
         $scope.invalidEmailPassword = true;
       }) ;
   };
 };
 
-function RegisterCtrl($scope, $http) {
+function RegisterCtrl($scope, $http, $location) {
   $scope.form = {};
   $scope.errorMessage = '';
   $scope.submitRegister = function () {
@@ -42,73 +37,90 @@ function RegisterCtrl($scope, $http) {
   };
 };
 
-function LogoutCtrl($http, $location) {
-  $http.get('/logout').success(function(data) {
-    console.log('USER LOGGED OUT');
-    $location.path('/');
-  });
+function ProductListCtrl($scope, Product) {
+  $scope.products = Product.query();
 };
 
-function DashboardCtrl($scope, $http) {
-
+function ProductDetailCtrl($scope, $routeParams, Product) {
+  $scope.product = Product.get({ Id: $routeParams.id });
 };
 
-function NavbarCtrl($scope, $rootScope, $location, User) {
-  $scope.user = {};
-  User.userCheck()
+function NavbarCtrl($scope, $location, Auth) {
+  Auth.userCheck();
   $scope.isLoggedIn = function isLoggedIn () {
-    $scope.user.isLoggedIn = User.isLoggedIn;
-    return $scope.user.isLoggedIn;    
+    // console.log('INSIDE isLoggedIn')
+    return Auth.isLoggedIn; 
   }
   $scope.getEmail = function getEmail () {
-    $scope.user.email = User.email;
-    return $scope.user.email;    
+    // console.log('INSIDE getEmail')
+    return Auth.email;
   }
-  // $scope.$on( 'User.update', function( event, isLoggedIn ) {
-  //    $scope.user.isLoggedIn = isLoggedIn;
-  //  });
-  console.log($scope.user)
+  $scope.logout = function logout () {
+    Auth.logout(function () {
+      Auth.userCheck();
+      $location.path('/');
+    });
+  }
   $scope.routeIs = function(routeName) {
+    console.log('INSIDE routeIs '+$location.path()+' '+routeName)
     return $location.path() === routeName;
   };
 };
-
-function ReadPostCtrl($scope, $http, $routeParams) {
-  $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.post = data.post;
-    });
-}
-
-function EditPostCtrl($scope, $http, $location, $routeParams) {
+function AdminProductsCtrl($scope, $location, Product) {
   $scope.form = {};
-  $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.form = data.post;
+  $scope.form.product = {};
+  $scope.products = Product.query();
+  $scope.deleteProduct = function (id) {
+    Product.delete({ Id: id }, function () {
+      $scope.products = Product.query();
+      // TODO : remove product from scope
+    })
+  };
+  $scope.addProduct = function () {
+    Product.save($scope.form, function () {
+      $scope.products = Product.query();
+      $scope.form.product = {};
     });
-
-  $scope.editPost = function () {
-    $http.put('/api/post/' + $routeParams.id, $scope.form).
-      success(function(data) {
-        $location.url('/readPost/' + $routeParams.id);
-      });
   };
-}
+};
 
-function DeletePostCtrl($scope, $http, $location, $routeParams) {
-  $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.post = data.post;
-    });
-
-  $scope.deletePost = function () {
-    $http.delete('/api/post/' + $routeParams.id).
-      success(function(data) {
-        $location.url('/');
-      });
+function EditProductCtrl($scope, $routeParams, $location, Product) {
+  $scope.form = {};
+  $scope.form.product = Product.get({ Id: $routeParams.id });
+  $scope.submitProduct = function () {
+    Product.update({ Id: $scope.form.product._id }, $scope.form, function () {
+      $location.path("/admin/products");
+    })
   };
-
-  $scope.home = function () {
-    $location.url('/');
+};
+function TxnCtrl($scope, Product, Txn, Auth) {
+  $scope.formStep = "first";
+  $scope.firstTab = true;
+  $scope.showMoreInfo = true;
+  $scope.form = {"txn": {"products": [{}]}, "user": {}};
+  $scope.form.txn.due='3';
+  $scope.formGoto = function (step) {
+    $scope.formStep = step;
+    $scope.firstTab = !$scope.firstTab;
   };
-}
+  $scope.formStepIs = function (step) {
+    console.log('INSIDE formStepIs')
+    return ($scope.formStep === step);
+  };
+  $scope.products = Product.query();
+  $scope.form.user.email = Auth.getEmail();
+  $scope.getDate = function () {
+    var date = new Date();
+    return date.toDateString();
+  }
+  $scope.addProductField = function () {
+    $scope.form.txn.products.push({});
+  };
+  // $scope.addresses = Address.query()
+  $scope.submitTxn = function () {
+    Txn.save($scope.form, function () {
+      console.log('Txn SAVED');
+      $scope.form = {"txn": {"urgent": false, "products": [ {} ]}};
+    })
+  };
+};

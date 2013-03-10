@@ -1,17 +1,22 @@
 extends layout
 
 block head
-  script(src='javascripts/lib/angular.min.js')
-  script(src='javascripts/app.js')
-  script(src='javascripts/services.js')
-  script(src='javascripts/controllers.js')
-  script(src='javascripts/filters.js')
-  script(src='javascripts/directives.js')
+  script(src='/javascripts/lib/angular.min.js')
+  script(src='/javascripts/lib/angular-resource.min.js')
+  script(src='/javascripts/app.js')
+  script(src='/javascripts/services.js')
+  script(src='/javascripts/controllers.js')
+  script(src='/javascripts/filters.js')
+  script(src='/javascripts/directives.js')
+  script(src="/javascripts/lib/jquery.js")
+  script(src="/javascripts/lib/bootstrap.min.js")
+  script(src="/javascripts/lib/ui-bootstrap.min.js")
   
 block body
-  div(ng-include="'partials/navbar'")   
+  div(ng-include="'/partials/navbar'")   
   .container
-    div(ng-view)
+    .row
+      div(ng-view)
     hr
   footer
     .container

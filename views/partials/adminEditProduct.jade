@@ -1,0 +1,25 @@
+div.span2.well
+  div(ng-include="'/partials/sidenav'") 
+
+div.span9.well
+  form(name="editProductForm", ng-submit="submitProduct()")
+    legend Edit Product
+
+    div.alert.alert-error(ng-show="invalidSubmitError")
+      span Product was not submitted properly. Try again.
+    
+    input(type="text", name="name", placeholder="product name", ng-model="form.product.name", required)
+
+    div.alert.alert-error(ng-show="editProductForm.name.$dirty && editProductForm.name.$invalid")
+      span.error(ng-show="editProductForm.name.$error.required") Name Required
+
+    br
+
+    textarea(type="text", name="description", placeholder="description", ng-model="form.product.description")
+    
+    br
+    {{form}}
+    br
+
+    button.btn.btn-large.btn-primary(type="submit", ng-disabled="editProductForm.$invalid")
+      span Submit

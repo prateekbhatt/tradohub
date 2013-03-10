@@ -5,7 +5,7 @@ form.form-signin(name="registerForm", ng-controller="RegisterCtrl", ng-submit="s
   div.alert.alert-error(ng-show="errorMessage")
     span {{errorMessage}}
 
-  input.input-block-level(type="text", name="email", placeholder="email", ng-model="form.email", required)
+  input.input-block-level(type="email", name="email", placeholder="email", ng-model="form.email", required)
 
   div.alert.alert-error(ng-show="registerForm.email.$dirty && registerForm.email.$invalid")
     span(ng-show="registerForm.email.$error.required") Email Required
@@ -22,14 +22,14 @@ form.form-signin(name="registerForm", ng-controller="RegisterCtrl", ng-submit="s
   input.input-block-level(type="password",name="confirmPassword", placeholder="confirm password", ng-model="form.confirmPassword", required)
 
   div.alert.alert-error(ng-show="registerForm.confirmPassword.$dirty && registerForm.confirmPassword.$invalid")
-    span(mg-show="registerForm.confirmPassword.$error.required") Confirm Password Required
+    span(ng-show="registerForm.confirmPassword.$error.required") Confirm Password Required
 
   br
 
-  button.btn.btn-large.btn-primary(type="submit")
+  button.btn.btn-large.btn-primary(type="submit", ng-disabled="registerForm.$invalid")
     span Submit
 
   hr
 
   p 
-    a(href="/login") Already have an account ? Login
+    a(href="/login") Already have an account? Login

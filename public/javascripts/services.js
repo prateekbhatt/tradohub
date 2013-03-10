@@ -2,24 +2,22 @@
 
 /* Services */
 
-
-// Demonstrate how to register services
-// In this case it is a simple value service.
-angular.module('amdavad.services', []).
+angular.module('amdavad.services', ['ngResource']).
   value('version', '0.1').
-  service('User', function ($rootScope, $http) {
-    // var isLoggedIn = false
-    //   , email = '';
+  service('Auth', function ($http, $resource) {
     return {
       isLoggedIn: false,
       email: '',
+      userId: '',
+      getEmail: function () {
+        return this.email;
+      },
       userCheck: function () {
         var value = this;
         var updateCallback = function updateCallback (data, value) {
-          // value.user = data.user;
           value.email = data.user.email;
           value.isLoggedIn = data.user.isLoggedIn;
-          value._id = data.user._id;
+          value.userId = data.user._id;
           return;
         }
         var getUser = function getUser (updateCallback, value) {
@@ -30,14 +28,9 @@ angular.module('amdavad.services', []).
             .error(function (data) {
               return updateCallback(data, value);
             });
-          }
-          getUser(updateCallback, value);
-          console.log(value);
-          // $rootScope.$broadcast( 'User.update', value.isLoggedIn );
-          // this.isLoggedIn = value.isLoggedIn;
-          // this.email = value.email;
-          // console.log(this)
-          return;
+        }
+        getUser(updateCallback, value);
+        return;
       },
       logout: function (callback) {
         $http.get('/logout')
@@ -46,4 +39,18 @@ angular.module('amdavad.services', []).
           });
       }
     };
+  }).
+  factory('Product', function ($resource) {
+    return $resource('/api/products/:Id', { Id: '@Id' },
+      { 'update': { method: 'PUT'}});
+  }).
+  factory('Txn', function ($resource) {
+    return $resource('/api/txn/:Id', { Id: '@Id' },
+      { 'update': { method: 'PUT'}});
+  }).
+  factory('User', function ($resource, Auth) {
+    return $resource('/api/users/:userId/addresses/:addressId',
+      { userId: this.userId, addressId: '@addressId' },
+      { 'update': { method: 'PUT' },
+        'addresses': { method: 'GET' }});
   });

@@ -1,19 +1,30 @@
-
-module.exports = function (mongoose, passport) {
+'use strict';
+module.exports = function (mongoose, passport, Address) {
   // Dependencies
   var LocalStrategy = require('passport-local').Strategy
     , bcrypt = require('bcrypt')
-    , SALT_WORK_FACTOR = 10;
+    , SALT_WORK_FACTOR = 10
+    , Schema = mongoose.Schema;
+
+  var PhoneSchema = new Schema({
+      countryCode: { type: Number, required: true }
+    , number: { type: Number, required: true }
+  })
+
+  var Phone = mongoose.model('Phone', PhoneSchema);
 
   // User Schema
-  var userSchema = mongoose.Schema({
-      email: { type: String, required: true, unique: true }
+  var UserSchema = new Schema({
+      email: { type: String, required: true, unique: true, min: 6, max: 64, lowercase: true }
+    , name: { type: String }
+    , phones: [ PhoneSchema ]
     , password: { type: String, required: true }
+    , roles: Array
     , accessToken: { type: String } // Used for Remember Me
   });
 
   // Bcrypt middleware
-  userSchema.pre('save', function(next) {
+  UserSchema.pre('save', function(next) {
     console.log('CREATING USER FOR: ' + this);
     var user = this;
 
@@ -31,7 +42,7 @@ module.exports = function (mongoose, passport) {
   });
 
   // Password verification
-  userSchema.methods.comparePassword = function(candidatePassword, cb) {
+  UserSchema.methods.comparePassword = function(candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
       if(err) return cb(err);
       cb(null, isMatch);
@@ -39,7 +50,7 @@ module.exports = function (mongoose, passport) {
   };
 
   // Remember Me implementation helper method
-  userSchema.methods.generateRandomToken = function () {
+  UserSchema.methods.generateRandomToken = function () {
     var user = this,
         chars = "_!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
         token = new Date().getTime() + '_';
@@ -50,21 +61,19 @@ module.exports = function (mongoose, passport) {
     return token;
   };
 
-  var User = mongoose.model('User', userSchema);
+  UserSchema.methods.hasRole = function (role) {
+    for (var i = 0; i < this.roles.length; i++) {
+      if (this.roles[i] === role) {
+        // if the role that we are chekign matches the 'role' we are
+        // looking for return true
+        return true;
+      }
+    };
+    // if the role does not match return false
+    return false;
+  };
 
-  // Seed a user
-  User.findOne ({ email: 'prat' }, function (err, user) {
-    if (!err) {
-      var user1 = new User({ email: 'prat', password: 'p' });
-      user1.save(function (err, user) {
-        if (err) {
-          console.log (err);
-        } else {
-          console.log ('user: ' + user.email + ' is saved!');
-        }
-      });
-    }
-  });
+  var User = mongoose.model('User', UserSchema);
 
   // Passport session setup.
   //   To support persistent login sessions, Passport needs to be able to
@@ -112,9 +121,8 @@ module.exports = function (mongoose, passport) {
       passwordField: 'password'
     }, 
     function(email, password, done) {
-    console.log ("INSIDE Passport LocalStrategy: " + email + ' : ' + password);
+    // console.log ("INSIDE Passport LocalStrategy: " + email + ' : ' + password);
     User.findOne({ email: email }, function(err, user) {
-      console.log('USER FOUND YO');
       if (err) { return done(err); }
       if (!user) { return done(null, false, { message: 'Unknown user ' + email }); }
       user.comparePassword(password, function(err, isMatch) {
@@ -128,29 +136,31 @@ module.exports = function (mongoose, passport) {
     });
   }));
 
-  var register = function (registerObj, fn) {
-    var email = registerObj.email
-      , password = registerObj.password
-      , confirmPassword = registerObj.confirmPassword;
-    if (email && password && confirmPassword) {
-      console.log('PASSWORD AND CONFIRM_PASSWORD MATCH\n');
-      var user = new User({ email: email, password: password });
-      user.save(function (err, user) {
-        if (err) {
-          return fn (err);
-        } else {
-          console.log('user: ' + user.email + ' is saved!');
-          return fn (null, true);
-        }
-      });
-    } else {
-      return fn (new Error ('ERROR DURING USER REGISTRATION: ALL FORM FIELDS \
-        ARE NOT PRESENT'));
-    }
+  var addUser = function addUser (user, fn) {
+    var newUser = new User({ email: user.email, password: user.password });
+    if (user.roles) { newUser.roles = user.roles; }
+    newUser.save(function (err, savedUser) {
+      err ? fn(err) : fn(null, savedUser);
+    });
+  };
+
+  var getUserByEmail = function getUserByEmail (email, fn) {
+    User.findOne({ email: email }, function (err, user) {
+      fn(null, user);
+    });
+  };
+
+  var resetPassword =  function resetPassword (token, fn) {
+    User.findOne({ passwordToken: token }, function (err, user) {
+      if (err) console.log(err);
+
+    })
   }
 
   return {
-    register: register
+      User: User
+    , addUser: addUser
+    , getUserByEmail: getUserByEmail
   }
 
 };

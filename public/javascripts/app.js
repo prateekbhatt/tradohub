@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var amdavad = angular.module('amdavad', ['amdavad.filters', 'amdavad.services', 'amdavad.directives']);
+var amdavad = angular.module('amdavad', ['amdavad.filters', 'amdavad.services', 'amdavad.directives', 'ui.bootstrap']);
 
 amdavad.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider.
@@ -17,22 +17,25 @@ amdavad.config(['$routeProvider', '$locationProvider', function($routeProvider, 
       templateUrl: 'partials/register',
       controller: RegisterCtrl
     }).
-    when('/logout', {
-      templateUrl: 'partials/index',
-      // template:'<div ng-include="templateUrl">Loading...</div>',
-      controller: LogoutCtrl
+    when('/products', {
+      templateUrl: 'partials/products',
+      controller: ProductListCtrl
     }).
-    when('/readPost/:id', {
-      templateUrl: 'partials/readPost',
-      controller: ReadPostCtrl
+    when('/products/:id', {
+      templateUrl: '/partials/product',
+      controller: ProductDetailCtrl
     }).
-    when('/editPost/:id', {
-      templateUrl: 'partials/editPost',
-      controller: EditPostCtrl
+    when('/quote', {
+      templateUrl: '/partials/txn',
+      controller: TxnCtrl
     }).
-    when('/deletePost/:id', {
-      templateUrl: 'partials/deletePost',
-      controller: DeletePostCtrl
+    when('/admin/products', {
+      templateUrl: '/partials/adminProducts',
+      controller: AdminProductsCtrl
+    }).
+    when('/admin/products/:id', {
+      templateUrl: '/partials/adminEditProduct',
+      controller: EditProductCtrl
     }).
     otherwise({
       redirectTo: '/'
@@ -49,7 +52,7 @@ amdavad.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 //   });
 // });
 amdavad.run(function($rootScope) {
-  $rootScope.user = '';
-  $rootScope.user.isLoggedIn = false;
-  $rootScope.user.email = '';
+  // $rootScope.user = '';
+  // $rootScope.user.isLoggedIn = false;
+  // $rootScope.user.email = '';
 })

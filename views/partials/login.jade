@@ -1,6 +1,6 @@
 form.form-signin(name="loginForm", ng-controller="LoginCtrl", ng-submit="submitLogin()")
 
-  h3.form-signin-heading Log In print isLoggedIn {{ User.isLoggedIn() }}
+  h3.form-signin-heading Log In
 
   div.alert.alert-error(ng-show="invalidEmailPassword")
     span Email / password not correct
@@ -29,4 +29,4 @@ form.form-signin(name="loginForm", ng-controller="LoginCtrl", ng-submit="submitL
   hr
 
   p 
-    a(href="/register") Don't have an account ? Register
+    a(href="/register") Don't have an account? Register

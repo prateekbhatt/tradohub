@@ -1,4 +1,4 @@
-
+'use strict';
 // Module dependencies
 var express = require('express')  
   , http = require('http')
@@ -12,21 +12,35 @@ var app = express();
 
 // Import the data layer
 var mongoose = require('mongoose')
+  , tree = require('mongoose-tree')
   , dbPath = 'mongodb://localhost/amdavad'
   , db = require('./db')(mongoose, dbPath);
 
 // Import the models
 var models = {
     User: require('./models/User')(mongoose, passport)
-  , Product: require('./models/Product')(mongoose)
+  , Product: require('./models/Product')(mongoose, tree)
+  , Txn: require('./models/Txn')(mongoose)
+  , Address: require('./models/Address')(mongoose)
+  , UserToken: require('./models/UserToken')(mongoose)
 };
+
+// Seed Application DB
+
+var seed = require('./models/seed')(models.Product, models.User, models.Address, models.Txn);
+
+// Import route middleware
+
+var isLoggedIn = require('./routes/middlewares').isLoggedIn
+  , ensureAuthenticated = require('./routes/middlewares').ensureAuthenticated
+  , ensureAdmin = require('./routes/middlewares').ensureAdmin;
 
 // Import the routes
 var routes = {
     index: require('./routes')
   , user: require('./routes/user')(models.User)
-  , dashboard: require('./routes/dashboard')(models.Product)
   , productApi: require('./routes/productApi')(models.Product)
+  , txnApi: require('./routes/txnApi')(models.Txn)
 };
 
 // Config settings
@@ -41,10 +55,6 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser('secretofthedarkhorse'));
   app.use(express.session());
-  // Remember me middleware
-  // app.use(user.rememberme);
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
   app.use(passport.initialize());
   app.use(passport.session());
   // add user to res.locals to make it available in layout.jade
@@ -54,7 +64,12 @@ app.configure(function(){
   });
   app.use(app.router);
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
-  app.use(express.compress());
+  app.use(express.compress({
+    filter: function (req, res) {
+      return /json|text|javascript|css/.test(res.getHeader('Content-Type'));
+    },
+    level: 9
+  }));
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
@@ -99,12 +114,9 @@ app.use(function(err, req, res, next){
 });
 
 // Locals (available inside all templates)
-
 app.locals({
   title: 'Amdavad'
 });
-
-// console.log('PRINTING app.locals.user : '+app.locals.user);
 
 // Routes are defined here
 app.get('/', routes.index.index);
@@ -113,16 +125,12 @@ app.get('/partials/:name', routes.index.partials);
 // TODO : use regex
 app.get('/register', routes.index.index);
 app.get('/login', routes.index.index);
+app.get('/products/:product_url?', routes.index.index);
+app.get('/admin/products/:id?', routes.index.index);
+app.get('/quote/:quoteId?', routes.index.index);
 
-app.get('/dashboard', routes.user.ensureAuthenticated, routes.dashboard.index);
-app.get('/products/:product_url?', routes.dashboard.products);
-app.get('/rfq', routes.dashboard.rfq);
 app.get('/logout', routes.user.logout);
-app.get('/me', routes.user.isLoggedIn);
-
-app.get('/api/products', routes.productApi.products);
-app.get('/api/products/:product_url', routes.productApi.product)
-
+app.get('/me', isLoggedIn);
 
 app.post('/register', routes.user.registerPost);
 app.post('/login',
@@ -131,6 +139,35 @@ app.post('/login',
     // console.log('PRINTING req.user: '+util.inspect(req.user));
     res.json({ email: req.user.email, _id: req.user._id });
   });
+
+// Product API routes
+
+app.get('/api/products', routes.productApi.products);
+app.get('/api/products/:product_url', routes.productApi.product)
+// TODO: Admin Checks
+app.post('/api/products', ensureAdmin, routes.productApi.addProduct);
+app.put('/api/products/:id', ensureAdmin, routes.productApi.editProduct);
+app.delete('/api/products/:id', ensureAdmin, routes.productApi.deleteProduct);
+
+//Transaction API Routes
+
+app.post('/api/txn', ensureAuthenticated, routes.txnApi.addTxn);
+
+// User API Routes
+
+app.get('/api/users/:userId');
+
+app.get('/api/users/:userId/addresses');
+app.get('/api/users/:userId/addresses/:addressId');
+app.post('/api/users/:userId/addresses');
+app.put('/api/users/:userId/addresses/:addressId');
+app.delete('/api/users/:userId/addresses/:addressId');
+
+app.get('/api/users/:userId/txns', routes.txnApi.userTxns);
+app.get('/api/users/:userId/txns/:txnId', routes.txnApi.userTxn);
+app.post('/api/users/:userId/txns');
+app.put('/api/users/:userId/txns/:txnId');
+app.delete('/api/users/:userId/txns/:txnId');
 
 // Start server
 http.createServer(app).listen(app.get('port'), function(){

@@ -1,0 +1,9 @@
+div.span2.well
+  div(ng-include="'partials/sidenav'") 
+
+div.span9.well
+  p Products
+  ul
+    span(ng-repeat="product in products")
+      li 
+        a(href="/products/{{product.url}}") {{product.name}}
