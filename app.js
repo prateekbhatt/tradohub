@@ -33,14 +33,16 @@ var seed = require('./models/seed')(models.Product, models.User, models.Address,
 
 var isLoggedIn = require('./routes/middlewares').isLoggedIn
   , ensureAuthenticated = require('./routes/middlewares').ensureAuthenticated
-  , ensureAdmin = require('./routes/middlewares').ensureAdmin;
+  , ensureAdmin = require('./routes/middlewares').ensureAdmin
+  , ensureApiAuth = require('./routes/middlewares').ensureApiAuth;
 
 // Import the routes
 var routes = {
     index: require('./routes')
   , user: require('./routes/user')(models.User)
   , productApi: require('./routes/productApi')(models.Product)
-  , txnApi: require('./routes/txnApi')(models.Txn)
+  , txnApi: require('./routes/txnApi')(models.Txn, models.Address)
+  , addressApi: require('./routes/addressApi')(models.Address)
 };
 
 // Config settings
@@ -48,7 +50,7 @@ app.configure(function(){
   app.set('port', process.env.PORT || 8000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.use(express.favicon());
+  // app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.limit('1mb'));
   app.use(express.bodyParser());
@@ -64,6 +66,7 @@ app.configure(function(){
   });
   app.use(app.router);
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
+  app.use(express.staticCache());
   app.use(express.compress({
     filter: function (req, res) {
       return /json|text|javascript|css/.test(res.getHeader('Content-Type'));
@@ -81,7 +84,7 @@ app.use(function(req, res, next){
   res.status(404);  
   // respond with html page
   if (req.accepts('html')) {
-    res.render('404', { url: req.url });
+    res.render('index');
     return;
   }
   // respond with json
@@ -128,17 +131,11 @@ app.get('/login', routes.index.index);
 app.get('/products/:product_url?', routes.index.index);
 app.get('/admin/products/:id?', routes.index.index);
 app.get('/quote/:quoteId?', routes.index.index);
+app.get('/orders/:id?', routes.index.index);
 
 app.get('/logout', routes.user.logout);
 app.get('/me', isLoggedIn);
 
-app.post('/register', routes.user.registerPost);
-app.post('/login',
-  passport.authenticate('local', {}),
-  function(req, res) {
-    // console.log('PRINTING req.user: '+util.inspect(req.user));
-    res.json({ email: req.user.email, _id: req.user._id });
-  });
 
 // Product API routes
 
@@ -151,20 +148,32 @@ app.delete('/api/products/:id', ensureAdmin, routes.productApi.deleteProduct);
 
 //Transaction API Routes
 
-app.post('/api/txn', ensureAuthenticated, routes.txnApi.addTxn);
+app.get('/api/txns', ensureAuthenticated, routes.txnApi.userTxns);
+app.get('/api/txns/:txnId', ensureAuthenticated, routes.txnApi.userTxn);
+app.post('/api/txns', ensureAuthenticated, routes.txnApi.addTxn);
 
 // User API Routes
 
+app.post('/register', routes.user.register);
+app.post('/login',
+  passport.authenticate('local', {}),
+  function(req, res) {
+    // console.log('PRINTING req.user: '+util.inspect(req.user));
+    res.json(200, { email: req.user.email, _id: req.user._id, isLoggedIn: true, roles: req.user.roles });
+  });
+
 app.get('/api/users/:userId');
 
-app.get('/api/users/:userId/addresses');
-app.get('/api/users/:userId/addresses/:addressId');
-app.post('/api/users/:userId/addresses');
-app.put('/api/users/:userId/addresses/:addressId');
-app.delete('/api/users/:userId/addresses/:addressId');
+// Address API
 
-app.get('/api/users/:userId/txns', routes.txnApi.userTxns);
-app.get('/api/users/:userId/txns/:txnId', routes.txnApi.userTxn);
+app.get('/api/users/:userId/addresses', ensureApiAuth, routes.addressApi.userAddresses);
+app.get('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.userAddress);
+app.post('/api/users/:userId/addresses', ensureApiAuth, routes.addressApi.addAddress);
+app.put('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.editAddress);
+app.delete('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.deleteAddress);
+
+app.get('/api/users/:userId/txns', ensureApiAuth, routes.txnApi.userTxns);
+app.get('/api/users/:userId/txns/:txnId', ensureApiAuth, routes.txnApi.userTxn);
 app.post('/api/users/:userId/txns');
 app.put('/api/users/:userId/txns/:txnId');
 app.delete('/api/users/:userId/txns/:txnId');

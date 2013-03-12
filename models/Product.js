@@ -1,5 +1,5 @@
-'use strict';
 module.exports = function (mongoose, tree) {
+  'use strict';
 
   var ProductSchema = mongoose.Schema({
       name: { type: String, required: true, unique: true }
@@ -20,20 +20,20 @@ module.exports = function (mongoose, tree) {
 
   var getProduct = function getProduct (product_url, fn) {
     Product.findOne({ url: product_url }, function(err, product) {
-      err ? fn(err) : fn(null, product);
+      fn(err, product);
     });
   };
 
   var getAllProducts = function getAllProducts (fn) {
     Product.find({}, function(err, products) {
-      err ? fn(err) : fn(null, products);
+      fn(err, products);
     });
   };
 
   var addProduct = function addProduct (product, fn) {
     var newProduct = new Product({ name: product.name, description: product.description });
     newProduct.save(function (err, savedProduct) {
-      err ? fn(err) : fn(null, savedProduct);
+      fn(err, savedProduct);
     });
   };
 
@@ -44,7 +44,7 @@ module.exports = function (mongoose, tree) {
         prod.name = product.name;
         prod.description = product.description;
         prod.save(function (err, savedProduct) {
-          err ? fn(err) : fn(null, savedProduct);
+          fn(err, savedProduct);
         });
       };
     });
@@ -52,7 +52,7 @@ module.exports = function (mongoose, tree) {
 
   var deleteProduct = function deleteProduct (id, fn) {
     Product.findByIdAndRemove(id, function (err, product) {
-      err ? fn(err) : fn(null, product);
+      fn(err, product);
     });
   };
 

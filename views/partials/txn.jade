@@ -2,19 +2,19 @@ div.span2.well
   div(ng-include="'/partials/sidenav'") 
 
 div.span9.well
-  form.form-horizontal.span7(name="txnForm", ng-switch="formStep", ng-submit="submitTxn()")
+  form.form-horizontal.span7(name="txnForm", ng-switch="step", ng-submit="submitTxn()")
     legend Request For Quote
     ul.nav.nav-tabs
-      li.span3(ng-class="{active: firstTab}", style="margin-left: 0;")
+      li.span3(ng-class="{active: stepIs('one')}", style="margin-left: 0;")
         a(href="", style="cursor: default;")
           strong Step 1 &nbsp;
           small RFQ & Product List
-      li.span3(ng-class="{active: !firstTab}", style="margin-left: 0;")
+      li.span3(ng-class="{active: stepIs('two')}", style="margin-left: 0;")
         a(href="", style="cursor: default;")
           strong Step 2 &nbsp;
           small Address and Contact
 
-    span(ng-switch-when="first")
+    span(ng-switch-when="one")
       
       .control-group
         label.control-label Query Date
@@ -23,28 +23,28 @@ div.span9.well
       .control-group
         label.control-label(for="description") RFQ Description
         .controls
-          textarea(type="text", id="description", rows="3", ng-model="form.txn.description", placeholder="RFQ Description")
+          textarea(type="text", id="description", rows="2", ng-model="form.txn.rfq.description", placeholder="RFQ Description")
       .control-group
         label.control-label(for="quoteDue") Quote Due In
         .controls
           div.btn-group(data-toggle="buttons-radio")
-            a.btn.btn-info(type="button", ng-model="form.txn.quoteDue", btn-radio="'1'") 1 day
-            a.btn.btn-info(type="button", ng-model="form.txn.quoteDue", btn-radio="'3'") 3 days
-            a.btn.btn-info(type="button", ng-model="form.txn.quoteDue", btn-radio="'7'") 7 days
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.quoteDue", btn-radio="'1'") 1 day
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.quoteDue", btn-radio="'3'") 3 days
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.quoteDue", btn-radio="'7'") 7 days
       .control-group
         label.control-label(for="reqDue") Requirement Within
         .controls
           div.btn-group(data-toggle="buttons-radio")
-            a.btn.btn-info(type="button", ng-model="form.txn.reqDue", btn-radio="'7'") 7 days
-            a.btn.btn-info(type="button", ng-model="form.txn.reqDue", btn-radio="'15'") 15 days
-            a.btn.btn-info(type="button", ng-model="form.txn.reqDue", btn-radio="'30'") 30 days
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.reqDue", btn-radio="'7'") 7 days
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.reqDue", btn-radio="'15'") 15 days
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.reqDue", btn-radio="'30'") 30 days
       .control-group
         label.control-label(for="approxVal") Approximate Order Value
         .controls
           div.btn-group(data-toggle="buttons-radio")
-            a.btn.btn-info(type="button", ng-model="form.txn.approxVal", btn-radio="'1'") &lt; 7 lakhs
-            a.btn.btn-info(type="button", ng-model="form.txn.approxVal", btn-radio="'5'") 1 - 5 lakhs
-            a.btn.btn-info(type="button", ng-model="form.txn.approxVal", btn-radio="'0'") &gt; 5 lakhs
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.approxVal", btn-radio="'1'") &lt; 1 lakhs
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.approxVal", btn-radio="'5'") 1 - 5 lakhs
+            a.btn.btn-info(type="button", ng-model="form.txn.rfq.approxVal", btn-radio="'10'") &gt; 5 lakhs
             
       legend Product List
       div.form-inline
@@ -54,10 +54,12 @@ div.span9.well
             option(value="") Select Product
           &nbsp;&nbsp;
           input.span2(type="number", name="quantity_"+"{{$index}}", ng-model="product.quantity", placeholder="Quantity", required)
+          select.span1(ng-model="product.unit", name="unit", ng-options="unit for unit in units", required)
+            option(value="") Select Unit
           br
           br
-          div.alert.alert-error(ng-show="txnForm.quantity_{{$index}}.$dirty && txnForm.quantity_{{$index}}.$invalid")
-            span.error(ng-show="txnForm.quantity_{{$index}}.$error.required") Quantity Required
+          //- div.alert.alert-error(ng-show="txnForm.quantity_{{$index}}.$dirty && txnForm.quantity_{{$index}}.$invalid")
+          //-   span.error(ng-show="txnForm.quantity_{{$index}}.$error.required") Quantity Required
 
 
       a.btn.btn-info(href="", ng-click="addProductField()") Add another product
@@ -67,15 +69,19 @@ div.span9.well
         label.btn.control-label(for="info", ng-click="showMoreInfo = !showMoreInfo", style="margin-right: 20px; \
           text-align: left; width: 138px;") Add More Information
         .controls(collapse="showMoreInfo")
-          textarea(type="text", id="info", rows="3", ng-model="form.txn.info", placeholder="More Information")
+          textarea(type="text", id="info", rows="3", ng-model="form.txn.rfq.info", placeholder="More Information")
       br
       br
-      a.btn.btn-large.btn-primary(href="", ng-click="formGoto('second')") Next
+      a.btn.btn-large.btn-primary(href="", ng-click="gotoStep('two')") Next
     
 
-    span(ng-switch-when="second")
+    span(ng-switch-when="two")
       legend Shipping Address
       
+      .control-group
+        label.control-label(for="company") Company Name
+        .controls
+          input(type="text", id="company", ng-model="form.address.company", placeholder="Company Name", required )
       .control-group
         label.control-label(for="street") Street
         .controls
@@ -91,25 +97,22 @@ div.span9.well
       .control-group
         label.control-label(for="pin") Pin Code
         .controls
-          input(type="text", id="pin", ng-model="form.address.zip", placeholder="Pin Code", required)
+          input(type="text", id="pin", ng-model="form.address.pin", placeholder="Pin Code", required)
       .control-group
         label.control-label(for="country") Country
         .controls
           input(type="text", id="country", ng-model="form.address.country", placeholder="Country", required)
+      .control-group
+        label.control-label(for="userName") Reference Name
+        .controls
+          input(type="text", id="userName", ng-model="form.address.name", placeholder="Reference Name", required )
 
       legend Contact Info
       .control-group
-        label.control-label(for="company") Company Name
-        .controls
-          input(type="text", id="company", ng-model="form.txn.company", placeholder="Company Name", required )
-      .control-group
-        label.control-label(for="userName") Your Name
-        .controls
-          input(type="text", id="userName", ng-model="form.user.name", placeholder="Your Name", required )
-      .control-group
         label.control-label(for="phoneNumber") Phone Number
         .controls
-          input(type="text", id="phoneNumber", ng-model="form.user.phone", placeholder="Phone Number", required )
+          input(type="text", ng-model="form.address.phone.countryCode", placeholder="Country Code", required )          
+          input(type="text", id="phoneNumber", ng-model="form.address.phone.number", placeholder="Phone Number", required )
       .control-group
         label.control-label(for="emailAddress") Email Address
         .controls
@@ -117,10 +120,31 @@ div.span9.well
       
       br
       br
-      a.btn.btn-large.btn-primary(href="", ng-click="formGoto('first')") Go Back &nbsp;&nbsp;&nbsp;
+      a.btn.btn-large.btn-primary(href="", ng-click="gotoStep('one')") Go Back &nbsp;&nbsp;&nbsp;
       button.btn.btn-large.btn-success.offset2(type="submit", ng-disabled="txnForm.$invalid")
         span Submit
       br
       br
       {{form}}
       br
+
+      //- comment block
+        //-   _user: userId
+        //- , _address: addressId
+        //- , status: txn.status
+        //- , rfq: {
+        //-       description: txn.description
+        //-     , info: txn.info
+        //-     , quoteDue: txn.quoteDue
+        //-     , reqDue: txn.reqDue
+        //-     , approxVal: txn.approxVal
+        //-   }
+        //-   company: address.company
+        //- , street: address.street
+        //- , city: address.city
+        //- , state: address.state
+        //- , country: address.country
+        //- , pin: address.pin
+        //- , _user: userId
+        //- , phone: { countryCode: phone.countryCode
+        //-           ,number: phone.number}

@@ -2,8 +2,8 @@ form.form-signin(name="registerForm", ng-controller="RegisterCtrl", ng-submit="s
 
   h3.form-signin-heading Register Account
 
-  div.alert.alert-error(ng-show="errorMessage")
-    span {{errorMessage}}
+  div.alert.alert-error(ng-show="error")
+    span {{error}}
 
   input.input-block-level(type="email", name="email", placeholder="email", ng-model="form.email", required)
 

@@ -1,43 +1,33 @@
-'use strict';
 module.exports = function (User) {
-  // var util = require('util');
-  // console.log('User INSIDE user route: ' + util.inspect(User, false, null));
-  // Remember Me middleware
-  // var rememberme = function (req, res, next) {
-  //   if ( req.method == 'POST' && req.url == '/login' ) {
-  //     if ( req.body.rememberme ) {
-  //       req.session.cookie.maxAge = 2592000000; // 30*24*60*60*1000 Rememeber 'me' for 30 days
-  //     } else {
-  //       req.session.cookie.expires = false;
-  //     }
-  //   }
-  //   next();
-  // };
+  'use strict';
 
   var logout = function (req, res) {
     req.logout();
-    res.json(200, 'User logged out successfully');
+    res.json(200, { success: { message: 'User logged out successfully' }});
   };
 
   // TODO : add checks, validations, errors such as check if user already exists
   // and if the passwords match etc.
-  var registerPost = function (req, res, next) {
+  var register = function register (req, res, next) {
     var user = {
         email: req.body.email
       , password: req.body.password
       , confirmPassword: req.body.confirmPassword
+      , roles: []
     };
     User.addUser(user, function (err, isRegistered) {
       if (err) {
+        // console.log('INSIDE register err')
         console.log(err);
-        res.json(500);
+        // return res.json(500, { error: { message: 'Internal Server Error'}});
       }
       if (isRegistered) {
-        res.json(400, new Error('User Not Registered. Check all input fields.'))
+        console.log('INSIDE register isRegistered')
+        res.redirect (200, { success: { message: 'User successfully registered' }});
       }
-       else {
-        console.log ('User successfully registered');
-        res.redirect (200);
+      else {
+        console.log('INSIDE register after isRegistered')
+        res.json(400, { error: { message: "User Not Registered. Check all input fields." }});
       } 
     });    
   };
@@ -116,6 +106,6 @@ var passwordResetCheck = function passwordResetCheck (req, res) {
 
   return {
       logout: logout
-    , registerPost: registerPost
+    , register: register
   }
 }

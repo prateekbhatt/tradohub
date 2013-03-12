@@ -2,8 +2,8 @@ form.form-signin(name="loginForm", ng-controller="LoginCtrl", ng-submit="submitL
 
   h3.form-signin-heading Log In
 
-  div.alert.alert-error(ng-show="invalidEmailPassword")
-    span Email / password not correct
+  div.alert.alert-error(ng-show="error")
+    span {{error}}
   
   input.input-block-level(type="text", name="email", placeholder="email", ng-model="form.email", required)
 
@@ -18,11 +18,6 @@ form.form-signin(name="loginForm", ng-controller="LoginCtrl", ng-submit="submitL
     span.error(ng-show="loginForm.password.$error.required") Password Required
 
   br
-
-  //label.checkbox
-  //  input(type="checkbox", name="rememberme", value="remember-me")
-  //  | Remember Me
-
   button.btn.btn-large.btn-primary(type="submit", ng-disabled="loginForm.$invalid")
     span Submit
 

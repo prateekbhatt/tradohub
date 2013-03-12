@@ -1,5 +1,5 @@
-'use strict';
 module.exports = function bootstrapApp (Product, User, Address, Txn) {
+  'use strict';
 
   // Seed Products
 

@@ -1,5 +1,5 @@
-'use strict';
 module.exports = function (mongoose) {
+  'use strict';
   var Schema = mongoose.Schema;
   
   var ProductListSchema = new Schema({
@@ -11,15 +11,17 @@ module.exports = function (mongoose) {
   var TxnSchema = new Schema({
       txnId: { type: String, required: true }
     , _user: { type: Schema.Types.ObjectId, ref: 'User' }
-    , description: { type:String }
-    , info: { type: String }
-    , created: { type: Date, default: Date.now }
-    , quoteDue: { type: Number, required: true }
-    , reqDue: { type: Number, required: true }
-    , approxVal: { type: Number, required: true }
-    , status: { type: String, required: true }
-    , products: [ ProductListSchema ]
     , _address: { type: Schema.Types.ObjectId, ref: 'Address' }
+    , products: [ ProductListSchema ]
+    , created: { type: Date, default: Date.now }
+    , status: { type: String, required: true }
+    , rfq: {      
+          description: { type:String }
+        , info: { type: String }
+        , quoteDue: { type: Number, required: true }
+        , reqDue: { type: Number, required: true }
+        , approxVal: { type: Number, required: true }
+      }
   });
 
   var Txn = mongoose.model('Txn', TxnSchema);
@@ -39,58 +41,58 @@ module.exports = function (mongoose) {
 
   var getTxn = function getTxn (txnId, fn) {
     Txn.findOne({ txnId: txnId }, function(err, txn) {
-      err ? fn(err) : fn(null, txn);
+      fn(err, txn);
     });
   };
 
   var getAllTxns = function getAllTxns (fn) {
     Txn.find({}, function(err, txns) {
-      err ? fn(err) : fn(null, txns);
+      fn(err, txns);
     });
   };
 
   var getUserTxn = function getUserTxn (userId, txnId, fn) {
     Txn.findOne( { txnId: txnId, _user: userId }, function (err, txn) {
-      err ? fn(err) : fn(null, txn);
+      fn(err, txn);
     });
   };
 
   var getUserTxns = function getUserTxns (userId, fn) {
     Txn.find({ _user: userId }, function(err, txns) {
-      err ? fn(err) : fn(null, txns);
+      fn(err, txns);
     });
   };
 
   var addTxn = function addTxn (txn, userId, addressId, fn) {
     var newTxn = new Txn({
         _user: userId
-      , des: txn.des
-      , info: txn.info
-      , quoteDue: txn.quoteDue
-      , reqDue: txn.reqDue
-      , approxVal: txn.approxVal
-      , status: txn.status
       , _address: addressId
+      , status: txn.status
     });
+    newTxn.rfq = {
+        description: txn.rfq.description
+      , info: txn.rfq.info
+      , quoteDue: txn.rfq.quoteDue
+      , reqDue: txn.rfq.reqDue
+      , approxVal: txn.rfq.approxVal
+    };
     
     newTxn.txnId = generateTxnId(); // TODO : check if txn id already exists
     
     newTxn.products = [];
-    for (i in txn.products) {
+    for (var i in txn.products) {
       var txnProduct = txn.products[i]
       var newProduct = {
-          _product: txnProduct._product
+          _product: txnProduct._id
         , quantity: txnProduct.quantity
         , unit: txnProduct.unit
-      }
-      console.log('INSIDE addTxn : product : ')
-      console.log(newProduct);
+      };
       newTxn.products.push(newProduct);
     }
     console.log(newTxn)
 
     newTxn.save(function (err, savedTxn) {
-      err ? fn(err) : fn(null, savedTxn);
+      fn(err, savedTxn);
     });
   };
 
@@ -109,7 +111,7 @@ module.exports = function (mongoose) {
 
   var deleteTxn = function deleteTxn (id, fn) {
     Txn.findByIdAndRemove(id, function (err, isDeleted) {
-      err ? fn(err) : fn(null, isDeleted);
+      fn(err, isDeleted);
     });
   };
 

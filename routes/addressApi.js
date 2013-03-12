@@ -1,8 +1,9 @@
-'use strict';
 module.exports = function (Address) {
+  'use strict';
   var address = function (req, res) {
-    var address_url = req.params.address_url;
-    Address.getAddress(address_url, function (err, address) {
+    var addressId = req.params.addressId;
+    Address.getAddress(addressId, function (err, address) {
+      if (err) { console.log(err); }
       if (address) {
         res.json(200, address);
       } else {
@@ -12,8 +13,11 @@ module.exports = function (Address) {
   };
   var addresses = function (req, res) {
     Address.getAllAddresses(function (err, addresses) {
+      if (err) { console.log(err); }
       if (addresses) {
         res.json(200, addresses);
+      } else {
+        res.json(404, 'No Address Found')
       }
     });
   };
@@ -21,69 +25,65 @@ module.exports = function (Address) {
     var userId = req.params.userId
       , addressId = req.params.addressId;
     Address.getUserAddress(userId, addressId, function (err, address) {
-      if (err) {
-        console.log(err);
-        res.json(500);
-      }
+      if (err) { console.log(err); }
       if (address) {
         res.json(200, address);
       } else {
-        res.json(200, {}); // TODO : Check status code
+        res.json(400, { error: { message: 'Address Not Found' }}); // TODO : Check status code
       }
     });
   };
-  var userAddresses = function (req, res) {
-    var userId = req.user ? req.user._id : req.params.userId; 
+  var userAddresses = function userAddresses (req, res) {
+    var userId = req.params.userId; 
     Address.getUserAddresses(userId, function (err, addresses) {
-      if(err) {
-        console.log(err);
-        res.json(500);
-      }
-      if (!addresses) {
-        res.json(200, {}); //Check status code
-      } else {
+      if(err) { console.log(err); }
+      if (addresses) {
         res.json(200, addresses);
-      }
-    });
-  };
-  var addAddress = function (req, res) {
-    var address = req.body.address
-      , userId = req.user ? req.user._id : '51312b9fdfcfb5ba26000001'
-      , addressId = req.body.addressId || '51312b9fdfcfb5ba26000001';
-    Address.addAddress(address, userId, addressId, function (err, address) {
-      if (err) {
-        console.log(err);
-        res.json(500);
-      } 
-      if (address) {
-        res.json(200, 'Address Saved');
       } else {
-        res.json(400, 'Address Not Saved');
+        res.json(400, { error: { message: 'No Address Found' }}); //Check status code
       }
     });
   };
-  var editAddress = function (req, res) {
-    var id = req.params.id;
-    var address = req.body.address;
-    Address.editAddress(id, address, function (err, isSaved) {
-      if (err) {
-        console.log(err);
-        res.json(500, 'Address Not Updated');
+  var addAddress = function addAddress (req, res) {
+    var address = req.body.address
+      , userId = req.params.userId; // TODO add validation
+    Address.addAddress(address, userId, function (err, address) {
+      if (err) { console.log(err); } 
+      if (address) {
+        res.json(200, { success: { message: 'Address Saved' }});
+      } else {
+        res.json(400, { error: { message: 'Address Not Saved. Check all input fields.' }});
       }
-      if (isSaved) { res.json(200); }
+    });
+  };
+  var editAddress = function editAddress (req, res) {
+    var userId = req.params.userId
+      , addressId = req.params.addressId
+      , address = req.body.address;
+    Address.editAddress(address, userId, addressId, function (err, isSaved) {
+      if (err) { console.log(err); }
+      if (isSaved) {
+        console.log(isSaved)
+        res.json(200, { success: { message: 'Address Updated' }});
+      } else {
+        res.json(400, { error: { message: 'Address Not Updated. Check all input fields.' }});        
+      }
     });
   };
 
-  var deleteAddress = function (req, res) {
-    var id = req.params.id;
-    Address.deleteAddress(id, function(err, isDeleted) {
-      if (err) {
-        console.log(err);
-        res.json(500, 'Address Not Deleted');
+  var deleteAddress = function deleteAddress (req, res) {
+    var userId = req.params.userId
+      , addressId = req.params.addressId;
+    Address.deleteAddress(userId, addressId, function(err, isDeleted) {
+      if (err) { console.log(err); }
+      if (isDeleted) {
+        console.log(isDeleted)
+        res.json(200, { success: { message: 'Address Deleted' }});
+      } else {
+        res.json(400, { error: { message: 'Address Not Found' }});
       }
-      if (isDeleted) { res.json(200); }
-    })
-  }
+    });
+  };
 
   return {
       address: address

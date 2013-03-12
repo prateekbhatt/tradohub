@@ -12,7 +12,7 @@ var transport = nodemailer.createTransport("SES", {
   AWSSecretKey: config.mailer.AWSSecretKey
 });
 
-exports.sendOne = function (locals, fn) {
+exports.sendOne = function sendOne (locals, fn) {
   // make sure that we have an user email and a subject
   if (!locals.email || !locals.subject) {
     return fn(EmailAddressRequiredError);

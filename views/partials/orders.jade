@@ -1,0 +1,23 @@
+div.span2.well
+  div(ng-include="'/partials/sidenav'") 
+
+div.span9.well
+  legend Order Status
+  table.table
+    thead
+      tr
+        th ID
+        th Description
+        th Status
+        th Quote
+        th Confirm Purchase Order
+    tbody
+      tr(ng-repeat="order in orders")
+        td 
+          a(ng-href="/orders/{{order.txnId}}")
+            strong {{order.txnId}}
+        td {{order.rfq.description}}
+        td {{getStatus($index)}}
+        td {{order.quote}}
+        td
+          button.btn.btn-success(ng-click="confirmPO('{{order._id}}')") Purchase Order

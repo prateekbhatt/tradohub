@@ -1,6 +1,5 @@
-'use strict';
-
 module.exports = function (mongoose) {
+  'use strict';
 
   // Taken from: http://www.scotchmedia.com/tutorials/express/authentication/3/01
 

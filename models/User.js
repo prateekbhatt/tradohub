@@ -1,26 +1,25 @@
-'use strict';
 module.exports = function (mongoose, passport, Address) {
+  'use strict';
   // Dependencies
   var LocalStrategy = require('passport-local').Strategy
     , bcrypt = require('bcrypt')
     , SALT_WORK_FACTOR = 10
     , Schema = mongoose.Schema;
 
-  var PhoneSchema = new Schema({
-      countryCode: { type: Number, required: true }
-    , number: { type: Number, required: true }
-  })
+  // var PhoneSchema = new Schema({
+  //     countryCode: { type: Number, required: true }
+  //   , number: { type: Number, required: true }
+  // })
 
-  var Phone = mongoose.model('Phone', PhoneSchema);
+  // var Phone = mongoose.model('Phone', PhoneSchema);
 
   // User Schema
   var UserSchema = new Schema({
       email: { type: String, required: true, unique: true, min: 6, max: 64, lowercase: true }
     , name: { type: String }
-    , phones: [ PhoneSchema ]
     , password: { type: String, required: true }
     , roles: Array
-    , accessToken: { type: String } // Used for Remember Me
+    // , accessToken: { type: String } // Used for Remember Me
   });
 
   // Bcrypt middleware
@@ -82,34 +81,46 @@ module.exports = function (mongoose, passport, Address) {
   //   the user by ID when deserializing.
   //
   //   Both serializer and deserializer edited for Remember Me functionality
+  // passport.serializeUser(function(user, done) {
+  //   console.log('SERIALIZING USER NOW!');
+  //   var createAccessToken = function () {
+  //     var token = user.generateRandomToken();
+  //     User.findOne( { accessToken: token }, function (err, existingUser) {
+  //       if (err) { return done( err ); }
+  //       if (existingUser) {
+  //         createAccessToken(); // Run the function again - the token has to be unique!
+  //       } else {
+  //         user.set('accessToken', token);
+  //         user.save( function (err) {
+  //           if (err) return done(err);
+  //           return done(null, user.get('accessToken'));
+  //         })
+  //       }
+  //     });
+  //   };
+
+  //   if ( user._id ) {
+  //     createAccessToken();
+  //   }
+  // });
+
+  // passport.deserializeUser(function(token, done) {
+  //   User.findOne( {accessToken: token } , function (err, user) {
+  //     done(err, user);
+  //   });
+  // });
+
+
+  // serialize sessions
   passport.serializeUser(function(user, done) {
-    console.log('SERIALIZING USER NOW!');
-    var createAccessToken = function () {
-      var token = user.generateRandomToken();
-      User.findOne( { accessToken: token }, function (err, existingUser) {
-        if (err) { return done( err ); }
-        if (existingUser) {
-          createAccessToken(); // Run the function again - the token has to be unique!
-        } else {
-          user.set('accessToken', token);
-          user.save( function (err) {
-            if (err) return done(err);
-            return done(null, user.get('accessToken'));
-          })
-        }
-      });
-    };
+    done(null, user.id)
+  })
 
-    if ( user._id ) {
-      createAccessToken();
-    }
-  });
-
-  passport.deserializeUser(function(token, done) {
-    User.findOne( {accessToken: token } , function (err, user) {
-      done(err, user);
-    });
-  });
+  passport.deserializeUser(function(id, done) {
+    User.findOne({ _id: id }, function (err, user) {
+      done(err, user)
+    })
+  })
 
   // Use the LocalStrategy within Passport.
   //   Strategies in passport require a `verify` function, which accept
@@ -140,13 +151,13 @@ module.exports = function (mongoose, passport, Address) {
     var newUser = new User({ email: user.email, password: user.password });
     if (user.roles) { newUser.roles = user.roles; }
     newUser.save(function (err, savedUser) {
-      err ? fn(err) : fn(null, savedUser);
+      fn(err, savedUser);
     });
   };
 
   var getUserByEmail = function getUserByEmail (email, fn) {
     User.findOne({ email: email }, function (err, user) {
-      fn(null, user);
+      fn(err, user);
     });
   };
 

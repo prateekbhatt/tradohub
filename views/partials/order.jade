@@ -1,0 +1,52 @@
+div.span2.well
+  div(ng-include="'/partials/sidenav'") 
+
+div.span9.well
+  legend Request For Quote
+  table.table
+    tbody
+      tr
+        td Order ID
+        td {{txn.txnId}}
+      tr
+        td Query Date
+        td {{txn.created}}
+      tr
+        td RFQ Description
+        td {{txn.rfq.description}}
+      tr
+        td Quote Due In
+        td {{txn.rfq.quoteDue}} day(s)
+      tr
+        td Requirement Within
+        td {{txn.rfq.reqDue}} days
+      tr
+        td Approximate Order Value
+        td {{txn.rfq.approxVal}} lakhs  
+        //- check for if else
+      tr
+        td More Information
+        td {{txn.rfq.info}}
+
+  legend Product List
+  table.table
+    thead
+      tr
+        th #
+        th Name
+        th Quantity
+    tbody
+      tr(ng-repeat="product in txn.products")
+        td [ {{$index + 1}} ]
+        td {{product._id}}
+        td {{product.quantity + ' ' + product.unit}}
+
+  span More Information
+  span {{txn.rfq.info}}
+  br
+
+  legend Shipping Address
+
+  span {{txn._address}}
+
+  br
