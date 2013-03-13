@@ -107,5 +107,5 @@ var passwordResetCheck = function passwordResetCheck (req, res) {
   return {
       logout: logout
     , register: register
-  }
-}
+  };
+};

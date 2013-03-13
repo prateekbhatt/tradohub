@@ -62,5 +62,5 @@ module.exports = function (Product) {
     , addProduct: addProduct
     , editProduct: editProduct
     , deleteProduct: deleteProduct
-  }
-}
+  };
+};

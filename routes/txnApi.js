@@ -20,7 +20,7 @@ module.exports = function (Txn, Address) {
       if (txns) {
         res.json(200, txns);
       } else {
-        res.json(400, { error: { message: 'No Txn has been made.'}})
+        res.json(400, { error: { message: 'No Txn has been made.'}});
       }
     });
   };
@@ -145,5 +145,5 @@ module.exports = function (Txn, Address) {
     , editTxn: editTxn
     , deleteTxn: deleteTxn
 
-  }
-}
+  };
+};

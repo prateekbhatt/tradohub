@@ -1,6 +1,11 @@
-div.span2.well
+.span2.well
   div(ng-include="'/partials/sidenav'") 
 
-div.span9.well
-  h3 {{product.name}}
+.span9.well
+  .row
+    .span6
+      h3 {{product.name}}
+    .span3
+      button.btn.btn-large.btn-success() Request For Quote
+  hr
   p {{product.description}}

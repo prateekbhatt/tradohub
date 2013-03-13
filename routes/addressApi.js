@@ -7,9 +7,9 @@ module.exports = function (Address) {
       if (address) {
         res.json(200, address);
       } else {
-        res.json(404, 'Address Not Found')
+        res.json(404, 'Address Not Found');
       }
-    })
+    });
   };
   var addresses = function (req, res) {
     Address.getAllAddresses(function (err, addresses) {
@@ -17,7 +17,7 @@ module.exports = function (Address) {
       if (addresses) {
         res.json(200, addresses);
       } else {
-        res.json(404, 'No Address Found')
+        res.json(404, 'No Address Found');
       }
     });
   };
@@ -63,7 +63,6 @@ module.exports = function (Address) {
     Address.editAddress(address, userId, addressId, function (err, isSaved) {
       if (err) { console.log(err); }
       if (isSaved) {
-        console.log(isSaved)
         res.json(200, { success: { message: 'Address Updated' }});
       } else {
         res.json(400, { error: { message: 'Address Not Updated. Check all input fields.' }});        
@@ -77,7 +76,6 @@ module.exports = function (Address) {
     Address.deleteAddress(userId, addressId, function(err, isDeleted) {
       if (err) { console.log(err); }
       if (isDeleted) {
-        console.log(isDeleted)
         res.json(200, { success: { message: 'Address Deleted' }});
       } else {
         res.json(400, { error: { message: 'Address Not Found' }});
@@ -94,5 +92,5 @@ module.exports = function (Address) {
     , editAddress: editAddress
     , deleteAddress: deleteAddress
 
-  }
-}
+  };
+};

@@ -1,5 +1,5 @@
 'use strict';
-function IndexCtrl() {};
+function IndexCtrl() {}
 
 function LoginCtrl($scope, $http, $location, Auth) {
   $scope.form = {};
@@ -24,7 +24,7 @@ function LoginCtrl($scope, $http, $location, Auth) {
         });
       });
   };
-};
+}
 LoginCtrl.$inject = ['$scope','$http','$location', 'Auth'];
 
 
@@ -45,19 +45,19 @@ function RegisterCtrl($scope, $http, $location) {
         });
     }
   };
-};
+}
 RegisterCtrl.$inject = ['$scope','$http','$location', 'Auth'];
 
 
 function ProductListCtrl($scope, ProductCatalog) {
   $scope.products = ProductCatalog.products;
-};
+}
 ProductListCtrl.$inject = ['$scope', 'ProductCatalog'];
 
 
 function ProductDetailCtrl($scope, $routeParams, ProductCatalog) {
   $scope.product = ProductCatalog.getProduct($routeParams.id);
-};
+}
 ProductDetailCtrl.$inject = ['$scope','$routeParams','ProductCatalog'];
 
 
@@ -79,16 +79,16 @@ function NavbarCtrl($scope, $location, Auth) {
       Auth.session.roles = [];
       $location.path('/');
     });
-  }
+  };
   $scope.routeIs = function(routeName) {
-    console.log('INSIDE routeIs '+$location.path()+' '+routeName)
+    console.log('INSIDE routeIs '+$location.path()+' '+routeName);
     return $location.path() === routeName;
   };
-};
+}
 NavbarCtrl.$inject = ['$scope','$location', 'Auth'];
 
 
-function AdminProductsCtrl($scope, $location, ProductCatalog) {
+function AdminProductsCtrl($scope, $location, Product, ProductCatalog) {
   $scope.form = {};
   $scope.form.product = {};
   $scope.products = ProductCatalog.products;
@@ -97,7 +97,7 @@ function AdminProductsCtrl($scope, $location, ProductCatalog) {
       ProductCatalog.getProducts();
       $scope.products = ProductCatalog.products;
       // TODO : remove product from scope
-    })
+    });
   };
   $scope.addProduct = function () {
     Product.save($scope.form, function () {
@@ -105,8 +105,8 @@ function AdminProductsCtrl($scope, $location, ProductCatalog) {
       $scope.form.product = {};
     });
   };
-};
-AdminProductsCtrl.$inject = ['$scope','$location', 'ProductCatalog'];
+}
+AdminProductsCtrl.$inject = ['$scope', '$location', 'Product', 'ProductCatalog'];
 
 
 function EditProductCtrl($scope, $routeParams, $location, Product, ProductCatalog) {
@@ -116,13 +116,13 @@ function EditProductCtrl($scope, $routeParams, $location, Product, ProductCatalo
     Product.update({ Id: $scope.form.product._id }, $scope.form, function () {
       ProductCatalog.getProducts();
       $location.path("/admin/products");
-    })
+    });
   };
-};
+}
 EditProductCtrl.$inject = ['$scope','$routeParams','$location', 'Product', 'ProductCatalog'];
 
 
-function TxnCtrl($scope, ProductCatalog, Txn, Auth) {
+function TxnCtrl($scope, $location, ProductCatalog, Txn, Auth) {
   $scope.step = "one";
   // $scope.stepOne = true;
   $scope.showMoreInfo = true;
@@ -130,7 +130,7 @@ function TxnCtrl($scope, ProductCatalog, Txn, Auth) {
                 "user": { "email": Auth.session.email},
                 "address": {"phone": {}}};
   $scope.products = ProductCatalog.products;
-  $scope.units = ['kg', 'tonne', 'piece']
+  $scope.units = ['kg', 'tonne', 'piece'];
   // $scope.addresses = Address.query()
   $scope.gotoStep = function (step) {
     $scope.step = step;
@@ -138,7 +138,7 @@ function TxnCtrl($scope, ProductCatalog, Txn, Auth) {
   };
   $scope.stepIs = function (step) {
     return $scope.step === step;
-  }
+  };
   $scope.getDate = function () {
     var date = new Date();
     return date.toDateString();
@@ -150,10 +150,10 @@ function TxnCtrl($scope, ProductCatalog, Txn, Auth) {
     Txn.save($scope.form, function () {
       console.log('Txn SAVED');
       $location.path('/orders');
-    })
+    });
   };
-};
-TxnCtrl.$inject = ['$scope', 'ProductCatalog', 'Txn', 'Auth'];
+}
+TxnCtrl.$inject = ['$scope', '$location', 'ProductCatalog', 'Txn', 'Auth'];
 
 
 function OrderListCtrl($scope, Txn) {
@@ -163,14 +163,14 @@ function OrderListCtrl($scope, Txn) {
     if (status === 'rfq') {
       return 'RFQ Sent. Waiting for Quote.';
     }
-  }
-};
+  };
+}
 OrderListCtrl.$inject = ['$scope','Txn'];
 
 
 function OrderDetailCtrl($scope, $routeParams, Txn) {
   $scope.txn = Txn.get({ Id: $routeParams.id });
-};
+}
 OrderDetailCtrl.$inject = ['$scope','$routeParams','Txn'];
 
 
