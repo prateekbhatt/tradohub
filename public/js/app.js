@@ -63,20 +63,14 @@ amdavad.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 .run( function($rootScope, $location, $route, Auth) {
   $rootScope.$on("$routeChangeStart", function (event, next, current) {
     Auth.userCheck();
-    console.log(next.$route)
     if (next.$route.access !== 'public') {
-      console.log('route not public')
       if (!Auth.session.isLoggedIn) {
-        console.log('user not logged in')
-        // no logged user, we should be going to #login
         if (next.$route.templateUrl !== "partials/login") {
-          console.log('templateUrl not login')
-          // not going to #login, we should redirect now
+          Auth.session.nextUrl = $location.path();
           $location.path("/login");
         }
       } else if (next.$route.access === 'admin') {
         if (!(Auth.session.roles.indexOf('admin') > -1)) {
-          console.log('user not admin')
           $location.path("/");          
         }
       }
@@ -84,7 +78,6 @@ amdavad.config(['$routeProvider', '$locationProvider', function($routeProvider, 
   });
 });
 amdavad.run(function(Auth, ProductCatalog) {
-  console.log('initialixing userCheck')
   Auth.userCheck();
   ProductCatalog.getProducts();
-})
+});

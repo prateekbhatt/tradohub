@@ -5,7 +5,9 @@ var express = require('express')
   , path = require('path')
   , less = require('less')
   , passport = require('passport')
-  , util = require('util');
+  , util = require('util')
+  , expressValidator = require('express-validator')
+  ;
 
 // Create app
 var app = express();
@@ -54,6 +56,7 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.limit('1mb'));
   app.use(express.bodyParser());
+  app.use(expressValidator);
   app.use(express.methodOverride());
   app.use(express.cookieParser('secretofthedarkhorse'));
   app.use(express.session());
@@ -152,6 +155,11 @@ app.get('/api/txns', ensureAuthenticated, routes.txnApi.userTxns);
 app.get('/api/txns/:txnId', ensureAuthenticated, routes.txnApi.userTxn);
 app.post('/api/txns', ensureAuthenticated, routes.txnApi.addTxn);
 
+//Address API Routes
+
+app.get('/api/addresses', ensureAuthenticated, routes.addressApi.userAddresses);
+app.get('/api/addresses/:addressId', ensureAuthenticated, routes.addressApi.userAddress);
+
 // User API Routes
 
 app.post('/register', routes.user.register);
@@ -166,11 +174,11 @@ app.get('/api/users/:userId');
 
 // Address API
 
-app.get('/api/users/:userId/addresses', ensureApiAuth, routes.addressApi.userAddresses);
-app.get('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.userAddress);
-app.post('/api/users/:userId/addresses', ensureApiAuth, routes.addressApi.addAddress);
-app.put('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.editAddress);
-app.delete('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.deleteAddress);
+// app.get('/api/users/:userId/addresses', ensureApiAuth, routes.addressApi.userAddresses);
+// app.get('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.userAddress);
+// app.post('/api/users/:userId/addresses', ensureApiAuth, routes.addressApi.addAddress);
+// app.put('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.editAddress);
+// app.delete('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.deleteAddress);
 
 app.get('/api/users/:userId/txns', ensureApiAuth, routes.txnApi.userTxns);
 app.get('/api/users/:userId/txns/:txnId', ensureApiAuth, routes.txnApi.userTxn);

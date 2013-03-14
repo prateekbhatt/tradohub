@@ -15,6 +15,16 @@ module.exports = function (User) {
       , confirmPassword: req.body.confirmPassword
       , roles: []
     };
+    req.assert('email', 'Enter a valid email address.').isEmail().notEmpty();
+    req.assert('password', 'Enter a valid password.').len(1,10);
+    var errors =req.validationErrors();
+    if (errors) {
+      var message = [];
+      for (var i in errors) {
+        message.push(errors[i].msg)
+      }
+      res.json(401, { error: { message: message.join()}});
+    }
     User.addUser(user, function (err, isRegistered) {
       if (err) {
         // console.log('INSIDE register err')
@@ -23,11 +33,10 @@ module.exports = function (User) {
       }
       if (isRegistered) {
         console.log('INSIDE register isRegistered')
-        res.redirect (200, { success: { message: 'User successfully registered' }});
-      }
-      else {
+        res.json(200, { success: { message: 'User successfully registered' }});
+      } else {
         console.log('INSIDE register after isRegistered')
-        res.json(400, { error: { message: "User Not Registered. Check all input fields." }});
+        res.json(400, { error: { message: "User with same email exists." }});
       } 
     });    
   };

@@ -2,7 +2,7 @@ div.span2.well
   div(ng-include="'/partials/sidenav'") 
 
 div.span9.well
-  legend Order Status
+  .lead Order Status
   table.table
     thead
       tr
@@ -10,14 +10,13 @@ div.span9.well
         th Description
         th Status
         th Quote
-        th Confirm Purchase Order
+        th Purchase Order
     tbody
       tr(ng-repeat="order in orders")
         td 
-          a(ng-href="/orders/{{order.txnId}}")
-            strong {{order.txnId}}
-        td {{order.rfq.description}}
+          a(ng-href="/orders/{{order.txnId}}") {{order.txnId}}
+        td {{order.rfq.description || '-'}}
         td {{getStatus($index)}}
-        td {{order.quote}}
+        td {{order.quote || '-'}}
         td
-          button.btn.btn-success(ng-click="confirmPO('{{order._id}}')") Purchase Order
+          button.btn.btn-success(ng-disabled="{{order.rfq.txn !== 'quoted'}}", ng-click="confirmPO('{{order._id}}')") Purchase Order

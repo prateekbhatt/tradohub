@@ -5,7 +5,7 @@
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 exports.ensureAuthenticated = function ensureAuthenticated (req, res, next) {
-  console.log(req.body)
+  // console.log(req.body)
   if (req.isAuthenticated()) {
     // console.log('INSIDE isAuthenticated in user.js');
     return next();

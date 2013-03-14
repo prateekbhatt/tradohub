@@ -1,8 +1,10 @@
+html,
 body {
-  padding-top: 15px;
-  padding-bottom: 20px;
+  /*padding-top: 15px;*/
+  height: 100%;
+/*  padding-bottom: 20px;
   padding-left: 10px;
-  padding-right: 10px;
+  padding-right: 10px;*/
   background-color: #f5f5f5;
 }
 .well {
@@ -16,6 +18,23 @@ body {
 /*.container > hr {
   margin: 60px 0;
 }*/
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -60px;
+}
+
+/* Set the fixed height of the footer here */
+#push,
+#footer {
+  height: 60px;
+}
+#footer {
+  background-color: #f5f5f5;
+}
 
 /* Main marketing message and sign up button */
 .jumbotron {
@@ -33,14 +52,6 @@ body {
 .jumbotron .btn {
   font-size: 21px;
   padding: 14px 24px;
-}
-
-/* Supporting marketing content */
-.marketing {
-  margin: 60px 0;
-}
-.marketing p + h4 {
-  margin-top: 28px;
 }
 
 /* login/register template css */

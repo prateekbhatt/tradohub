@@ -12,7 +12,8 @@ function LoginCtrl($scope, $http, $location, Auth) {
         Auth.session.userId = data._id;
         Auth.session.roles = data.roles;
         $scope.error = '';
-        $location.path('/quote');
+        var nextUrl = Auth.session.nextUrl || '/quote';
+        $location.path(nextUrl);
       }).
       error(function(data, status) {
         $scope.error = data.error ? data.error.message : 'Email / password not correct';
@@ -56,7 +57,7 @@ ProductListCtrl.$inject = ['$scope', 'ProductCatalog'];
 
 
 function ProductDetailCtrl($scope, $routeParams, ProductCatalog) {
-  $scope.product = ProductCatalog.getProduct($routeParams.id);
+  $scope.product = ProductCatalog.findByUrl($routeParams.id);
 }
 ProductDetailCtrl.$inject = ['$scope','$routeParams','ProductCatalog'];
 
@@ -81,7 +82,7 @@ function NavbarCtrl($scope, $location, Auth) {
     });
   };
   $scope.routeIs = function(routeName) {
-    console.log('INSIDE routeIs '+$location.path()+' '+routeName);
+    // console.log('INSIDE routeIs '+$location.path()+' '+routeName);
     return $location.path() === routeName;
   };
 }
@@ -111,7 +112,7 @@ AdminProductsCtrl.$inject = ['$scope', '$location', 'Product', 'ProductCatalog']
 
 function EditProductCtrl($scope, $routeParams, $location, Product, ProductCatalog) {
   $scope.form = {};
-  $scope.form.product = ProductCatalog.getProduct($routeParams.id);
+  $scope.form.product = ProductCatalog.findByUrl($routeParams.id);
   $scope.submitProduct = function () {
     Product.update({ Id: $scope.form.product._id }, $scope.form, function () {
       ProductCatalog.getProducts();
@@ -147,6 +148,7 @@ function TxnCtrl($scope, $location, ProductCatalog, Txn, Auth) {
     $scope.form.txn.products.push({});
   };
   $scope.submitTxn = function () {
+    console.log('submitting transaction')
     Txn.save($scope.form, function () {
       console.log('Txn SAVED');
       $location.path('/orders');
@@ -161,16 +163,22 @@ function OrderListCtrl($scope, Txn) {
   $scope.getStatus = function (id) {
     var status = $scope.orders[id].status;
     if (status === 'rfq') {
-      return 'RFQ Sent. Waiting for Quote.';
+      return 'RFQ Sent';
     }
   };
 }
 OrderListCtrl.$inject = ['$scope','Txn'];
 
 
-function OrderDetailCtrl($scope, $routeParams, Txn) {
-  $scope.txn = Txn.get({ Id: $routeParams.id });
+function OrderDetailCtrl($scope, $routeParams, $http, Txn, ProductCatalog, Address) {
+  $http.get('/api/txns/' + $routeParams.id)
+    .success(function (data) {
+      $scope.txn = data;
+      $scope.address = Address.get({ Id: data._address })
+    });
+  $scope.getName = function (id) {
+    var product = ProductCatalog.findById(id);
+    return product.name ? product.name : 'Not Found';
+  };
 }
-OrderDetailCtrl.$inject = ['$scope','$routeParams','Txn'];
-
-
+OrderDetailCtrl.$inject = ['$scope','$routeParams', '$http', 'Txn', 'ProductCatalog', 'Address'];

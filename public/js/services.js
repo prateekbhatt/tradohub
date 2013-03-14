@@ -9,7 +9,8 @@ angular.module('amdavad.services', ['ngResource']).
         isLoggedIn: false,
         email: '',
         userId: '',
-        roles: []
+        roles: [],
+        nextUrl: ''
       },
       getEmail: function () {
         return this.session.email;
@@ -50,11 +51,9 @@ angular.module('amdavad.services', ['ngResource']).
     return $resource('/api/txns/:Id', { Id: '@Id' },
       { 'update': { method: 'PUT'}});
   }).
-  factory('User', function ($resource, Auth) {
-    return $resource('/api/users/:userId/addresses/:addressId',
-      { userId: this.userId, addressId: '@addressId' },
-      { 'update': { method: 'PUT' },
-        'addresses': { method: 'GET' }});
+  factory('Address', function ($resource) {
+    return $resource('/api/addresses/:Id', { Id: '@Id' },
+      { 'update': { method: 'PUT'}});
   }).
   factory('ProductCatalog', function (Product) {
     return {
@@ -62,10 +61,17 @@ angular.module('amdavad.services', ['ngResource']).
       getProducts: function () {
         this.products = Product.query();
       },
-      getProduct: function (productUrl) {
+      findByUrl: function (productUrl) {
         for (var i in this.products) {
           if (this.products[i].url === productUrl) {
             return this.products[i];            
+          }
+        }
+      },
+      findById: function (id) {
+        for (var i in this.products) {
+          if (this.products[i]._id === id) {
+            return this.products[i];
           }
         }
       }

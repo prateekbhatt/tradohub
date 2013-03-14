@@ -1,5 +1,6 @@
 module.exports = function (grunt) {
 
+var SRC_JS = 'public/js/'
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
@@ -19,6 +20,17 @@ module.exports = function (grunt) {
         }
       }
     },
+    less: {
+      dev: {
+        options: {
+          paths: ["public/css/less"],
+          yuicompress: true
+        },
+        files: {
+          "public/css/bootstrap.css": "public/css/less/bootstrap.less"
+        }
+      }
+    },
     concat: {
       options: {
         // define a string to put between each file in the concatenated output
@@ -26,16 +38,16 @@ module.exports = function (grunt) {
       },
       dist: {
         // the files to concatenate
-        src: ['public/js/lib/angular.min.js',
-              'public/js/lib/angular-resource.min.js',
-              'public/js/app.js',
-              'public/js/services.js',
-              'public/js/controllers.js',
-              'public/js/lib/jquery.js',
-              'public/js/lib/bootstrap.min.js',
-              'public/js/lib/ui-bootstrap.min.js'],
+        src: [SRC_JS + 'lib/angular.min.js',
+              SRC_JS + 'lib/angular-resource.min.js',
+              SRC_JS + 'app.js',
+              SRC_JS + 'services.js',
+              SRC_JS + 'controllers.js',
+              SRC_JS + 'lib/jquery.js',
+              SRC_JS + 'lib/bootstrap.min.js',
+              SRC_JS + 'lib/ui-bootstrap.min.js'],
         // the location of the resulting JS file
-        dest: 'public/js/<%= pkg.name %>.js'
+        dest: SRC_JS + '<%= pkg.name %>.js'
       }
     },
     uglify: {
@@ -53,7 +65,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');  
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-less');
   
   grunt.registerTask('test', ['jshint', 'concat']);
   grunt.registerTask('js', ['concat', 'uglify']);

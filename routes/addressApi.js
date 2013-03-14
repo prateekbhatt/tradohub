@@ -22,7 +22,7 @@ module.exports = function (Address) {
     });
   };
   var userAddress = function userAddress (req, res) {
-    var userId = req.params.userId
+    var userId = req.user._id
       , addressId = req.params.addressId;
     Address.getUserAddress(userId, addressId, function (err, address) {
       if (err) { console.log(err); }
@@ -34,7 +34,7 @@ module.exports = function (Address) {
     });
   };
   var userAddresses = function userAddresses (req, res) {
-    var userId = req.params.userId; 
+    var userId = req.user._id; 
     Address.getUserAddresses(userId, function (err, addresses) {
       if(err) { console.log(err); }
       if (addresses) {
@@ -46,7 +46,7 @@ module.exports = function (Address) {
   };
   var addAddress = function addAddress (req, res) {
     var address = req.body.address
-      , userId = req.params.userId; // TODO add validation
+      , userId = req.user._id; // TODO add validation
     Address.addAddress(address, userId, function (err, address) {
       if (err) { console.log(err); } 
       if (address) {
@@ -57,7 +57,7 @@ module.exports = function (Address) {
     });
   };
   var editAddress = function editAddress (req, res) {
-    var userId = req.params.userId
+    var userId = req.user._id
       , addressId = req.params.addressId
       , address = req.body.address;
     Address.editAddress(address, userId, addressId, function (err, isSaved) {
@@ -71,7 +71,7 @@ module.exports = function (Address) {
   };
 
   var deleteAddress = function deleteAddress (req, res) {
-    var userId = req.params.userId
+    var userId = req.user._id
       , addressId = req.params.addressId;
     Address.deleteAddress(userId, addressId, function(err, isDeleted) {
       if (err) { console.log(err); }

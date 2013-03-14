@@ -10,14 +10,16 @@ block head
     script(src="/js/lib/jquery.js")
     script(src="/js/lib/bootstrap.min.js")
     script(src="/js/lib/ui-bootstrap.min.js")
-  script(src="/js/amdavad.min.js")
+  script(src="/js/amdavad.js")
   
 block body
-  div(ng-include="'/partials/navbar'")   
-  .container
-    .row
-      div(ng-view)
-    hr
-  footer
+  #wrap
+    div(ng-include="'/partials/navbar'")
+    .container
+      .row
+        div(ng-view)
+      hr
+    #push
+  #footer
     .container
       include footer

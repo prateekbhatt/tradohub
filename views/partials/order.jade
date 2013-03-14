@@ -2,7 +2,7 @@ div.span2.well
   div(ng-include="'/partials/sidenav'") 
 
 div.span9.well
-  legend Request For Quote
+  .lead Request For Quote
   table.table
     tbody
       tr
@@ -26,9 +26,9 @@ div.span9.well
         //- check for if else
       tr
         td More Information
-        td {{txn.rfq.info}}
+        td {{txn.rfq.info || '-'}}
 
-  legend Product List
+  .lead Product List
   table.table
     thead
       tr
@@ -38,15 +38,23 @@ div.span9.well
     tbody
       tr(ng-repeat="product in txn.products")
         td [ {{$index + 1}} ]
-        td {{product._id}}
+        td {{getName(product._product)}} 
         td {{product.quantity + ' ' + product.unit}}
 
-  span More Information
-  span {{txn.rfq.info}}
   br
 
-  legend Shipping Address
+  .lead Shipping Address
 
-  span {{txn._address}}
+  address.well
+    strong {{address.company}}
+    br
+    span {{address.street}}
+    br
+    span {{address.city + ' , ' + address.state}}
+    br
+    span {{address.country + ' ' + address.pin}}
+    br
+    abbr(title="Phone") P:&nbsp;&nbsp;
+    span {{address.phone.countryCode + '-'+address.phone.number}}
 
   br

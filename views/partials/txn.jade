@@ -2,8 +2,8 @@ div.span2.well
   div(ng-include="'/partials/sidenav'") 
 
 div.span9.well
-  form.form-horizontal.span7(name="txnForm", ng-switch="step", ng-submit="submitTxn()")
-    legend Request For Quote
+  form.form-horizontal(name="txnForm", ng-switch="step")
+    .lead Request For Quote
     ul.nav.nav-tabs
       li.span3(ng-class="{active: stepIs('one')}", style="margin-left: 0;")
         a(href="", style="cursor: default;")
@@ -23,7 +23,7 @@ div.span9.well
       .control-group
         label.control-label(for="description") RFQ Description
         .controls
-          textarea(type="text", id="description", rows="2", ng-model="form.txn.rfq.description", placeholder="RFQ Description")
+          textarea.input-xlarge(type="text", id="description", rows="2", ng-model="form.txn.rfq.description", placeholder="RFQ Description")
       .control-group
         label.control-label(for="quoteDue") Quote Due In
         .controls
@@ -46,87 +46,99 @@ div.span9.well
             a.btn.btn-info(type="button", ng-model="form.txn.rfq.approxVal", btn-radio="'5'") 1 - 5 lakhs
             a.btn.btn-info(type="button", ng-model="form.txn.rfq.approxVal", btn-radio="'10'") &gt; 5 lakhs
             
-      legend Product List
+      .lead Product List
       div.form-inline
         div(ng-repeat="product in form.txn.products")
-          strong [ {{$index + 1}} ] &nbsp;&nbsp;
-          select(ng-model="product._id", name="name", ng-options="p._id as p.name for p in products", required)
+          strong [ {{$index + 1}} ]
+          &nbsp;&nbsp;
+          select(ng-model="product._id", ng-options="p._id as p.name for p in products", required)
             option(value="") Select Product
           &nbsp;&nbsp;
-          input.span2(type="number", name="quantity_"+"{{$index}}", ng-model="product.quantity", placeholder="Quantity", required)
-          select.span1(ng-model="product.unit", name="unit", ng-options="unit for unit in units", required)
-            option(value="") Select Unit
-          br
-          br
+          input.input-small(type="number", ng-model="product.quantity", placeholder="Quantity", required)
+          &nbsp;&nbsp;
+          select.input-small(ng-model="product.unit", ng-options="unit for unit in units")
+            //- option(value="") {{units}}
+          hr
           //- div.alert.alert-error(ng-show="txnForm.quantity_{{$index}}.$dirty && txnForm.quantity_{{$index}}.$invalid")
           //-   span.error(ng-show="txnForm.quantity_{{$index}}.$error.required") Quantity Required
+        a.btn.btn-info(href="", ng-click="addProductField()") Add another product
 
-
-      a.btn.btn-info(href="", ng-click="addProductField()") Add another product
       br
       br
       .control-group
         label.btn.control-label(for="info", ng-click="showMoreInfo = !showMoreInfo", style="margin-right: 20px; \
-          text-align: left; width: 138px;") Add More Information
+          text-align: left; width: 138px;") More Information
         .controls(collapse="showMoreInfo")
-          textarea(type="text", id="info", rows="3", ng-model="form.txn.rfq.info", placeholder="More Information")
+          textarea.input-xlarge(type="text", id="info", rows="3", ng-model="form.txn.rfq.info", placeholder="More Information")
       br
-      br
-      a.btn.btn-large.btn-primary(href="", ng-click="gotoStep('two')") Next
+      a.btn.btn-large.btn-primary.span2.offset2(href="#", ng-click="gotoStep('two')") Next &rarr;
     
 
     span(ng-switch-when="two")
-      legend Shipping Address
+      .lead Shipping Address
       
       .control-group
         label.control-label(for="company") Company Name
         .controls
-          input(type="text", id="company", ng-model="form.address.company", placeholder="Company Name", required )
+          input.input-xlarge(type="text", id="company", ng-model="form.address.company", placeholder="Company Name", required )
+      
       .control-group
         label.control-label(for="street") Street
         .controls
-          input(type="text", id="street", ng-model="form.address.street", placeholder="Street", required)
+          input.input-xlarge(type="text", id="street", ng-model="form.address.street", placeholder="Street", required)
+      
       .control-group
         label.control-label(for="city") City
         .controls
-          input(type="text", id="city", ng-model="form.address.city", placeholder="City")
+          input.input-xlarge(type="text", id="city", ng-model="form.address.city", placeholder="City")
+      
       .control-group
         label.control-label(for="state") State
         .controls
-          input(type="text", id="state", ng-model="form.address.state", placeholder="State")
+          input.input-xlarge(type="text", id="state", ng-model="form.address.state", placeholder="State")
+      
       .control-group
         label.control-label(for="pin") Pin Code
         .controls
-          input(type="text", id="pin", ng-model="form.address.pin", placeholder="Pin Code", required)
+          input.input-xlarge(type="text", id="pin", ng-model="form.address.pin", placeholder="Pin Code", required)
+      
       .control-group
         label.control-label(for="country") Country
         .controls
-          input(type="text", id="country", ng-model="form.address.country", placeholder="Country", required)
+          input.input-xlarge(type="text", id="country", ng-model="form.address.country", placeholder="Country", required)
+      
       .control-group
         label.control-label(for="userName") Reference Name
         .controls
-          input(type="text", id="userName", ng-model="form.address.name", placeholder="Reference Name", required )
+          input.input-xlarge(type="text", id="userName", ng-model="form.address.name", placeholder="Reference Name", required )
 
-      legend Contact Info
+      
+      .lead Contact Info
+      
       .control-group
         label.control-label(for="phoneNumber") Phone Number
         .controls
-          input(type="text", ng-model="form.address.phone.countryCode", placeholder="Country Code", required )          
-          input(type="text", id="phoneNumber", ng-model="form.address.phone.number", placeholder="Phone Number", required )
+          input.input-mini(type="text", ng-model="form.address.phone.countryCode", placeholder="Code", required )          
+          input.input-medium(type="text", id="phoneNumber", ng-model="form.address.phone.number", placeholder="Phone Number", required )
+      
       .control-group
         label.control-label(for="emailAddress") Email Address
         .controls
-          input(type="email", id="emailAddress", ng-model="form.user.email", placeholder="Email Address", required)
+          input.input-xlarge(type="email", id="emailAddress", ng-model="form.user.email", placeholder="Email Address", required)
       
       br
       br
-      a.btn.btn-large.btn-primary(href="", ng-click="gotoStep('one')") Go Back &nbsp;&nbsp;&nbsp;
-      button.btn.btn-large.btn-success.offset2(type="submit", ng-disabled="txnForm.$invalid")
-        span Submit
-      br
-      br
-      {{form}}
-      br
+      ul.inline
+        li.btn.btn-large.btn-primary.offset1.span2(ng-click="gotoStep('one')") &larr; Go Back &nbsp;&nbsp;&nbsp;
+        li
+          buton.btn.btn-large.btn-success.offset1.span2(type="submit", ng-disabled="txnForm.$invalid", ng-click="submitTxn()")
+            span Submit
+      
+      //-
+        br
+        br
+        {{form}}
+        br
 
       //- comment block
         //-   _user: userId
