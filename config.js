@@ -1,14 +1,24 @@
 'use strict';
 
 module.exports = {
- // db: {
- //   production: "mongodb://user:pass@example.com:1234/stroeski-prod",
- //   development: "mongodb://localhost/storeski-dev",
- //   test: "mongodb://localhost/storeski-test",
- // },
-  mailer: {
-    AWSAccessKeyID: 'AKIAICEIHBPNOCUWGVUQ',
-    AWSSecretKey: '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',
-    defaultFromAddress: 'Prateek Bhatt <prattbhatt@gmail.com>'
-  }
-};
+    development: {
+      root: require('path').normalize(__dirname + '/..'),
+      // db: 'mongodb://localhost/noobjs_dev',
+      // google: {
+      //     clientID: "APP_ID"
+      //   , clientSecret: "APP_SECRET"
+      //   , callbackURL: "http://localhost:3000/auth/google/callback"
+      // },
+      mailer: {
+        AWSAccessKeyID: 'AKIAICEIHBPNOCUWGVUQ',
+        AWSSecretKey: '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',
+        defaultFromAddress: 'Prateek Bhatt <prattbhatt@gmail.com>'
+      }
+    }
+  , test: {
+
+    }
+  , production: {
+
+    }
+}

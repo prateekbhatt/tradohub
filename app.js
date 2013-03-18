@@ -125,16 +125,16 @@ app.locals({
 });
 
 // Routes are defined here
-app.get('/', routes.index.index);
+// app.get('/', routes.index.index);
 app.get('/partials/:name', routes.index.partials);
 
 // TODO : use regex
-app.get('/register', routes.index.index);
-app.get('/login', routes.index.index);
-app.get('/products/:product_url?', routes.index.index);
-app.get('/admin/products/:id?', routes.index.index);
-app.get('/quote/:quoteId?', routes.index.index);
-app.get('/orders/:id?', routes.index.index);
+// app.get('/register', routes.index.index);
+// app.get('/login', routes.index.index);
+// app.get('/products/:product_url?', routes.index.index);
+// app.get('/admin/products/:id?', routes.index.index);
+// app.get('/quote/:quoteId?', routes.index.index);
+// app.get('/orders/:id?', routes.index.index);
 
 app.get('/logout', routes.user.logout);
 app.get('/me', isLoggedIn);
@@ -170,21 +170,7 @@ app.post('/login',
     res.json(200, { email: req.user.email, _id: req.user._id, isLoggedIn: true, roles: req.user.roles });
   });
 
-app.get('/api/users/:userId');
-
-// Address API
-
-// app.get('/api/users/:userId/addresses', ensureApiAuth, routes.addressApi.userAddresses);
-// app.get('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.userAddress);
-// app.post('/api/users/:userId/addresses', ensureApiAuth, routes.addressApi.addAddress);
-// app.put('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.editAddress);
-// app.delete('/api/users/:userId/addresses/:addressId', ensureApiAuth, routes.addressApi.deleteAddress);
-
-app.get('/api/users/:userId/txns', ensureApiAuth, routes.txnApi.userTxns);
-app.get('/api/users/:userId/txns/:txnId', ensureApiAuth, routes.txnApi.userTxn);
-app.post('/api/users/:userId/txns');
-app.put('/api/users/:userId/txns/:txnId');
-app.delete('/api/users/:userId/txns/:txnId');
+// app.get('*', routes.index.index);
 
 // Start server
 http.createServer(app).listen(app.get('port'), function(){

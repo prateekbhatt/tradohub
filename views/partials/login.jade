@@ -5,10 +5,10 @@ form.form-signin(name="loginForm", ng-controller="LoginCtrl", ng-submit="submitL
   div.alert.alert-error(ng-show="error")
     span {{error}}
   
-  input.input-block-level(type="text", name="email", placeholder="email", ng-model="form.email", required)
+  input.input-block-level(type="email", name="email", placeholder="email", ng-model="form.email", required, autofocus)
 
   div.alert.alert-error(ng-show="loginForm.email.$dirty && loginForm.email.$invalid")
-    span.error(ng-show="loginForm.email.$error.required") Email Required
+    //- span.error(ng-show="loginForm.email.$error.required") Email Required
 
   br
 
