@@ -1,0 +1,29 @@
+extends ../index
+block partial
+
+  .span2.well
+    include admin_nav
+
+  .span9.well
+    .lead Order Status
+    table.table
+      thead
+        tr
+          th Order #
+          th Contact
+          th Info
+          th Status
+          th Quote
+          th Created
+      tbody
+        for order in txns
+          tr
+            td 
+              a(href="/admin/orders/#{order.tid}") #{order.tid}
+            td #{(order.contact.name.first || '') + ' ' + (order.contact.name.last || '')}
+              br
+              span #{order.contact.email}
+            td #{order.info || '--'}
+            td #{order.status}
+            td #{order.quote || '--'}
+            td #{order.created.toDateString()}

@@ -1,35 +1,46 @@
-form.form-signin(name="registerForm", ng-controller="RegisterCtrl", ng-submit="submitRegister()")
+extends ../index
 
-  h3.form-signin-heading Register Account
+block script
+  link(rel='stylesheet', href='/js/lib/bootstrap-fileupload.min.css')
+  script(src="/js/lib/bootstrap-fileupload.min.js")
 
-  div.alert.alert-error(ng-show="error")
-    span {{error}}
+block partial
 
-  input.input-block-level(type="email", name="email", placeholder="email", ng-model="form.email", required, autofocus)
+  .span6.offset3
+    form.form-signin(name="registerForm", method="POST", action="/register")
 
-  div.alert.alert-error(ng-show="registerForm.email.$dirty && registerForm.email.$invalid")
-    span(ng-show="registerForm.email.$error.required") Email Required
+      .lead Create a new account
+      
+      p Name:
+      input.input-medium(type="text", name="name[first]", placeholder="first name", autofocus)
+      &nbsp;&nbsp;&nbsp;
+      input.input-medium(type="text", name="name[last]", placeholder="last name")
+      br
 
-  br
+      p Email:
+      input.input-block-level(type="email", name="email", placeholder="email")
+      br
 
-  input.input-block-level(type="password", name="password", placeholder="password", ng-model="form.password", required)
-  
-  div.alert.alert-error(ng-show="registerForm.password.$dirty && registerForm.password.$invalid")
-    span(ng-show="registerForm.password.$error.required") Password Required
+      p Password:
+      input.input-block-level(type="password", name="password", placeholder="password")
+      br
 
-  br
+      p Company Name:
+      input.input-block-level(type="text", name="company", placeholder="company name")
+      br
 
-  input.input-block-level(type="password",name="confirmPassword", placeholder="confirm password", ng-model="form.confirmPassword", required)
+      .fileupload.fileupload-new(data-provides="fileupload")
+        p Import / Export Document:
+        span.btn.btn-file.btn-block
+          span.fileupload-new Select file
+          span.fileupload-exists Change
+          input(type="file")
+        &nbsp;
+        span.fileupload-preview
+        &nbsp;
+        a.close.fileupload-exists(href="#", data-dismiss="fileupload", style="float: none")×
 
-  div.alert.alert-error(ng-show="registerForm.confirmPassword.$dirty && registerForm.confirmPassword.$invalid")
-    span(ng-show="registerForm.confirmPassword.$error.required") Confirm Password Required
-
-  br
-
-  button.btn.btn-large.btn-primary(type="submit", ng-disabled="registerForm.$invalid")
-    span Submit
-
-  hr
-
-  p 
-    a(href="/login") Already have an account? Login
+      button.btn.btn-block.btn-large.btn-primary(type="submit")
+        span Create Account
+      br
+      small By signing up you agree to our Terms and Privacy Policy

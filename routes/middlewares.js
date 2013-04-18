@@ -10,7 +10,12 @@ exports.ensureAuthenticated = function ensureAuthenticated (req, res, next) {
     // console.log('INSIDE isAuthenticated in user.js');
     return next();
   } else {
-    res.json(401, { error: { message: 'Please login to proceed.'}});
+    res.format({
+      html: function(){
+        req.flash('error', 'Login to view page.')
+        res.redirect('/login'); },
+      json: function(){ res.json(401, { error: { message: 'Please login to proceed.'}}); }
+    });
   }
 };
 
@@ -23,13 +28,22 @@ exports.isLoggedIn = function isLoggedIn (req, res) {
 };
 
 exports.ensureAdmin =  function ensureAdmin (req, res, next) {
-  // make sure the user is logged in. 
-  console.log(req)
+  // make sure the user is logged in.
   if (req.isAuthenticated()) {
     // make sure the user has role 'admin'
-    req.user.hasRole('admin') ? next() : res.json(403, { error: { message: 'You don\'t have admin access.' }});
+    if (req.user.hasRole('admin')) {
+      next();
+    } else {
+      res.format({
+        html: function(){ res.render('403'); },
+        json: function(){ res.json(403, { error: { message: 'You don\'t have admin access.' }}); }  
+      });      
+    }
   } else {
-    res.json(401, { error: { message: 'Please login as admin to proceed.' }});    
+    res.format({
+      html: function(){ res.redirect('/login'); },
+      json: function(){ res.json(401, { error: { message: 'Please login as admin to proceed.'}}); }
+    });
   }
 };
 

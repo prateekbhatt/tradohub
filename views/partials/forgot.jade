@@ -1,0 +1,17 @@
+extends ../index
+block partial
+  .span6.offset3
+    form.form-signin(name="forgotPasswordForm", method="POST", action="/forgot-password")
+
+      //- h3.form-signin-heading Forgot My Password
+
+      p Email:
+      input.input-block-level(type="email", name="email", placeholder="email", required, autofocus)
+      br
+      button.btn.btn-block.btn-large.btn-primary(type="submit")
+        span Send password reset link
+
+      hr
+
+      p 
+        a(href="/login") Go back to Login

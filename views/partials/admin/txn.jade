@@ -1,0 +1,100 @@
+extends ../index
+block partial
+
+  div.span2.well
+    include admin_nav
+  div.span9.well
+    .lead Order Detail
+    table.table
+      tbody
+        tr
+          td Order ID
+          td #{txn.tid}
+        tr
+          td Query Date
+          td #{txn.created.toDateString()}
+        tr
+          td Status
+          td
+            if (txn.status === 'request')
+              span Request Made
+            if (txn.status === 'quoted')
+              span Quote Sent
+        tr
+          td More Information
+          td #{txn.info || '-'}
+
+        tr
+          td 
+            h5 Shipping and Payment
+          td
+        tr
+          td Destination Port
+          td #{txn.shipping.destPort}
+        tr
+          td Requirement Within
+          td #{txn.shipping.reqDue.toDateString()}
+        tr
+          td Shipping Terms
+          td #{txn.shipping.terms}
+        tr
+          td Payment Terms
+          td #{txn.payment.terms}
+        
+    .row
+      .span4.well
+        
+        h5 Company
+        address
+          p #{txn.company.name}
+          span #{txn.company.street}
+          br
+          span #{txn.company.city + ' , ' + txn.company.state}
+          br
+          span #{txn.company.country + ' ' + txn.company.zip}
+      
+      .span4.well
+        h5 Contact
+        p #{txn.contact.name.first + ' ' + txn.contact.name.last}
+        p Phone:&nbsp;&nbsp;
+          span #{txn.contact.phone.country + '-' + txn.contact.phone.area + '-' + txn.contact.phone.number}
+        p Email:&nbsp;&nbsp;
+          span #{txn.contact.email}
+
+    h5 Products
+    table.table
+      thead
+        tr
+          th Name
+          th Specification
+          th Quantity
+          th Bid Price
+          th Quote Price
+          //- th Action
+      tbody
+        for p in txn.products
+          tr
+            td #{p.name}
+            td #{p.specs}
+            td #{p.quantity + ' ' + p.unit}
+            td #{'$ ' + p.bid}
+            td
+              if p.quote
+                span #{'$ ' + p.quote}
+              else
+                form(method="POST", action="/admin/orders/#{txn.tid}")
+                  .input-prepend
+                    span.add-on $
+                    input.input-mini(type="number", name="quote")
+                  input(type="hidden", name="pid", value="#{p.pid}")
+                  input.btn.btn-info(type="submit", value="Save")
+            //- td
+            //-   if p.quote
+            //-     .btn.btn-warning
+            //-       span Cancel
+            //-   else
+            //-     .btn.btn-info
+            //-       span Save
+
+    br
+    .btn.btn-success.btn-large.span4.offset2() Send Quote

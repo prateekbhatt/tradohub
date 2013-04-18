@@ -1,13 +1,11 @@
-
-// note that we extend a different
-// layout with jade for 4xx & 5xx
-// responses
-
-extends error
-
-block errorContent
-  h3 Error: #{error.message}
-  if settings['verbose errors']
-    pre= error.stack
-  else
-    p An error ocurred!
+extends index
+  
+block partial
+  .span12.text-center
+    if settings['verbose errors']
+      p Error: #{error.message}
+      pre= error.stack
+    else
+      h1 500
+      h3 an error ocurred ;(
+      h3 Go Back

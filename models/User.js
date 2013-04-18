@@ -1,3 +1,5 @@
+var validate = require('mongoose-validator').validate;
+
 module.exports = function (mongoose, passport, Address) {
   'use strict';
   // Dependencies
@@ -6,17 +8,16 @@ module.exports = function (mongoose, passport, Address) {
     , SALT_WORK_FACTOR = 10
     , Schema = mongoose.Schema;
 
-  // var PhoneSchema = new Schema({
-  //     countryCode: { type: Number, required: true }
-  //   , number: { type: Number, required: true }
-  // })
-
-  // var Phone = mongoose.model('Phone', PhoneSchema);
-
+  var emailValidator = [validate({message: "Email Address should be between 5 and 64 characters"},'len', 5, 64)
+                        , validate({message: "Email Address is not correct"},'isEmail')
+                        ];
   // User Schema
   var UserSchema = new Schema({
-      email: { type: String, required: true, unique: true, min: 6, max: 64, lowercase: true }
-    , name: { type: String }
+      email: { type: String, unique: true, lowercase: true, validate: emailValidator }
+    , name: {
+        first: { type: String, required: true }
+      , last: {type: String, required: true }
+      }      
     , password: { type: String, required: true }
     , roles: Array
     // , accessToken: { type: String } // Used for Remember Me
@@ -147,31 +148,43 @@ module.exports = function (mongoose, passport, Address) {
     });
   }));
 
-  var addUser = function addUser (user, fn) {
-    var newUser = new User({ email: user.email, password: user.password });
+  function create (user, fn) {
+    var newUser = new User({
+        name: {
+            first: user.name.first
+          , last: user.name.last
+        }
+      , email: user.email
+      , password: user.password });
     if (user.roles) { newUser.roles = user.roles; }
     newUser.save(function (err, savedUser) {
       fn(err, savedUser);
     });
   };
 
-  var getUserByEmail = function getUserByEmail (email, fn) {
+  function getByEmail (email, fn) {
     User.findOne({ email: email }, function (err, user) {
       fn(err, user);
     });
   };
 
-  var resetPassword =  function resetPassword (token, fn) {
-    User.findOne({ passwordToken: token }, function (err, user) {
+  function updatePassword (userId, password, fn) {
+    User.findOne({ _id: userId }, function (err, user) {
       if (err) console.log(err);
-
-    })
-  }
+      if (user) {
+        user.password = password;
+        user.save(function (err, updated) {
+          fn (err, updated);
+        });
+      }
+    });
+  };
 
   return {
       User: User
-    , addUser: addUser
-    , getUserByEmail: getUserByEmail
+    , create: create
+    , getByEmail: getByEmail
+    , updatePassword: updatePassword
   }
 
 };

@@ -1,11 +1,14 @@
-.span2.well
-  div(ng-include="'/partials/sidenav'") 
+extends ../index
+block partial
 
-.span9.well
-  .row
-    .span6
-      h3 {{product.name}}
-      hr
-      p {{product.description}}
-    .span3
-      button.btn.btn-large.btn-success() Request For Quote
+  .span2.well
+    include sidenav 
+
+  .span9.well
+    .row
+      .span6
+        h3 #{product.name}
+        hr
+        p #{product.description}
+      .span3
+        a.btn.btn-large.btn-success(href="/quote") Request For Quote

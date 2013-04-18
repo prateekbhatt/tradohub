@@ -1,0 +1,171 @@
+extends ../index
+
+block script
+  script(src="/js/lib/angular.min.js")
+  script(src="/js/lib/ui-bootstrap.min.js")  
+  script(src="/js/app2.js")
+  script
+    function shipTU (value){
+      var terms = document.getElementById('shippingTerms')
+      terms.value = value;
+      // console.log(document.getElementById('shippingTerms').val);
+    };
+    function payTU (value){
+      var terms = document.getElementById('paymentTerms')
+      terms.value = value;
+    };
+    function reqDueU (value){
+      var terms = document.getElementById('reqDue')
+      terms.value = value;
+    };
+
+block partial
+  .span2.well
+    include sidenav
+
+  .span9.well
+    form.form-horizontal(name="txnForm", method="POST", action="/orders", ng-controller="TxnCtrl")
+      //- {{ form }}
+      .lead
+        strong Request For Quote
+
+      .lead Product
+      
+      .form-inline
+        table.table.table-condensed.table-hover
+          thead
+            tr
+              th Product
+              th Quantity
+              th Base Price
+              th Specification
+              th
+                i.icon-plus(ng-click="addProductField()")
+          tbody
+            tr(ng-repeat="product in form.txn.products")
+              td
+                select.input-medium(name="products[{{$index}}][detail]", required)
+                  option(value="") Select Product
+                  for p in products
+                    option(value='{"_id":"#{p._id}","name":"#{p.name}","unit":"MT"}') #{p.name}
+              td
+                .input-append
+                  input.input-mini(type="number", name="products[{{$index}}][quantity]", placeholder="Quantity", required)
+                  span.add-on MT
+              td
+                .input-prepend
+                  span.add-on $
+                  input.input-mini(type="text", name="products[{{$index}}][bid]", placeholder="Price")
+              td
+                input.input-small(type="text", name="products[{{$index}}][specs]", placeholder="Specification")
+              td
+                i.icon-remove(ng-click="removeProductField($index)", ng-show="form.txn.products.length > 1")
+      br
+      .control-group
+        label.control-label(for="origin") Country of Origin
+        .controls
+          select.input-xlarge(name="origin")
+            option(value="") Select Country
+            each country, i in originCountries
+              option(value=i) #{country}
+
+      .lead Shipping and Payment
+      
+      .control-group
+        label.control-label(for="port") Destination Port
+        .controls
+          input.input-xlarge(type="text", id="port", name="shipping[destPort]", placeholder="Destination Port")
+
+      .control-group
+        label.control-label(for="reqDue") Delivery Time
+        .controls
+          .btn-group(data-toggle="buttons-radio")
+            input(type="hidden", name="shipping[reqDue]", value="", id="reqDue")            
+            for i in reqDue
+              button.btn.btn-info(type="button", onclick="reqDueU('#{i}');") #{i} days
+      .control-group
+        label.control-label(for="shippingTerms") Shipping Terms
+        .controls
+          .btn-group(data-toggle="buttons-radio")
+            input(type="hidden", name="shipping[terms]", value="", id="shippingTerms")
+            each term, i in shippingTerms
+              button.btn.btn-info(type="button", id="shippingTerms", data-toggle="button", value="'#{i}'", onclick="shipTU('#{i}');") #{i}
+          //- select.input-xlarge(name="shippingTerms")
+          //-   option(value="") Select Terms
+          //-     option(value=i) #{i} : #{term}
+
+      .control-group
+        label.control-label(for="paymentTerms") Payment Terms
+        .controls
+          .btn-group(data-toggle="buttons-radio")
+            input(type="hidden", name="payment[terms]", value="", id="paymentTerms")            
+            each term, i in paymentTerms
+              button.btn.btn-info(type="button", value="'#{i}'", onclick="payTU('#{i}');") #{i}
+          //- select.input-xlarge(name="paymentTerms")
+          //-   option(value="") Select Terms
+          //-   each term, i in paymentTerms
+          //-     option(value=i) #{i} : #{term}
+
+      .control-group
+        label.control-label(for="info") More Information
+        .controls
+          textarea.input-xlarge(type="text", id="info", rows="3", name="info", placeholder="More Information")
+
+      .lead Company
+
+      .control-group
+        label.control-label(for="company") Company Name
+        .controls
+          input.input-xlarge(type="text", id="company", name="company[name]", placeholder="Company Name", required )
+      
+      .control-group
+        label.control-label(for="street") Address
+        .controls
+          input.input-medium(type="text", id="street", name="company[street]", placeholder="Street")
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          input.input-small(type="text", id="city", name="company[city]", placeholder="City")
+      
+      .control-group
+        label.control-label(for="state") State
+        .controls
+          input.input-xlarge(type="text", id="state", name="company[state]", placeholder="State")
+      
+      .control-group
+        label.control-label(for="zip") Zip / Postal Code
+        .controls
+          input.input-xlarge(type="text", id="zip", name="company[zip]", placeholder="Zip / Postal Code", required)
+      
+      .control-group
+        label.control-label(for="country") Country
+        .controls
+          //- input.input-xlarge(type="text", id="country", name="address[country]", placeholder="Country", required)
+          select.input-xlarge(name="company[country]", required)
+            option(value="") Select Country
+            each i in countryList
+              option(value=i.cca3) #{i.name}
+      
+      .lead Contact
+      
+      .control-group
+        label.control-label(for="userName") Your Name
+        .controls
+          input.span2(type="text", id="userName", name="contact[name][first]", placeholder="First Name", required )
+          input.span2(type="text", name="contact[name][last]", placeholder="Last Name", required )
+      
+      .control-group
+        label.control-label(for="phoneNumber") Phone Number
+        .controls
+          input.input-mini(type="number", name="contact[phone][country]", placeholder="Country", required )
+          &nbsp; - &nbsp;
+          input.input-mini(type="number", name="contact[phone][area]", placeholder="Area", required )
+          &nbsp; - &nbsp;
+          input.input-small(type="number", id="phoneNumber", name="contact[phone][number]", placeholder="Number", required )
+      
+      .control-group
+        label.control-label(for="emailAddress") Email
+        .controls
+          input.input-xlarge(type="email", id="emailAddress", name="contact[email]", placeholder="Email Address", required)
+      
+      br
+      button.btn.btn-large.btn-success.span6(type="submit")
+        span Submit

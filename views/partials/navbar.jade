@@ -1,17 +1,18 @@
-.container
-  .navbar(ng-controller="NavbarCtrl")
-    .navbar-inner(ng-switch="isLoggedIn()")
-      a(href='/').brand #{title}
-      ul.nav.pull-left
+.navbar
+  .navbar-inner
+    a(href='/').brand #{title}
+    ul.nav.pull-left
+      li
+        a(href="/products") Products
+      li
+        a(href='/quote') Request Quote
+    if user
+      ul.nav.pull-right
+        li(style="padding:10px 15px 10px;")  Welcome, #{user.email}
         li
-          a(href="/products") Products
-      ul.nav.pull-right(ng-switch-when="true")
-        li(style="padding:10px 15px 10px;")  Welcome, {{getEmail()}}
-        li
-          a(href='/dashboard') Dashboard
-        li
-          a(href='', ng-click="logout()") Logout
-      ul.nav.pull-right(ng-switch-when="false")
+          a(href='/logout') Logout
+    else
+      ul.nav.pull-right
         li
           a(href='/login') Login
         li

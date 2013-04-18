@@ -1,20 +1,18 @@
-ul.nav.nav-list(style="padding:0;", ng-controller="NavbarCtrl", ng-show="isAdmin()")
-  li.nav-header Admin
-  li(ng-class="{active: routeIs('/admin/products')}")
-    a(href="/admin/products")  Products Admin
-
-ul.nav.nav-list(style="padding:0;", ng-controller="NavbarCtrl")
+ul.nav.nav-list(style="padding:0;")
   li.nav-header Catalog
-  li(ng-class="{active: routeIs('/products')}")
+  li
     a(href="/products")  Products
+  
   li.nav-header  Orders
-  li(ng-class="{active: routeIs('/quote')}")
+  li
     a(href="/quote") Request For Quote
-  li(ng-class="{active: routeIs('/orders')}")
+  li
     a(href="/orders") Order Status
+  
   li.nav-header  Settings
-  li(ng-class="{active: routeIs('/account')}")
+  li
     a(href="/account") Account
+  
   li.divider
-  li(ng-class="{active: routeIs('/faq')}")
+  li
     a(href="/faq") Frequently Asked Questions

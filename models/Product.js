@@ -18,26 +18,26 @@ module.exports = function (mongoose, tree) {
 
   var Product = mongoose.model('Product', ProductSchema);
 
-  var getProduct = function getProduct (product_url, fn) {
+  function get (product_url, fn) {
     Product.findOne({ url: product_url }, function(err, product) {
       fn(err, product);
     });
   };
 
-  var getAllProducts = function getAllProducts (fn) {
+  function list (fn) {
     Product.find({}, function(err, products) {
       fn(err, products);
     });
   };
 
-  var addProduct = function addProduct (product, fn) {
+  function create (product, fn) {
     var newProduct = new Product({ name: product.name, description: product.description });
     newProduct.save(function (err, savedProduct) {
       fn(err, savedProduct);
     });
   };
 
-  var editProduct = function editProduct (id, product, fn) {
+  function update (id, product, fn) {
     Product.findById(id, function (err, prod) {
       if (err) { return fn(err); }
       if (prod) {
@@ -50,7 +50,7 @@ module.exports = function (mongoose, tree) {
     });
   };
 
-  var deleteProduct = function deleteProduct (id, fn) {
+  function remove (id, fn) {
     Product.findByIdAndRemove(id, function (err, product) {
       fn(err, product);
     });
@@ -58,10 +58,10 @@ module.exports = function (mongoose, tree) {
 
   return {
       Product: Product
-    , getProduct: getProduct
-    , getAllProducts: getAllProducts
-    , addProduct: addProduct
-    , editProduct: editProduct
-    , deleteProduct: deleteProduct
+    , get: get
+    , list: list
+    , create: create
+    , update: update
+    , remove: remove
   }
 };

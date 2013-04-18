@@ -1,27 +1,23 @@
-form.form-signin(name="loginForm", ng-controller="LoginCtrl", ng-submit="submitLogin()")
+extends ../index
+block partial
+  .span6.offset3
+    form.form-signin(name="loginForm", method="POST", action="/login")
 
-  h3.form-signin-heading Log In
+      //- h3.form-signin-heading Log In
 
-  div.alert.alert-error(ng-show="error")
-    span {{error}}
-  
-  input.input-block-level(type="email", name="email", placeholder="email", ng-model="form.email", required, autofocus)
+      p Email:
+      input.input-block-level(type="email", name="email", placeholder="email", required, autofocus)
+      br
 
-  div.alert.alert-error(ng-show="loginForm.email.$dirty && loginForm.email.$invalid")
-    //- span.error(ng-show="loginForm.email.$error.required") Email Required
+      p Password: &nbsp;&nbsp;
+        a(href="/forgot-password") 
+          small Forgot Password?
+      input.input-block-level(type="password", name="password", placeholder="password", required)
 
-  br
+      br
+      button.btn.btn-block.btn-large.btn-primary(type="submit")
+        span Log In
+      hr
 
-  input.input-block-level(type="password", name="password", placeholder="password", ng-model="form.password", required)
-
-  div.alert.alert-error(ng-show="loginForm.password.$dirty && loginForm.password.$invalid")
-    span.error(ng-show="loginForm.password.$error.required") Password Required
-
-  br
-  button.btn.btn-large.btn-primary(type="submit", ng-disabled="loginForm.$invalid")
-    span Submit
-
-  hr
-
-  p 
-    a(href="/register") Don't have an account? Register
+      p 
+        a(href="/register") Don't have an account? Register

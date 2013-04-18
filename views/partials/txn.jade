@@ -1,162 +1,78 @@
-div.span2.well
-  div(ng-include="'/partials/sidenav'") 
+extends ../index
+block partial
 
-div.span9.well
-  form.form-horizontal(name="txnForm", ng-switch="step")
-    .lead Request For Quote
-    ul.nav.nav-tabs
-      li.span3(ng-class="{active: stepIs('one')}", style="margin-left: 0;")
-        a(href="", style="cursor: default;")
-          strong Step 1 &nbsp;
-          small RFQ & Product List
-      li.span3(ng-class="{active: stepIs('two')}", style="margin-left: 0;")
-        a(href="", style="cursor: default;")
-          strong Step 2 &nbsp;
-          small Address and Contact
+  div.span2.well
+    include sidenav
 
-    span(ng-switch-when="one")
-      
-      .control-group
-        label.control-label Query Date
-        .controls
-          span(style="line-height: 30px;") {{getDate()}}
-      .control-group
-        label.control-label(for="description") RFQ Description
-        .controls
-          textarea.input-xlarge(type="text", id="description", rows="2", ng-model="form.txn.rfq.description", placeholder="RFQ Description")
-      .control-group
-        label.control-label(for="quoteDue") Quote Due In
-        .controls
-          div.btn-group(data-toggle="buttons-radio")
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.quoteDue", btn-radio="'1'") 1 day
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.quoteDue", btn-radio="'3'") 3 days
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.quoteDue", btn-radio="'7'") 7 days
-      .control-group
-        label.control-label(for="reqDue") Requirement Within
-        .controls
-          div.btn-group(data-toggle="buttons-radio")
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.reqDue", btn-radio="'7'") 7 days
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.reqDue", btn-radio="'15'") 15 days
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.reqDue", btn-radio="'30'") 30 days
-      .control-group
-        label.control-label(for="approxVal") Approximate Order Value
-        .controls
-          div.btn-group(data-toggle="buttons-radio")
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.approxVal", btn-radio="'1'") &lt; 1 lakhs
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.approxVal", btn-radio="'5'") 1 - 5 lakhs
-            a.btn.btn-info(type="button", ng-model="form.txn.rfq.approxVal", btn-radio="'10'") &gt; 5 lakhs
-            
-      .lead Product List
-      div.form-inline
-        div(ng-repeat="product in form.txn.products")
-          strong [ {{$index + 1}} ]
-          &nbsp;&nbsp;
-          select(ng-model="product._id", ng-options="p._id as p.name for p in products", required)
-            option(value="") Select Product
-          &nbsp;&nbsp;
-          input.input-small(type="number", ng-model="product.quantity", placeholder="Quantity", required)
-          &nbsp;&nbsp;
-          select.input-small(ng-model="product.unit", ng-options="unit for unit in units")
-            //- option(value="") {{units}}
-          hr
-          //- div.alert.alert-error(ng-show="txnForm.quantity_{{$index}}.$dirty && txnForm.quantity_{{$index}}.$invalid")
-          //-   span.error(ng-show="txnForm.quantity_{{$index}}.$error.required") Quantity Required
-        a.btn.btn-info(href="", ng-click="addProductField()") Add another product
+  div.span9.well
+    .lead Order Detail
+    table.table
+      tbody
+        tr
+          td Order ID
+          td #{txn.tid}
+        tr
+          td Query Date
+          td #{txn.created.toDateString()}
+        tr
+          td Status
+          td #{txn.status}
+        tr
+          td More Information
+          td #{txn.info || '-'}
 
+    .lead Products
+    table.table
+      thead
+        tr
+          th Name
+          th Specification
+          th Quantity
+          th Bid Price
+          th Quote Price
+      tbody
+        for p in txn.products
+          tr
+            td #{p.name}
+            td #{p.specs}
+            td #{p.quantity + ' ' + p.unit}
+            td #{'$ ' + p.bid}
+            td #{p.quote}
+
+
+    br
+
+    .lead Shipping and Payment
+    table.table
+      tbody
+        tr
+          td Destination Port
+          td #{txn.shipping.destPort}
+        tr
+          td Requirement Within
+          td #{txn.shipping.reqDue.toDateString()}
+        tr
+          td Shipping Terms
+          td #{txn.shipping.terms}
+        tr
+          td Payment Terms
+          td #{txn.payment.terms}
+        
+
+    .lead Company
+
+    address
+      strong #{txn.company.name}
       br
+      span #{txn.company.street}
       br
-      .control-group
-        label.btn.control-label(for="info", ng-click="showMoreInfo = !showMoreInfo", style="margin-right: 20px; \
-          text-align: left; width: 138px;") More Information
-        .controls(collapse="showMoreInfo")
-          textarea.input-xlarge(type="text", id="info", rows="3", ng-model="form.txn.rfq.info", placeholder="More Information")
+      span #{txn.company.city + ' , ' + txn.company.state}
       br
-      a.btn.btn-large.btn-primary.span2.offset2(href="#", ng-click="gotoStep('two')") Next &rarr;
-    
-
-    span(ng-switch-when="two")
-      .lead Shipping Address
-      
-      .control-group
-        label.control-label(for="company") Company Name
-        .controls
-          input.input-xlarge(type="text", id="company", ng-model="form.address.company", placeholder="Company Name", required )
-      
-      .control-group
-        label.control-label(for="street") Street
-        .controls
-          input.input-xlarge(type="text", id="street", ng-model="form.address.street", placeholder="Street", required)
-      
-      .control-group
-        label.control-label(for="city") City
-        .controls
-          input.input-xlarge(type="text", id="city", ng-model="form.address.city", placeholder="City")
-      
-      .control-group
-        label.control-label(for="state") State
-        .controls
-          input.input-xlarge(type="text", id="state", ng-model="form.address.state", placeholder="State")
-      
-      .control-group
-        label.control-label(for="pin") Pin Code
-        .controls
-          input.input-xlarge(type="text", id="pin", ng-model="form.address.pin", placeholder="Pin Code", required)
-      
-      .control-group
-        label.control-label(for="country") Country
-        .controls
-          input.input-xlarge(type="text", id="country", ng-model="form.address.country", placeholder="Country", required)
-      
-      .control-group
-        label.control-label(for="userName") Reference Name
-        .controls
-          input.input-xlarge(type="text", id="userName", ng-model="form.address.name", placeholder="Reference Name", required )
-
-      
-      .lead Contact Info
-      
-      .control-group
-        label.control-label(for="phoneNumber") Phone Number
-        .controls
-          input.input-mini(type="text", ng-model="form.address.phone.countryCode", placeholder="Code", required )          
-          input.input-medium(type="text", id="phoneNumber", ng-model="form.address.phone.number", placeholder="Phone Number", required )
-      
-      .control-group
-        label.control-label(for="emailAddress") Email Address
-        .controls
-          input.input-xlarge(type="email", id="emailAddress", ng-model="form.user.email", placeholder="Email Address", required)
-      
-      br
-      br
-      ul.inline
-        li.btn.btn-large.btn-primary.offset1.span2(ng-click="gotoStep('one')") &larr; Go Back &nbsp;&nbsp;&nbsp;
-        li
-          buton.btn.btn-large.btn-success.offset1.span2(type="submit", ng-disabled="txnForm.$invalid", ng-click="submitTxn()")
-            span Submit
-      
-      //-
-        br
-        br
-        {{form}}
-        br
-
-      //- comment block
-        //-   _user: userId
-        //- , _address: addressId
-        //- , status: txn.status
-        //- , rfq: {
-        //-       description: txn.description
-        //-     , info: txn.info
-        //-     , quoteDue: txn.quoteDue
-        //-     , reqDue: txn.reqDue
-        //-     , approxVal: txn.approxVal
-        //-   }
-        //-   company: address.company
-        //- , street: address.street
-        //- , city: address.city
-        //- , state: address.state
-        //- , country: address.country
-        //- , pin: address.pin
-        //- , _user: userId
-        //- , phone: { countryCode: phone.countryCode
-        //-           ,number: phone.number}
+      span #{txn.company.country + ' ' + txn.company.zip}
+  
+    .lead Contact
+    p #{txn.contact.name.first + ' ' + txn.contact.name.last}
+    p Phone:&nbsp;&nbsp;
+      span #{txn.contact.phone.country + '-' + txn.contact.phone.area + '-' + txn.contact.phone.number}
+    p Email:&nbsp;&nbsp;
+      span #{txn.contact.email}

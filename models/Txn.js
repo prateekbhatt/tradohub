@@ -3,100 +3,179 @@ module.exports = function (mongoose) {
   var Schema = mongoose.Schema;
   
   var ProductListSchema = new Schema({
-      _product: { type: Schema.Types.ObjectId, ref: 'Product' }
+      pid: { type: Schema.Types.ObjectId, ref: 'Product' }
+    , name: { type: String, required: true }
+    , specs: { type: String }
     , quantity: { type: Number, required: true }
     , unit: { type: String, required: true }
+    , bid: { type: Number }
+    , quote: { type: Number }
+    , origin: { type: String }
   });
 
   var TxnSchema = new Schema({
-      txnId: { type: String, required: true }
-    , _user: { type: Schema.Types.ObjectId, ref: 'User' }
-    , _address: { type: Schema.Types.ObjectId, ref: 'Address' }
+      tid: { type: String, required: true }
+    , uid: { type: Schema.Types.ObjectId, ref: 'User' }
     , products: [ ProductListSchema ]
     , created: { type: Date, default: Date.now }
+    , updated: { type: Date, default: Date.now }
+    , info: { type: String }
     , status: { type: String, required: true }
-    , rfq: {      
-          description: { type:String }
-        , info: { type: String }
-        , quoteDue: { type: Number, required: true }
-        , reqDue: { type: Number, required: true }
-        , approxVal: { type: Number, required: true }
-      }
+    , company: {
+        name: { type: String, required: true }
+      , street: { type: String }
+      , city: { type: String }
+      , state: { type: String }
+      , country: { type: String, required: true }
+      , zip: { type: String, required: true }
+    }
+    , contact: {
+        name: {
+            first: { type: String, required: true }
+          , last: { type: String, required: true }
+        }
+      , email: { type: String, required: true }
+      , phone: {
+          country: { type: Number }
+        , area: { type: Number }
+        , number: { type: Number }
+      }      
+    }
+    , shipping: {
+        destPort: { type: String, required: true }
+      , reqDue: { type: Date, required: true }
+      , terms: { type: String, required: true }
+    }
+    , payment: {
+        bank: { type: String }
+      , acc: { type: Number }
+      , terms: { type: String }
+    }
+    , files: {
+        reg: { type: String }
+      , imex: { type: String }
+      , inv: { type: String }
+    }
   });
 
   var Txn = mongoose.model('Txn', TxnSchema);
 
-  var generateTxnId = function generateTxnId () {
+  function generateTid () {
     var monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG",
                       "SEP", "OCT", "NOV", "DEC"]
       , chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
       , date = new Date()
-      , txnId = date.getFullYear() + monthNames[date.getMonth()] + date.getDate();
+      , tid = date.getFullYear() + monthNames[date.getMonth()] + date.getDate();
     for ( var x = 0; x < 5; x++ ) {
       var i = Math.floor( Math.random() * 35 );
-      txnId += chars.charAt( i );
+      tid += chars.charAt( i );
     }
-    return txnId;
+    return tid;
   };
 
-  var getTxn = function getTxn (txnId, fn) {
-    Txn.findOne({ txnId: txnId }, function(err, txn) {
+  function create (txn, uid, fn) {
+    // console.log('inside create txn model \n\n')
+    // console.log(txn)
+
+    var t = new Txn({
+        uid: uid
+      , status: 'request'
+      , info: txn.info
+    });
+    
+    t.tid = generateTid(); // TODO : check if txn id already exists
+    
+    t.company = {
+        name: txn.company.name
+      , street: txn.company.street
+      , city: txn.company.city
+      , state: txn.company.state
+      , country: txn.company.country
+      , zip: txn.company.zip
+    };
+
+    t.contact = {
+        name: {
+            first: txn.contact.name.first
+          , last: txn.contact.name.last
+        }  
+      , email: txn.contact.email
+      , phone: {
+          country: txn.contact.phone.country
+        , area: txn.contact.phone.area
+        , number: txn.contact.phone.number
+      }
+    };
+
+    t.shipping = {
+        destPort: txn.shipping.destPort
+      , reqDue: reqDueTime(txn.shipping.reqDue)
+      , terms: txn.shipping.terms
+    };
+
+    t.payment = {
+        bank: txn.payment.bank
+      , acc: txn.payment.acc
+      , terms: txn.payment.terms
+    };
+    console.log(JSON.parse(txn.products[0].detail))
+    t.products = [];
+    for (var i in txn.products) {
+      var p = txn.products[i]
+      var newProduct = {
+          pid: JSON.parse(p.detail)['_id']
+        , name: JSON.parse(p.detail)['name']
+        , unit: JSON.parse(p.detail)['unit']
+        , specs: p.specs
+        , quantity: p.quantity
+        , bid: p.bid
+        , quote: p.quote
+        , origin: txn.origin
+      };
+      t.products.push(newProduct);
+    };
+
+    // console.log('create txn')
+    // console.log(t)
+
+    t.save(function (err, savedTxn) {
+      fn(err, savedTxn);
+    });
+  };
+
+  function reqDueTime (days) {
+    var today = new Date()
+    , reqDate = new Date()
+    ;
+    reqDate.setDate(today.getDate() + days)
+    return reqDate;
+  };
+
+  function get (tid, fn) {
+    Txn.findOne({ tid: tid }, function(err, txn) {
       fn(err, txn);
     });
   };
 
-  var getAllTxns = function getAllTxns (fn) {
+  function list (fn) {
     Txn.find({}, function(err, txns) {
       fn(err, txns);
     });
   };
 
-  var getUserTxn = function getUserTxn (userId, txnId, fn) {
-    Txn.findOne( { txnId: txnId, _user: userId }, function (err, txn) {
+  function getByUser (uid, tid, fn) {
+    Txn.findOne( { tid: tid, uid: uid }, function (err, txn) {
       fn(err, txn);
     });
   };
 
-  var getUserTxns = function getUserTxns (userId, fn) {
-    Txn.find({ _user: userId }, function(err, txns) {
+  function listByUser (uid, fn) {
+    Txn.find({ uid: uid }, function(err, txns) {
       fn(err, txns);
     });
   };
 
-  var addTxn = function addTxn (txn, userId, addressId, fn) {
-    var newTxn = new Txn({
-        _user: userId
-      , _address: addressId
-      , status: txn.status
-    });
-    newTxn.rfq = {
-        description: txn.rfq.description
-      , info: txn.rfq.info
-      , quoteDue: txn.rfq.quoteDue
-      , reqDue: txn.rfq.reqDue
-      , approxVal: txn.rfq.approxVal
-    };
-    
-    newTxn.txnId = generateTxnId(); // TODO : check if txn id already exists
-    
-    newTxn.products = [];
-    for (var i in txn.products) {
-      var txnProduct = txn.products[i]
-      var newProduct = {
-          _product: txnProduct._id
-        , quantity: txnProduct.quantity
-        , unit: txnProduct.unit
-      };
-      newTxn.products.push(newProduct);
-    }
-    console.log(newTxn)
-
-    newTxn.save(function (err, savedTxn) {
-      fn(err, savedTxn);
-    });
-  };
-
-  var editTxn = function editTxn (id, txn, fn) {
+  function update (id, txn, fn) {
     Txn.findById(id, function (err, gotTxn) {
       if (err) { return fn(err); }
       if (gotTxn) {
@@ -109,7 +188,7 @@ module.exports = function (mongoose) {
     });
   };
 
-  var deleteTxn = function deleteTxn (id, fn) {
+  function remove (id, fn) {
     Txn.findByIdAndRemove(id, function (err, isDeleted) {
       fn(err, isDeleted);
     });
@@ -117,12 +196,12 @@ module.exports = function (mongoose) {
 
   return {
       Txn: Txn
-    , getTxn: getTxn
-    , getAllTxns: getAllTxns
-    , getUserTxn: getUserTxn
-    , getUserTxns: getUserTxns
-    , addTxn: addTxn
-    , editTxn: editTxn
-    , deleteTxn: deleteTxn
+    , get: get
+    , list: list
+    , getByUser: getByUser
+    , listByUser: listByUser
+    , create: create
+    , update: update
+    , remove: remove
   }
 };

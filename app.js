@@ -7,6 +7,7 @@ var express = require('express')
   , passport = require('passport')
   , util = require('util')
   , expressValidator = require('express-validator')
+  , flash = require('connect-flash')
   ;
 
 // Create app
@@ -16,35 +17,51 @@ var app = express();
 var mongoose = require('mongoose')
   , tree = require('mongoose-tree')
   , dbPath = 'mongodb://localhost/amdavad'
-  , db = require('./db')(mongoose, dbPath);
+  , db = require('./db')(mongoose, dbPath)
+  ;
 
 // Import the models
 var models = {
     User: require('./models/User')(mongoose, passport)
   , Product: require('./models/Product')(mongoose, tree)
   , Txn: require('./models/Txn')(mongoose)
-  , Address: require('./models/Address')(mongoose)
   , UserToken: require('./models/UserToken')(mongoose)
 };
 
 // Seed Application DB
 
-var seed = require('./models/seed')(models.Product, models.User, models.Address, models.Txn);
+var seed = require('./helpers/seed')(models.Product, models.User, models.Txn);
+
+// Helpers
+
+var mailer = require('./helpers/mailer')
+  , sendMail = mailer.sendOne
+  , termsData = require('./helpers/termsData')
+  , countryList = require('./helpers/countryList')
+  ;
+
+// check mailer
+
+// mailer.sendOne({email: 'prattbhatt@gmail.com', subject: 'testing tradohub email', text: 'tradohub email working'},
+//   function(err, response) {
+//     console.log(err, ' : ', response)
+//   })
 
 // Import route middleware
 
 var isLoggedIn = require('./routes/middlewares').isLoggedIn
   , ensureAuthenticated = require('./routes/middlewares').ensureAuthenticated
   , ensureAdmin = require('./routes/middlewares').ensureAdmin
-  , ensureApiAuth = require('./routes/middlewares').ensureApiAuth;
+  ;
 
 // Import the routes
 var routes = {
     index: require('./routes')
   , user: require('./routes/user')(models.User)
-  , productApi: require('./routes/productApi')(models.Product)
-  , txnApi: require('./routes/txnApi')(models.Txn, models.Address)
-  , addressApi: require('./routes/addressApi')(models.Address)
+  , product: require('./routes/product')(models.Product)
+  , txn: require('./routes/txn')(models.Txn, models.Product, termsData, countryList)
+  , auth: require('./routes/auth')(models.User, models.UserToken, sendMail)
+  , account: require('./routes/account')(models.User)
 };
 
 // Config settings
@@ -62,12 +79,24 @@ app.configure(function(){
   app.use(express.session());
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(flash());
   // add user to res.locals to make it available in layout.jade
   app.use(function (req, res, next) {
-    res.locals.user = req.user;
+    app.locals.pretty = true;
+    res.locals.user = req.user ? { 'email': req.user.email } : null;
     next();
   });
   app.use(app.router);
+  app.use(function(err, req, res, next){
+    // we may use properties of the error object
+    // here and next(err) appropriately, or if
+    // we possibly recovered from the error, simply next().
+    
+    console.log('\n\n ErroR was fouND. inside app.use ERR \n\n\n')
+    res.status(err.status || 500);
+    res.render('500', { error: err });
+  });
+
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
   app.use(express.staticCache());
   app.use(express.compress({
@@ -87,7 +116,7 @@ app.use(function(req, res, next){
   res.status(404);  
   // respond with html page
   if (req.accepts('html')) {
-    res.render('index');
+    res.render('404');
     return;
   }
   // respond with json
@@ -111,66 +140,63 @@ app.use(function(req, res, next){
 // would remain being executed, however here
 // we simply respond with an error page.
 
-app.use(function(err, req, res, next){
-  // we may use properties of the error object
-  // here and next(err) appropriately, or if
-  // we possibly recovered from the error, simply next().
-  res.status(err.status || 500);
-  res.render('500', { error: err });
-});
 
 // Locals (available inside all templates)
 app.locals({
-  title: 'Amdavad'
+  title: 'tradohub'
 });
 
 // Routes are defined here
-// app.get('/', routes.index.index);
-app.get('/partials/:name', routes.index.partials);
+app.get('/', routes.index.index);
 
-// TODO : use regex
-// app.get('/register', routes.index.index);
-// app.get('/login', routes.index.index);
-// app.get('/products/:product_url?', routes.index.index);
-// app.get('/admin/products/:id?', routes.index.index);
-// app.get('/quote/:quoteId?', routes.index.index);
-// app.get('/orders/:id?', routes.index.index);
+app.get('/quote', ensureAuthenticated, routes.txn.quote);
 
-app.get('/logout', routes.user.logout);
 app.get('/me', isLoggedIn);
-
 
 // Product API routes
 
-app.get('/api/products', routes.productApi.products);
-app.get('/api/products/:product_url', routes.productApi.product)
+app.get('/products', routes.product.list);
+app.get('/products/:product_url', routes.product.get);
+
+// Admin Routes
 // TODO: Admin Checks
-app.post('/api/products', ensureAdmin, routes.productApi.addProduct);
-app.put('/api/products/:id', ensureAdmin, routes.productApi.editProduct);
-app.delete('/api/products/:id', ensureAdmin, routes.productApi.deleteProduct);
+app.get('/admin/products', ensureAdmin, routes.product.adminList);
+app.get('/admin/products/:product_url', ensureAdmin, routes.product.adminGet);
+app.post('/admin/products', ensureAdmin, routes.product.create);
+app.put('/admin/products/:id', ensureAdmin, routes.product.update);
+app.delete('/admin/products/:id', ensureAdmin, routes.product.remove);
 
-//Transaction API Routes
+app.get('/orders', ensureAuthenticated, routes.txn.listByUser);
+app.get('/orders/:txnId', ensureAuthenticated, routes.txn.getByUser);
+app.post('/orders', routes.txn.create);
 
-app.get('/api/txns', ensureAuthenticated, routes.txnApi.userTxns);
-app.get('/api/txns/:txnId', ensureAuthenticated, routes.txnApi.userTxn);
-app.post('/api/txns', ensureAuthenticated, routes.txnApi.addTxn);
+app.get('/admin/orders', ensureAdmin, routes.txn.list);
+app.get('/admin/orders/:txnId', ensureAdmin, routes.txn.get);
+app.post('/admin/orders/:tid', ensureAdmin, routes.txn.updateQuote);
 
-//Address API Routes
+// Auth Routes
 
-app.get('/api/addresses', ensureAuthenticated, routes.addressApi.userAddresses);
-app.get('/api/addresses/:addressId', ensureAuthenticated, routes.addressApi.userAddress);
+app.get('/login', routes.auth.login);
+app.get('/register', routes.auth.register);
+app.get('/forgot-password', routes.auth.passwordForgot);
+app.get('/forgot-password/:token', routes.auth.passwordForgotCheck);
+app.post('/forgot-password', routes.auth.passwordForgotPost);
+app.get('/logout', routes.auth.logout);
 
-// User API Routes
-
-app.post('/register', routes.user.register);
+app.post('/register', routes.user.create);
 app.post('/login',
-  passport.authenticate('local', {}),
+  passport.authenticate('local', { failureRedirect: '/login', failureFlash: 'Invalid email or password' }),
   function(req, res) {
-    // console.log('PRINTING req.user: '+util.inspect(req.user));
-    res.json(200, { email: req.user.email, _id: req.user._id, isLoggedIn: true, roles: req.user.roles });
+    res.format({
+      html: function(){ res.redirect('/quote'); },
+      json: function(){ res.json(200, { email: req.user.email, _id: req.user._id, isLoggedIn: true, roles: req.user.roles }); }
+    });
   });
 
-// app.get('*', routes.index.index);
+// Account routes
+
+app.get('/account/password', ensureAuthenticated, routes.account.password);
+app.post('/account/password', ensureAuthenticated, routes.account.updatePassword);
 
 // Start server
 http.createServer(app).listen(app.get('port'), function(){
