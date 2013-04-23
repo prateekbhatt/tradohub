@@ -4,6 +4,7 @@ var User = require('../models/User')
   , File = require('../models/File')
   , errorHelper = require('../helpers/errorHelper')
   , fileValidate = require('../helpers/fileValidate')
+  , countryList = require('../helpers/countryList')
   ;
 
 function create (req, res, next) {
@@ -72,8 +73,42 @@ function create (req, res, next) {
     req.flash('error', 'User with same email already exists.');
     res.redirect('/register');
   });
-};  
+};
+
+function accountPage (req, res) {
+  res.locals.countryList = countryList;
+  res.locals.user = req.user;
+  res.render('partials/account/account',
+    { error: req.flash('error'), success: req.flash('success') });
+};
+
+function passwordPage (req, res) {
+  res.render('partials/account/password', 
+    {error: req.flash('error'), success: req.flash('success')});
+};
+
+function updatePassword (req, res) {
+  var userId = req.user._id
+    , password = req.body.password
+    ;
+  User.updatePassword(userId, password, function (err, updated) {
+    if (err) console.log(err);
+    if (updated) {
+      console.log('updated password')
+      var msg = 'Password Updated';
+      req.flash('success', msg);
+      res.redirect('/account/password');
+    } else {
+      var msg = 'An error occured. Try Again.';
+      req.flash('error', msg);
+      res.redirect('/account/password');
+    }
+  });
+};
 
 module.exports = {
     create: create
+  , accountPage: accountPage
+  , passwordPage: passwordPage
+  , updatePassword: updatePassword
 };

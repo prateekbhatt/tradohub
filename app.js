@@ -41,7 +41,6 @@ var routes = {
   , product: require('./routes/product')
   , txn: require('./routes/txn')
   , auth: require('./routes/auth')
-  , account: require('./routes/account')
 };
 
 // Config settings
@@ -151,8 +150,9 @@ app.post('/login',
 
 // Account routes
 
-app.get('/account/password', ensureLogin, routes.account.password);
-app.post('/account/password', ensureLogin, routes.account.updatePassword);
+app.get('/account', ensureLogin, routes.user.accountPage);
+app.get('/account/password', ensureLogin, routes.user.passwordPage);
+app.post('/account/password', ensureLogin, routes.user.updatePassword);
 
 // Start server
 http.createServer(app).listen(app.get('port'), function(){
