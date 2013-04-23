@@ -28,7 +28,9 @@
     "request": "2.14.0",
     "mongoose-tree": "0.2.1",
     "express-validator": "~0.3.2",
-    "mongoose-validator": "~0.2.1"
+    "mongoose-validator": "~0.2.1",
+    "knox": "~0.7.0",
+    "amazon-s3-url-signer": "0.0.6"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

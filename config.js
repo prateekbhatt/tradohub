@@ -1,9 +1,12 @@
 'use strict';
 
 module.exports = {
+    aws: {
+        key: 'AKIAICEIHBPNOCUWGVUQ'
+      , secret: '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'
+      , bucket: 'tradohub1'
+    },
     mailer: {
-      AWSAccessKeyID: 'AKIAICEIHBPNOCUWGVUQ',
-      AWSSecretKey: '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',
       defaultFromAddress: 'Prateek Bhatt <prattbhatt@gmail.com>'
     },
     development: {

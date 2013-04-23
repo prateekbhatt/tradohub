@@ -7,7 +7,7 @@ block script
 block partial
 
   .span6.offset3
-    form.form-signin(name="registerForm", method="POST", action="/register")
+    form.form-signin(name="registerForm", method="POST", action="/register", enctype="multipart/form-data")
 
       .lead Create a new account
       
@@ -26,15 +26,21 @@ block partial
       br
 
       p Company Name:
-      input.input-block-level(type="text", name="company", placeholder="company name")
+      input.input-block-level(type="text", name="company[name]", placeholder="company name")
       br
+
+      p Country
+      select.input-block-level(name="company[country]", required)
+        option(value="") Select Country
+        each i in countryList
+          option(value=i.cca3) #{i.name}
 
       .fileupload.fileupload-new(data-provides="fileupload")
         p Import / Export Document:
         span.btn.btn-file.btn-block
           span.fileupload-new Select file
           span.fileupload-exists Change
-          input(type="file")
+          input(type="file", name="imexFile")
         &nbsp;
         span.fileupload-preview
         &nbsp;

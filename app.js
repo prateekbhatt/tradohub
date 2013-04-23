@@ -5,7 +5,6 @@ var express = require('express')
   , path = require('path')
   , less = require('less')
   , passport = require('passport')
-  , util = require('util')
   , expressValidator = require('express-validator')
   , flash = require('connect-flash')
   ;
@@ -14,31 +13,13 @@ var express = require('express')
 var app = express();
 
 // Import the data layer
-var mongoose = require('mongoose')
-  , tree = require('mongoose-tree')
-  , dbPath = 'mongodb://localhost/amdavad'
-  , db = require('./db')(mongoose, dbPath)
+var dbPath = 'mongodb://localhost/amdavad'
+  , db = require('./db')(dbPath)
   ;
-
-// Import the models
-var models = {
-    User: require('./models/User')(mongoose, passport)
-  , Product: require('./models/Product')(mongoose, tree)
-  , Txn: require('./models/Txn')(mongoose)
-  , UserToken: require('./models/UserToken')(mongoose)
-};
 
 // Seed Application DB
 
-var seed = require('./helpers/seed')(models.Product, models.User, models.Txn);
-
-// Helpers
-
-var mailer = require('./helpers/mailer')
-  , sendMail = mailer.sendOne
-  , termsData = require('./helpers/termsData')
-  , countryList = require('./helpers/countryList')
-  ;
+var seed = require('./helpers/seed');
 
 // check mailer
 
@@ -49,19 +30,18 @@ var mailer = require('./helpers/mailer')
 
 // Import route middleware
 
-var isLoggedIn = require('./routes/middlewares').isLoggedIn
-  , ensureAuthenticated = require('./routes/middlewares').ensureAuthenticated
+var ensureLogin = require('./routes/middlewares').ensureLogin
   , ensureAdmin = require('./routes/middlewares').ensureAdmin
   ;
 
 // Import the routes
 var routes = {
     index: require('./routes')
-  , user: require('./routes/user')(models.User)
-  , product: require('./routes/product')(models.Product)
-  , txn: require('./routes/txn')(models.Txn, models.Product, termsData, countryList)
-  , auth: require('./routes/auth')(models.User, models.UserToken, sendMail)
-  , account: require('./routes/account')(models.User)
+  , user: require('./routes/user')
+  , product: require('./routes/product')
+  , txn: require('./routes/txn')
+  , auth: require('./routes/auth')
+  , account: require('./routes/account')
 };
 
 // Config settings
@@ -88,11 +68,6 @@ app.configure(function(){
   });
   app.use(app.router);
   app.use(function(err, req, res, next){
-    // we may use properties of the error object
-    // here and next(err) appropriately, or if
-    // we possibly recovered from the error, simply next().
-    
-    console.log('\n\n ErroR was fouND. inside app.use ERR \n\n\n')
     res.status(err.status || 500);
     res.render('500', { error: err });
   });
@@ -106,39 +81,26 @@ app.configure(function(){
     level: 9
   }));
   app.use(express.static(path.join(__dirname, 'public')));
+  app.use(function(req, res, next){
+    res.status(404);
+    // respond with html page
+    if (req.accepts('html')) {
+      res.render('404');
+      return;
+    }
+    // respond with json
+    if (req.accepts('json')) {
+      res.send({ error: 'Not found' });
+      return;
+    }
+    // default to plain-text. send()
+    res.type('txt').send('Not found');
+  });
 });
 
 app.configure('development', function(){
   app.use(express.errorHandler());
 });
-
-app.use(function(req, res, next){
-  res.status(404);  
-  // respond with html page
-  if (req.accepts('html')) {
-    res.render('404');
-    return;
-  }
-  // respond with json
-  if (req.accepts('json')) {
-    res.send({ error: 'Not found' });
-    return;
-  }
-  // default to plain-text. send()
-  res.type('txt').send('Not found');
-});
-
-// error-handling middleware, take the same form
-// as regular middleware, however they require an
-// arity of 4, aka the signature (err, req, res, next).
-// when connect has an error, it will invoke ONLY error-handling
-// middleware.
-
-// If we were to next() here any remaining non-error-handling
-// middleware would then be executed, or if we next(err) to
-// continue passing the error, only error-handling middleware
-// would remain being executed, however here
-// we simply respond with an error page.
 
 
 // Locals (available inside all templates)
@@ -148,32 +110,29 @@ app.locals({
 
 // Routes are defined here
 app.get('/', routes.index.index);
-
-app.get('/quote', ensureAuthenticated, routes.txn.quote);
-
-app.get('/me', isLoggedIn);
+app.get('/quote', ensureLogin, routes.txn.quote);
 
 // Product API routes
 
 app.get('/products', routes.product.list);
-app.get('/products/:product_url', routes.product.get);
+app.get('/products/:url', routes.product.get);
 
 // Admin Routes
 // TODO: Admin Checks
 app.get('/admin/products', ensureAdmin, routes.product.adminList);
-app.get('/admin/products/:product_url', ensureAdmin, routes.product.adminGet);
+app.get('/admin/products/:url', ensureAdmin, routes.product.adminGet);
 app.post('/admin/products', ensureAdmin, routes.product.create);
 app.put('/admin/products/:id', ensureAdmin, routes.product.update);
 app.delete('/admin/products/:id', ensureAdmin, routes.product.remove);
 
-app.get('/orders', ensureAuthenticated, routes.txn.listByUser);
-app.get('/orders/:txnId', ensureAuthenticated, routes.txn.getByUser);
+app.get('/orders', ensureLogin, routes.txn.list);
+app.get('/orders/:tid', ensureLogin, routes.txn.get);
 app.post('/orders', routes.txn.create);
 
-app.get('/admin/orders', ensureAdmin, routes.txn.list);
-app.get('/admin/orders/:txnId', ensureAdmin, routes.txn.get);
+app.get('/admin/orders', ensureAdmin, routes.txn.adminList);
+app.get('/admin/orders/:tid', ensureAdmin, routes.txn.adminGet);
 app.post('/admin/orders/:tid', ensureAdmin, routes.txn.updateQuote);
-
+app.delete('/admin/orders/:tid', ensureAdmin, routes.txn.remove);
 // Auth Routes
 
 app.get('/login', routes.auth.login);
@@ -187,18 +146,15 @@ app.post('/register', routes.user.create);
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login', failureFlash: 'Invalid email or password' }),
   function(req, res) {
-    res.format({
-      html: function(){ res.redirect('/quote'); },
-      json: function(){ res.json(200, { email: req.user.email, _id: req.user._id, isLoggedIn: true, roles: req.user.roles }); }
-    });
+    res.redirect('/quote');
   });
 
 // Account routes
 
-app.get('/account/password', ensureAuthenticated, routes.account.password);
-app.post('/account/password', ensureAuthenticated, routes.account.updatePassword);
+app.get('/account/password', ensureLogin, routes.account.password);
+app.post('/account/password', ensureLogin, routes.account.updatePassword);
 
 // Start server
 http.createServer(app).listen(app.get('port'), function(){
-  console.log("Amdavad server listening on port " + app.get('port'));
+  console.log("Server listening on port " + app.get('port'));
 });
