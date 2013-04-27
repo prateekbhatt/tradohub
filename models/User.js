@@ -15,7 +15,7 @@ var emailValidator = [
   , validate({message: "Email Address is not correct"},'isEmail')
 ];
 
-var statusTypes = ['notVerified', 'verified']
+var statusTypes = ['notVerified', 'verified', 'activated', 'blocked']
 // User Schema
 var UserSchema = new Schema({
     email: { type: String, unique: true, lowercase: true, validate: emailValidator }
@@ -35,6 +35,11 @@ var UserSchema = new Schema({
     , zip: { type: String }
     , imex: { type: Schema.Types.ObjectId, ref: 'File' }
   }
+  , phone: {
+      country: { type: Number }
+    , area: { type: Number }
+    , number: { type: Number }
+  }  
 });
 
 // Bcrypt middleware

@@ -6,8 +6,17 @@ var User = require('../models/User')
   , countryList = require('../helpers/countryList')
   ;
 
-function login (req, res) {
+function loginPage (req, res) {
   res.render('partials/login', { error: req.flash('error'), success: req.flash('success') });    
+};
+
+function registerPage (req, res) {
+  res.locals.countryList = countryList;
+  res.render('partials/register', { error: req.flash('error') });
+};
+
+function passwordForgotPage (req, res) {
+  res.render('partials/forgot', { error: req.flash('error') });
 };
 
 function logout (req, res) {
@@ -16,20 +25,11 @@ function logout (req, res) {
   res.redirect('/');
 };
 
-function register (req, res) {
-  res.locals.countryList = countryList;
-  res.render('partials/register', { error: req.flash('error') });
-};
-
-function passwordForgot (req, res) {
-  res.render('partials/forgot', { error: req.flash('error') });
-};
-
 /*
 * POST /password/forgot
 */
 
-function passwordForgotPost (req, res, next) {
+function passwordForgot (req, res, next) {
   req.onValidationError(function (msg) {
     //Redirect to `/password/forgot` if email is bogus
     req.flash('error', msg);
@@ -86,7 +86,7 @@ function passwordForgotCheck (req, res, next) {
     }
     // get the user
     // console.log('token : ', token.userId)
-    User.User.findOne({ _id: token.userId }, function (err, user) {
+    User.findOne({ _id: token.userId }, function (err, user) {
       if (err) return next(err);
       if (!user) {
         req.flash('error', 'User Not Found. Try Again.');
@@ -105,11 +105,22 @@ function passwordForgotCheck (req, res, next) {
   });
 };
 
+function verifyEmail(req, res, next) {
+  User.findById(req.params.id, function (err, user) {
+    user.status = 'verified';
+    user.save(function (err, saved) {
+      if (saved) req.flash('success', 'Your email has been verified.');
+      res.redirect('/login');
+    });
+  });
+};
+
 module.exports = {
-    login: login
-  , passwordForgot: passwordForgot
-  , passwordForgotPost: passwordForgotPost
-  , passwordForgotCheck: passwordForgotCheck
+    loginPage: loginPage
+  , registerPage: registerPage
+  , passwordForgotPage: passwordForgotPage
   , logout: logout
-  , register: register
+  , passwordForgot: passwordForgot
+  , passwordForgotCheck: passwordForgotCheck
+  , verifyEmail: verifyEmail
 };

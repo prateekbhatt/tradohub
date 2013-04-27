@@ -11,32 +11,32 @@ block partial
 
       .lead Create a new account
       
-      p Name:
-      input.input-medium(type="text", name="name[first]", placeholder="first name", autofocus)
+      //- p Name:
+      input.input-medium(type="text", name="name[first]", placeholder="First Name", autofocus)
       &nbsp;&nbsp;&nbsp;
-      input.input-medium(type="text", name="name[last]", placeholder="last name")
+      input.input-medium(type="text", name="name[last]", placeholder="Last Name")
       br
 
-      p Email:
-      input.input-block-level(type="email", name="email", placeholder="email")
+      //- p Email:
+      input.input-block-level(type="email", name="email", placeholder="Email Address")
       br
 
-      p Password:
-      input.input-block-level(type="password", name="password", placeholder="password")
+      //- p Password:
+      input.input-block-level(type="password", name="password", placeholder="Password")
       br
 
-      p Company Name:
-      input.input-block-level(type="text", name="company[name]", placeholder="company name")
+      //- p Company Name:
+      input.input-block-level(type="text", name="company[name]", placeholder="Company Name")
       br
 
-      p Country
+      //- p Country
       select.input-block-level(name="company[country]", required)
         option(value="") Select Country
         each i in countryList
           option(value=i.cca3) #{i.name}
 
       .fileupload.fileupload-new(data-provides="fileupload")
-        p Import / Export Document:
+        P Import / Export Document:
         span.btn.btn-file.btn-block
           span.fileupload-new Select file
           span.fileupload-exists Change

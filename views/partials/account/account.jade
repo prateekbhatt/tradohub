@@ -1,0 +1,78 @@
+extends ../../index
+
+block script
+  script(src="/js/lib/angular.min.js")
+  script(src="/js/lib/ui-bootstrap.min.js")  
+  script(src="/js/app2.js")
+
+block partial
+  .span2.well
+    include ../sidenav
+
+  .span9.well
+    form.form-horizontal(name="accountForm", method="POST", action="/account")
+      //- {{ form }}
+      .lead
+        strong Your Account
+
+      .lead Password
+      p
+        a.btn(href='/account/password') Change Password
+        // &nbsp;&nbsp|&nbsp;&nbsp
+        // a.btn(href='') Forgot Password?
+
+      .lead Company
+
+      .control-group
+        label.control-label(for="company") Company Name
+        .controls
+          input.input-xlarge(type="text", id="company", name="user[company][name]", value="#{user.company.name}", placeholder="Company Name", required)
+      
+      .control-group
+        label.control-label(for="street") Address
+        .controls
+          input.input-medium(type="text", id="street", name="user[company][street]", value="#{user.company.street || ''}", placeholder="Street")
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          input.input-small(type="text", id="city", name="user[company][city]", value="#{user.company.city || ''}", placeholder="City")
+      
+      .control-group
+        label.control-label(for="state") State
+        .controls
+          input.input-xlarge(type="text", id="state", name="user[company][state]", value="#{user.company.state || ''}", placeholder="State")
+      
+      .control-group
+        label.control-label(for="zip") Zip / Postal Code
+        .controls
+          input.input-xlarge(type="text", id="zip", name="user[company][zip]", value="#{user.company.zip || ''}", placeholder="Zip / Postal Code")
+      
+      .control-group
+        label.control-label(for="country") Country
+        .controls
+          //- input.input-xlarge(type="text", id="country", name="address[country]", placeholder="Country", required)
+          select.input-xlarge(name="user[company][country]", required)
+            option(value="#{user.company.country}") #{user.company.country}
+            each i in countryList
+              option(value=i.cca3) #{i.name}
+      
+      .lead Contact
+      
+      .control-group
+        label.control-label(for="userName") Your Name
+        .controls
+          input.span2(type="text", id="userName", name="user[name][first]", value="#{user.name.first}", placeholder="First Name", required )
+          input.span2(type="text", name="user[name][last]", value="#{user.name.last}", placeholder="Last Name", required )
+      
+      .control-group
+        label.control-label(for="phoneNumber") Phone Number
+        .controls
+          input.input-mini(type="number", name="user[phone][country]", value="#{user.phone.country || ''}", placeholder="Country")
+          &nbsp; - &nbsp;
+          input.input-mini(type="number", name="user[phone][area]", value="#{user.phone.area || ''}", placeholder="Area")
+          &nbsp; - &nbsp;
+          input.input-small(type="number", id="phoneNumber", name="user[phone][number]", value="#{user.phone.number || ''}", placeholder="Number")
+      
+      br
+      button.btn.btn-primary(type="submit")
+        span Update account
+      &nbsp;&nbsp;
+      a.btn(href="/account") Cancel changes

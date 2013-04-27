@@ -3,10 +3,11 @@
 exports.index = function (req, res) {
   res.format({
     html: function(){
-      res.render ('partials/index', { success: req.flash('success'), error: req.flash('error') });
+      res.render ('partials/index',
+        { success: req.flash('success'), error: req.flash('error') });
     },
     json: function(){
-      res.json(200, { message: 'Welcome to Amdavad !'});
+      res.json(200, { message: 'Welcome to Tradohub!'});
     }
   });
 };

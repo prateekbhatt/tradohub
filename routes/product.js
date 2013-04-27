@@ -5,6 +5,7 @@ var Product = require('../models/Product');
 function get (req, res, next) {
   Product.findOne({ url: req.params.url }, function (err, product) {
     if (err) return next(err);
+    console.log(product)
     if (product) {
       return res.format({
         html: function(){

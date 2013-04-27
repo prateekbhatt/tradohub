@@ -32,6 +32,7 @@ var seed = require('./helpers/seed');
 
 var ensureLogin = require('./routes/middlewares').ensureLogin
   , ensureAdmin = require('./routes/middlewares').ensureAdmin
+  , isVerified = require('./routes/middlewares').isVerified
   ;
 
 // Import the routes
@@ -41,6 +42,7 @@ var routes = {
   , product: require('./routes/product')
   , txn: require('./routes/txn')
   , auth: require('./routes/auth')
+  , admin: require('./routes/admin')
 };
 
 // Config settings
@@ -109,36 +111,26 @@ app.locals({
 
 // Routes are defined here
 app.get('/', routes.index.index);
-app.get('/quote', ensureLogin, routes.txn.quote);
 
 // Product API routes
 
 app.get('/products', routes.product.list);
 app.get('/products/:url', routes.product.get);
 
-// Admin Routes
-// TODO: Admin Checks
-app.get('/admin/products', ensureAdmin, routes.product.adminList);
-app.get('/admin/products/:url', ensureAdmin, routes.product.adminGet);
-app.post('/admin/products', ensureAdmin, routes.product.create);
-app.put('/admin/products/:id', ensureAdmin, routes.product.update);
-app.delete('/admin/products/:id', ensureAdmin, routes.product.remove);
 
-app.get('/orders', ensureLogin, routes.txn.list);
-app.get('/orders/:tid', ensureLogin, routes.txn.get);
-app.post('/orders', routes.txn.create);
+app.get('/quote', ensureLogin, isVerified, routes.txn.quotePage);
+app.get('/orders', ensureLogin, isVerified, routes.txn.list);
+app.get('/orders/:tid', ensureLogin, isVerified, routes.txn.get);
+app.post('/orders', ensureLogin, isVerified, routes.txn.create);
 
-app.get('/admin/orders', ensureAdmin, routes.txn.adminList);
-app.get('/admin/orders/:tid', ensureAdmin, routes.txn.adminGet);
-app.post('/admin/orders/:tid', ensureAdmin, routes.txn.updateQuote);
-app.delete('/admin/orders/:tid', ensureAdmin, routes.txn.remove);
 // Auth Routes
 
-app.get('/login', routes.auth.login);
-app.get('/register', routes.auth.register);
-app.get('/forgot-password', routes.auth.passwordForgot);
+app.get('/login', routes.auth.loginPage);
+app.get('/register', routes.auth.registerPage);
+app.get('/forgot-password', routes.auth.passwordForgotPage);
 app.get('/forgot-password/:token', routes.auth.passwordForgotCheck);
-app.post('/forgot-password', routes.auth.passwordForgotPost);
+app.post('/forgot-password', routes.auth.passwordForgot);
+app.get('/users/:id/verify/:token', routes.auth.verifyEmail);
 app.get('/logout', routes.auth.logout);
 
 app.post('/register', routes.user.create);
@@ -151,10 +143,29 @@ app.post('/login',
 // Account routes
 
 app.get('/account', ensureLogin, routes.user.accountPage);
+app.post('/account', ensureLogin, routes.user.updateAccount);
 app.get('/account/password', ensureLogin, routes.user.passwordPage);
 app.post('/account/password', ensureLogin, routes.user.updatePassword);
 
+// Admin Routes
+// TODO: Admin Checks
+
+app.get('/admin/products', routes.product.adminList);
+app.get('/admin/products/:url', routes.product.adminGet);
+app.post('/admin/products', routes.product.create);
+app.put('/admin/products/:id', routes.product.update);
+app.delete('/admin/products/:id', routes.product.remove);
+
+app.get('/admin/orders', routes.txn.adminList);
+app.get('/admin/orders/:tid', routes.txn.adminGet);
+app.post('/admin/orders/:tid', routes.txn.updateQuote);
+app.delete('/admin/orders/:tid', routes.txn.remove);
+
+app.get('/admin/users', routes.user.adminList);
+app.get('/admin/users/:id', routes.user.adminGet);
+app.put('/admin/users/:id/:status', routes.user.updateStatus);
+
 // Start server
 http.createServer(app).listen(app.get('port'), function(){
-  console.log("Server listening on port " + app.get('port'));
+  console.log("Server listening on port", app.get('port'));
 });

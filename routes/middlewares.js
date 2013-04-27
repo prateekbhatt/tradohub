@@ -24,10 +24,15 @@ exports.ensureAdmin =  function ensureAdmin (req, res, next) {
   if (req.isAuthenticated()) {
     // make sure the user has role 'admin'
     if (req.user.hasRole('admin')) return next();
-    return res.format({
-      html: function(){ res.render('403'); },
-      json: function(){ res.json(403, { error: { message: 'You don\'t have admin access.' }}); }
-    });
+    return res.render('403');
   }
   gotoLogin(req, res);
+};
+
+exports.isVerified = function isVerified (req, res, next) {
+  var status = req.user.status;
+  if (status == 'verified') return next();
+  if (status == 'notVerified') req.flash('error', 'Please verify your email.');
+  else if (status == 'blocked') req.flash('error', 'Your account has been blocked.');
+  res.redirect('/account');
 };

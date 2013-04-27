@@ -8,7 +8,7 @@ var Product = require('../models/Product')
 
 // Renders the request for quote page
 
-function quote (req, res, next) {
+function quotePage (req, res, next) {
   Product.find({}, function (err, products) {
     if (err) return next(err);
     res.format({
@@ -165,7 +165,7 @@ function remove (req, res, next) {
 };
 
 module.exports = {
-    quote: quote
+    quotePage: quotePage
   , get: get
   , list: list
   , adminGet: adminGet
