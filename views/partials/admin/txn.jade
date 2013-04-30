@@ -1,9 +1,30 @@
 extends ../index
+
+block script
+  script(src="/js/lib/angular.min.js")
+  script(src="/js/lib/ui-bootstrap.min.js")  
+  script(src="/js/app2.js")
+  script
+    function shipTU (value){
+      var terms = document.getElementById('shippingTerms')
+      terms.value = value;
+      // console.log(document.getElementById('shippingTerms').val);
+    };
+    function payTU (value){
+      var terms = document.getElementById('paymentTerms')
+      terms.value = value;
+    };
+    function reqDueU (value){
+      var terms = document.getElementById('reqDue')
+      terms.value = value;
+    };
+
 block partial
 
   div.span2.well
     include admin_nav
   div.span9.well
+    
     .lead Order Detail
     table.table
       tbody
@@ -36,10 +57,38 @@ block partial
           td #{txn.shipping.reqDue.toDateString()}
         tr
           td Shipping Terms
-          td #{txn.shipping.terms}
+          td
+            a.btn.btn-info(href="#shipModal", role="button", data-toggle="modal") #{txn.shipping.terms}
+            #shipModal(class="modal hide fade", tabindex="-1", role="dialog", aria-labelledby="shipModalLabel", aria-hidden="true")
+              form(method="POST", action="/admin/orders/#{txn.tid}/shippingTerms")
+                .modal-header
+                  button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
+                  .lead(id="shipModalLabel") Change Shipping Terms
+                .modal-body                  
+                  select.input-xlarge(name="shippingTerms")
+                    option(value="") Select New Terms
+                    each term, i in shippingTerms
+                      option(value=i) #{i}
+                .modal-footer
+                  input.btn.btn-info(type="submit", value="Update")
+                  button.btn(data-dismiss="modal", aria-hidden="true") Cancel                
         tr
           td Payment Terms
-          td #{txn.payment.terms}
+          td
+            a.btn.btn-info(href="#payModal", role="button", data-toggle="modal") #{txn.payment.terms}
+            #payModal(class="modal hide fade", tabindex="-1", role="dialog", aria-labelledby="payModalLabel", aria-hidden="true")
+              form(method="POST", action="/admin/orders/#{txn.tid}/paymentTerms")
+                .modal-header
+                  button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
+                  .lead(id="payModalLabel") Change Payment Terms
+                .modal-body                  
+                  select.input-xlarge(name="paymentTerms")
+                    option(value="") Select New Terms
+                    each term, i in paymentTerms
+                      option(value=i) #{i}
+                .modal-footer
+                  input.btn.btn-info(type="submit", value="Update")
+                  button.btn(data-dismiss="modal", aria-hidden="true") Cancel
         
     .row
       .span4.well
@@ -66,10 +115,10 @@ block partial
       thead
         tr
           th Name
-          th Specification
+          th Specs
           th Quantity
-          th Bid Price
-          th Quote Price
+          th Bid
+          th Quote
           //- th Action
       tbody
         for p in txn.products
@@ -80,21 +129,23 @@ block partial
             td #{'$ ' + p.bid}
             td
               if p.quote
-                span #{'$ ' + p.quote}
+                a.btn.btn-info(href="#{'#quoteModal' + p._id}", role="button", data-toggle="modal")
+                  span #{'$ ' + p.quote}
               else
-                form(method="POST", action="/admin/orders/#{txn.tid}")
-                  .input-prepend
-                    span.add-on $
-                    input.input-mini(type="number", name="quote")
-                  input(type="hidden", name="pid", value="#{p.pid}")
-                  input.btn.btn-info(type="submit", value="Save")
-            //- td
-            //-   if p.quote
-            //-     .btn.btn-warning
-            //-       span Cancel
-            //-   else
-            //-     .btn.btn-info
-            //-       span Save
-
+                a.btn.btn-warning(href="#{'#quoteModal' + p._id}", role="button", data-toggle="modal")
+                  span Add Quote
+              .div(id="#{'quoteModal'+p._id}", class="modal hide fade", tabindex="-1", role="dialog", aria-labelledby="quoteModalLabel", aria-hidden="true")
+                form(method="POST", action="/admin/orders/#{txn.tid}/products/#{p.pid}/quote")
+                  .modal-header
+                    button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
+                    .lead(id="quoteModalLabel") Quote for #{p.name}
+                  .modal-body                  
+                    .input-prepend
+                      span.add-on $
+                      input.input-medium(type="number", name="quote")
+                  .modal-footer
+                    input.btn.btn-info(type="submit", value="Save")
+                    button.btn(data-dismiss="modal", aria-hidden="true") Cancel
     br
-    .btn.btn-success.btn-large.span4.offset2() Send Quote
+    form.offset1(method="POST", action="/admin/orders/#{txn.tid}/send")
+      input.btn.btn-success.btn-large.span6(type="submit", value="Send Quote")

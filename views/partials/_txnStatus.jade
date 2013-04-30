@@ -1,0 +1,10 @@
+if (txn.status == 'request')
+  span Request For Quote
+else if (txn.status == 'quote')
+  span Quote Received
+else if (txn.status == 'bid')
+  span Negotiate Request Sent
+else if (txn.status == 'po')
+  span Purchase Order
+else if (txn.status == 'invoice')
+  span Invoice

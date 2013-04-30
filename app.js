@@ -30,9 +30,9 @@ var seed = require('./helpers/seed');
 
 // Import route middleware
 
-var ensureLogin = require('./routes/middlewares').ensureLogin
-  , ensureAdmin = require('./routes/middlewares').ensureAdmin
-  , isVerified = require('./routes/middlewares').isVerified
+var loggedIn = require('./routes/middlewares').loggedIn
+  , isAdmin = require('./routes/middlewares').isAdmin
+  , activated = require('./routes/middlewares').activated
   ;
 
 // Import the routes
@@ -42,7 +42,13 @@ var routes = {
   , product: require('./routes/product')
   , txn: require('./routes/txn')
   , auth: require('./routes/auth')
-  , admin: require('./routes/admin')
+};
+
+// import admin routes
+var admin = {
+    product: require('./routes/admin/product')
+  , user: require('./routes/admin/user')
+  , txn: require('./routes/admin/txn')
 };
 
 // Config settings
@@ -68,7 +74,7 @@ app.configure(function(){
     next();
   });
   app.use(app.router);
-  app.use(function(err, req, res, next){
+  app.use(function (err, req, res, next){
     res.status(err.status || 500);
     res.render('500', { error: err });
   });
@@ -118,10 +124,14 @@ app.get('/products', routes.product.list);
 app.get('/products/:url', routes.product.get);
 
 
-app.get('/quote', ensureLogin, isVerified, routes.txn.quotePage);
-app.get('/orders', ensureLogin, isVerified, routes.txn.list);
-app.get('/orders/:tid', ensureLogin, isVerified, routes.txn.get);
-app.post('/orders', ensureLogin, isVerified, routes.txn.create);
+app.get('/quote', loggedIn, activated, routes.txn.quotePage);
+app.get('/orders', loggedIn, activated, routes.txn.list);
+app.get('/orders/:tid', loggedIn, activated, routes.txn.get);
+app.post('/orders', loggedIn, activated, routes.txn.create);
+app.post('/orders/:tid/bid', loggedIn, activated, routes.txn.updateBid);
+app.post('/orders/:tid/payInfo', loggedIn, activated, routes.txn.updatePayInfo);
+app.post('/orders/:tid/cancel', loggedIn, activated, routes.txn.cancel);
+app.get('/orders/:tid/po', loggedIn, activated, routes.txn.poPage);
 
 // Auth Routes
 
@@ -137,33 +147,38 @@ app.post('/register', routes.user.create);
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login', failureFlash: 'Invalid email or password' }),
   function(req, res) {
-    res.redirect('/quote');
+    var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/quote'; // redirecTo set in loggedIn middleware
+    delete req.session.redirectTo; 
+    res.redirect(redirectTo);
   });
 
 // Account routes
 
-app.get('/account', ensureLogin, routes.user.accountPage);
-app.post('/account', ensureLogin, routes.user.updateAccount);
-app.get('/account/password', ensureLogin, routes.user.passwordPage);
-app.post('/account/password', ensureLogin, routes.user.updatePassword);
+app.get('/account', loggedIn, routes.user.accountPage);
+app.post('/account', loggedIn, routes.user.updateAccount);
+app.get('/account/password', loggedIn, routes.user.passwordPage);
+app.post('/account/password', loggedIn, routes.user.updatePassword);
 
 // Admin Routes
 // TODO: Admin Checks
 
-app.get('/admin/products', routes.product.adminList);
-app.get('/admin/products/:url', routes.product.adminGet);
-app.post('/admin/products', routes.product.create);
-app.put('/admin/products/:id', routes.product.update);
-app.delete('/admin/products/:id', routes.product.remove);
+app.get('/admin/products', admin.product.list);
+app.get('/admin/products/:url', admin.product.get);
+app.post('/admin/products', admin.product.create);
+app.put('/admin/products/:id', admin.product.update);
+app.delete('/admin/products/:id', admin.product.remove);
 
-app.get('/admin/orders', routes.txn.adminList);
-app.get('/admin/orders/:tid', routes.txn.adminGet);
-app.post('/admin/orders/:tid', routes.txn.updateQuote);
-app.delete('/admin/orders/:tid', routes.txn.remove);
+app.get('/admin/orders', admin.txn.list);
+app.get('/admin/orders/:tid', admin.txn.get);
+app.post('/admin/orders/:tid/products/:pid/quote', admin.txn.updateQuote);
+app.post('/admin/orders/:tid/shippingTerms', admin.txn.updateShippingTerms);
+app.post('/admin/orders/:tid/paymentTerms', admin.txn.updatePaymentTerms);
+app.post('/admin/orders/:tid/send', admin.txn.sendQuote);
+app.delete('/admin/orders/:tid', admin.txn.remove);
 
-app.get('/admin/users', routes.user.adminList);
-app.get('/admin/users/:id', routes.user.adminGet);
-app.put('/admin/users/:id/:status', routes.user.updateStatus);
+app.get('/admin/users', admin.user.list);
+app.get('/admin/users/:id', admin.user.get);
+app.put('/admin/users/:id/:status', admin.user.updateStatus);
 
 // Start server
 http.createServer(app).listen(app.get('port'), function(){

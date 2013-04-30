@@ -14,11 +14,15 @@ block partial
           th Quote
           th Purchase Order
       tbody
-        for order in txns
+        for txn in txns
           tr
             td 
-              a(href="/orders/#{order.tid}") #{order.tid}
-            td #{order.status}
-            td #{order.quote || 'Nil'}
+              a(href="/orders/#{txn.tid}") #{txn.tid}
+            td 
+              include _txnStatus
+
+            td #{txn.quote || 'Nil'}
             td
               button.btn.btn-success Purchase Order
+          tr
+            td(colspan="4") #{txn.status}

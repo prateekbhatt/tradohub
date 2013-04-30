@@ -15,6 +15,9 @@ var ProductListSchema = new Schema({
   , origin: { type: String }
 });
 
+// Txn status types
+var statusTypes = ['request', 'quote', 'bid', 'po', 'invoice', 'cancel'];
+
 var TxnSchema = new Schema({
     tid: { type: String, required: true }
   , uid: { type: Schema.Types.ObjectId, ref: 'User' }
@@ -22,7 +25,8 @@ var TxnSchema = new Schema({
   , created: { type: Date, default: Date.now }
   , updated: { type: Date, default: Date.now }
   , info: { type: String }
-  , status: { type: String, required: true }
+  , bidNo: { type: Number, default: 0 }
+  , status: { type: String, required: true, enum: statusTypes }
   , company: {
       name: { type: String, required: true }
     , street: { type: String }
@@ -50,7 +54,10 @@ var TxnSchema = new Schema({
   }
   , payment: {
       bank: { type: String }
-    , acc: { type: Number }
+    , address: { type: String }
+    , accName: { type: String }
+    , accNo: { type: Number }
+    , bankCode: { type: String }
     , terms: { type: String }
   }
   , files: {
@@ -60,7 +67,7 @@ var TxnSchema = new Schema({
   }
 });
 
-function generateTid () {
+TxnSchema.methods.generateTid = function generateTid () {
   var monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG",
                     "SEP", "OCT", "NOV", "DEC"]
     , chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
@@ -73,95 +80,20 @@ function generateTid () {
   return tid;
 };
 
-TxnSchema.statics.create = function create (txn, uid, fn) {
-  // console.log('inside create txn model \n\n')
-  // console.log(txn)
-
-  var t = new Txn({
-      uid: uid
-    , status: 'request'
-    , info: txn.info
-  });
-  
-  t.tid = generateTid(); // TODO : check if txn id already exists
-  
-  t.company = {
-      name: txn.company.name
-    , street: txn.company.street
-    , city: txn.company.city
-    , state: txn.company.state
-    , country: txn.company.country
-    , zip: txn.company.zip
-  };
-
-  t.contact = {
-      name: {
-          first: txn.contact.name.first
-        , last: txn.contact.name.last
-      }  
-    , email: txn.contact.email
-    , phone: {
-        country: txn.contact.phone.country
-      , area: txn.contact.phone.area
-      , number: txn.contact.phone.number
-    }
-  };
-
-  t.shipping = {
-      destPort: txn.shipping.destPort
-    , reqDue: reqDueTime(txn.shipping.reqDue)
-    , terms: txn.shipping.terms
-  };
-
-  t.payment = {
-      bank: txn.payment.bank
-    , acc: txn.payment.acc
-    , terms: txn.payment.terms
-  };
-  console.log(JSON.parse(txn.products[0].detail))
-  t.products = [];
-  for (var i in txn.products) {
-    var p = txn.products[i]
-    var newProduct = {
-        pid: JSON.parse(p.detail)['_id']
-      , name: JSON.parse(p.detail)['name']
-      , unit: JSON.parse(p.detail)['unit']
-      , specs: p.specs
-      , quantity: p.quantity
-      , bid: p.bid
-      , quote: p.quote
-      , origin: txn.origin
-    };
-    t.products.push(newProduct);
-  };
-
-  // console.log('create txn')
-  // console.log(t)
-
-  t.save(function (err, savedTxn) {
-    fn(err, savedTxn);
-  });
-};
-
-function reqDueTime (days) {
-  var today = new Date()
-  , reqDate = new Date()
-  ;
-  reqDate.setDate(today.getDate() + days)
+TxnSchema.methods.reqDueTime = function reqDueTime (days) {
+  var reqDate = new Date();
+  reqDate.setDate(reqDate.getDate() + days)
   return reqDate;
 };
 
-TxnSchema.statics.update = function update (id, txn, fn) {
-  Txn.findById(id, function (err, gotTxn) {
-    if (err) { return fn(err); }
-    if (gotTxn) {
-      gotTxn.name = product.name;
-      gotTxn.description = product.description;
-      gotTxn.save(function (err, savedTxn) {
-        err ? fn(err) : fn(null, savedTxn);
-      });
-    };
-  });
+TxnSchema.methods.getProductByPid = function getProductByPid (pid, fn) {
+  var p = this.products;
+  for (var i in p) {
+    if (p[i].pid == pid) {
+      return fn(null, p[i]);
+    }
+  }
+  return fn(null, null);
 };
 
 var Txn = mongoose.model('Txn', TxnSchema);

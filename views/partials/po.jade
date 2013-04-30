@@ -101,13 +101,3 @@ block partial
           span #{txn.contact.phone.country + '-' + txn.contact.phone.area + '-' + txn.contact.phone.number}
         p Email:&nbsp;&nbsp;
           span #{txn.contact.email}
-
-    if (txn.status == 'quote' || txn.status == 'bid')
-      .btn.btn-success Make Purchase Order
-    else if (txn.status == 'po')
-      .btn.btn-info See Purchase Order
-    else if (txn.status == 'invoice')
-      .btn.btn-info See Invoice
-
-    if (txn.status == 'request' || txn.status == 'quote' || txn.status == 'bid')
-      .btn.btn-danger Cancel Order

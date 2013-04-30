@@ -6,6 +6,7 @@
 //   login page.
 
 function gotoLogin (req, res) {
+  req.session.redirectTo = req.path;
   res.format({
     html: function(){
       req.flash('error', 'Login to view page.')
@@ -14,12 +15,12 @@ function gotoLogin (req, res) {
   });
 };
 
-exports.ensureLogin = function ensureLogin (req, res, next) {
+exports.loggedIn = function loggedIn (req, res, next) {
   if (req.isAuthenticated()) return next();
   gotoLogin(req, res);
 };
 
-exports.ensureAdmin =  function ensureAdmin (req, res, next) {
+exports.isAdmin =  function isAdmin (req, res, next) {
   // make sure the user is logged in.
   if (req.isAuthenticated()) {
     // make sure the user has role 'admin'
@@ -29,10 +30,11 @@ exports.ensureAdmin =  function ensureAdmin (req, res, next) {
   gotoLogin(req, res);
 };
 
-exports.isVerified = function isVerified (req, res, next) {
+exports.activated = function activated (req, res, next) {
   var status = req.user.status;
-  if (status == 'verified') return next();
-  if (status == 'notVerified') req.flash('error', 'Please verify your email.');
+  if (status == 'activated') return next();
+  if (status == 'verified') req.flash('error', 'Your account has not been activated yet.');
+  else if (status == 'notVerified') req.flash('error', 'Please verify your email.');
   else if (status == 'blocked') req.flash('error', 'Your account has been blocked.');
   res.redirect('/account');
 };

@@ -26,16 +26,15 @@ block partial
   .span9.well
     form.form-horizontal(name="txnForm", method="POST", action="/orders", ng-controller="TxnCtrl")
       //- {{ form }}
-      .lead
-        strong Request For Quote
+      .lead Request For Quote
 
-      .lead Product
+      h5 Products
       
       .form-inline
         table.table.table-condensed.table-hover
           thead
             tr
-              th Product
+              th Name
               th Quantity
               th Base Price
               th Specification
@@ -69,7 +68,7 @@ block partial
             each country, i in originCountries
               option(value=i) #{country}
 
-      .lead Shipping and Payment
+      h5 Shipping and Payment
       
       .control-group
         label.control-label(for="port") Destination Port
@@ -111,60 +110,26 @@ block partial
         .controls
           textarea.input-xlarge(type="text", id="info", rows="3", name="info", placeholder="More Information")
 
-      .lead Company
+      h5 Company
 
-      .control-group
-        label.control-label(for="company") Company Name
-        .controls
-          input.input-xlarge(type="text", id="company", name="company[name]", placeholder="Company Name", required )
+      include _companyForm
       
-      .control-group
-        label.control-label(for="street") Address
-        .controls
-          input.input-medium(type="text", id="street", name="company[street]", placeholder="Street")
-          &nbsp;&nbsp;&nbsp;&nbsp;
-          input.input-small(type="text", id="city", name="company[city]", placeholder="City")
-      
-      .control-group
-        label.control-label(for="state") State
-        .controls
-          input.input-xlarge(type="text", id="state", name="company[state]", placeholder="State")
-      
-      .control-group
-        label.control-label(for="zip") Zip / Postal Code
-        .controls
-          input.input-xlarge(type="text", id="zip", name="company[zip]", placeholder="Zip / Postal Code", required)
-      
-      .control-group
-        label.control-label(for="country") Country
-        .controls
-          //- input.input-xlarge(type="text", id="country", name="address[country]", placeholder="Country", required)
-          select.input-xlarge(name="company[country]", required)
-            option(value="") Select Country
-            each i in countryList
-              option(value=i.cca3) #{i.name}
-      
-      .lead Contact
+      h5 Contact
       
       .control-group
         label.control-label(for="userName") Your Name
         .controls
-          input.span2(type="text", id="userName", name="contact[name][first]", placeholder="First Name", required )
-          input.span2(type="text", name="contact[name][last]", placeholder="Last Name", required )
+          input.span2(type="text", id="userName", name="contact[name][first]", value="#{user.name.first}", placeholder="First Name", required )
+          input.span2(type="text", name="contact[name][last]", value="#{user.name.last}", placeholder="Last Name", required )
       
       .control-group
         label.control-label(for="phoneNumber") Phone Number
         .controls
           input.input-mini(type="number", name="contact[phone][country]", placeholder="Country", required )
-          &nbsp; - &nbsp;
+          &nbsp;&nbsp;
           input.input-mini(type="number", name="contact[phone][area]", placeholder="Area", required )
-          &nbsp; - &nbsp;
+          &nbsp;&nbsp;
           input.input-small(type="number", id="phoneNumber", name="contact[phone][number]", placeholder="Number", required )
-      
-      .control-group
-        label.control-label(for="emailAddress") Email
-        .controls
-          input.input-xlarge(type="email", id="emailAddress", name="contact[email]", placeholder="Email Address", required)
       
       br
       button.btn.btn-large.btn-success.span6(type="submit")
