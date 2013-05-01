@@ -1,0 +1,25 @@
+extends index
+block txns
+
+  .lead Order Status
+  table.table
+    thead
+      tr
+        th ID
+        th Status
+        th Products : Quote
+        th Purchase Order
+    tbody
+      for txn in txns
+        tr
+          td 
+            a(href="/orders/#{txn.tid}") #{txn.tid}
+          td 
+            include _txnStatus
+
+          td
+            for p in txn.products
+              span #{p.name} : #{'$ ' + p.quote + ' / ' + p.unit}
+              br
+          td
+            button.btn.btn-success Purchase Order

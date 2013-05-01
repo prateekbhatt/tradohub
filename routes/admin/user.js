@@ -29,7 +29,7 @@ function list (req, res, next) {
     res.format({
       html: function(){
         res.locals.users = users;
-        res.render('partials/admin/users',
+        res.render('admin/users',
           { error: req.flash('error'), success: req.flash('success') });
       },
       json: function(){ res.json(200, users); }
@@ -44,7 +44,7 @@ function get (req, res, next) {
       return res.format({
         html: function(){
           res.locals.user = user;
-          res.render('partials/admin/user',
+          res.render('admin/user',
             { error: req.flash('error'), success: req.flash('success') });
         },
         json: function(){ res.json(200, user); }

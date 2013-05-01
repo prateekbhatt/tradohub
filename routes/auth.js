@@ -7,16 +7,16 @@ var User = require('../models/User')
   ;
 
 function loginPage (req, res) {
-  res.render('partials/login', { error: req.flash('error'), success: req.flash('success') });    
+  res.render('auth/login', { error: req.flash('error'), success: req.flash('success') });    
 };
 
 function registerPage (req, res) {
   res.locals.countryList = countryList;
-  res.render('partials/register', { error: req.flash('error') });
+  res.render('auth/register', { error: req.flash('error') });
 };
 
 function passwordForgotPage (req, res) {
-  res.render('partials/forgot', { error: req.flash('error') });
+  res.render('auth/forgot', { error: req.flash('error') });
 };
 
 function logout (req, res) {

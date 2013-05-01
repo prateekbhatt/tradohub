@@ -1,0 +1,90 @@
+extends index
+
+block childScript
+  script
+    function selectText(containerid) {
+      if (document.selection) {
+        var range = document.body.createTextRange();
+        range.moveToElementText(document.getElementById(containerid));
+        range.select();
+      } else if (window.getSelection) {
+        var range = document.createRange();
+        range.selectNode(document.getElementById(containerid));
+        window.getSelection().addRange(range);
+      }
+    };
+
+block txns
+  .lead Make Purchase Order
+  p 
+    small Click anywhere in the box below and copy the purchase order on to your company's letter pad.
+  .row
+    .span8.well.textarea(id='selectable', onclick="selectText('selectable');", style="background-color: #E3E3E3")
+      p ICPO Ref. No. :
+        span(style="color:#ff0000;") INSERT ICPO REF NO HERE
+      p Issue Date : #{new Date().toDateString()}
+      h4.text-center(style="text-decoration: underline;") Irrevocable Corporate Purchase Order
+      br
+      p Dear Sir,
+      p(style="text-align: justify;") We the M/s. #{txn.company.name} as the buyer with full corporate responsibilty, subject to terms,
+        span confirm that we are willing, ready and able to buy the following product in terms and conditions
+        span mentioned by seller and below.
+      h5 PRODUCTS:
+      table.table
+        thead
+          tr
+            th Name
+            th Specification
+            th Quantity
+            th Price
+            th Origin
+        tbody
+          for p in txn.products
+            tr
+              td #{p.name}
+              td #{p.specs}
+              td #{p.quantity + ' ' + p.unit}
+              td #{'$ ' + p.quote + ' / ' + p.unit}
+              td #{p.origin ? p.origin : '-'}
+
+      br
+      span Total Contract Value = #{'$ ' + totalValue}
+      
+      h5 SHIPPING AND PAYMENT TERMS:
+      p Destination Port :  #{txn.shipping.destPort}
+      p Delivery Time :  #{txn.shipping.reqDue.toDateString()}
+      p Shipping Terms :  #{txn.shipping.terms}
+      p Payment Terms :  #{txn.payment.terms}
+      p Clearances :  All clearance charges and custom duties are in seller's scope.
+      
+      h5 BUYER'S INFORMATION:
+      p Name of the Company :  #{txn.company.name}
+      p Contact / Authorised Person :  #{txn.contact.name.first + ' ' + txn.contact.name.last}
+
+      h5 IDENTIFICATION DETAIL:
+      p Passport No. :
+        span(style="color:#ff0000;") INSERT PASSPORT NO. OR PROVIDE OTHER PERSONAL IDENTIFICATION
+
+      h5 COMPANY DETAILS:
+      p Address :  #{txn.company.street + ', ' + txn.company.city + ', ' + txn.company.state + ', ' + txn.company.country + ' ' + txn.company.zip}
+      p Telephone Number :  #{txn.contact.phone.country + '-' + txn.contact.phone.area + '-' + txn.contact.phone.number}    
+      p Email Address :  #{txn.contact.email}
+
+      h5 BUYER'S BANK DETAILS:
+      p Bank Name :  #{txn.payment.bank}
+      p Bank Address :  #{txn.payment.address}
+      p Account Number :  #{txn.payment.accNo}
+      p Account Name :  #{txn.payment.accName}
+      p Swift Code :  #{txn.payment.bankCode}
+
+      h5 SPECIAL CONDITION:
+      p All the terms and conditions above agreed herein as well as the subsequemt contract
+       span of sale including any amendmends or variations thereof, all of which have to be
+       span reduced in writing and signed by both parties hereto.
+
+      br
+      br
+      br
+      br
+      br
+      p.pull-right BUYER SIGNATURE, STAMP & SEAL

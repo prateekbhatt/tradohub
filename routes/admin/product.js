@@ -9,7 +9,7 @@ function get (req, res, next) {
       return res.format({
         html: function(){
           res.locals.product = product;
-          res.render('partials/admin/product');
+          res.render('admin/product');
         },
         json: function(){ res.json(200, product); }
       });
@@ -28,7 +28,7 @@ function list (req, res, next) {
       return res.format({
         html: function(){
           res.locals.products = products;
-          res.render('partials/admin/products');
+          res.render('admin/products');
         },
         json: function(){ res.json(200, products); }
       });
@@ -36,7 +36,7 @@ function list (req, res, next) {
     res.format({
       html: function(){
         res.locals.products = null;
-        res.render('partials/admin/products');
+        res.render('admin/products');
       },
       json: function(){ res.json(400, { error: { message: 'No Product Found'}}); }
     });

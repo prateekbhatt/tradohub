@@ -129,7 +129,8 @@ app.get('/orders', loggedIn, activated, routes.txn.list);
 app.get('/orders/:tid', loggedIn, activated, routes.txn.get);
 app.post('/orders', loggedIn, activated, routes.txn.create);
 app.post('/orders/:tid/bid', loggedIn, activated, routes.txn.updateBid);
-app.post('/orders/:tid/payInfo', loggedIn, activated, routes.txn.updatePayInfo);
+app.get('/orders/:tid/pay', loggedIn, activated, routes.txn.bankPage);
+app.post('/orders/:tid/pay', loggedIn, activated, routes.txn.updatePayInfo);
 app.post('/orders/:tid/cancel', loggedIn, activated, routes.txn.cancel);
 app.get('/orders/:tid/po', loggedIn, activated, routes.txn.poPage);
 

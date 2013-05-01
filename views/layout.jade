@@ -5,9 +5,41 @@ html(lang="en", ng-app='tradohub')
     title= title
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='/css/bootstrap.css')
-    link(rel='stylesheet',href='/css/custom.css')
+    link(rel='stylesheet', href='/css/custom.css')
+    link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet', type='text/css')
+    //-
+      script(src="/js/lib/ui-bootstrap.min.js")
+    // script(src="/js/lib/angular.min.js")
+    script(src="/js/lib/jquery.js")
+    script(src="/js/lib/bootstrap.min.js")
 
-    block head
+    block script
     
   body
-    block body
+    #wrap
+      .container
+        .row
+          .span12
+            include _navbar
+
+        if ( typeof(error) != "undefined" && error != "" )
+          .row
+            .span12
+              .alert.alert-error.fade.in.text-center
+                button.close(type="button", data-dismiss="alert") ×
+                span #{error}
+
+        if ( typeof(success) != "undefined" && success != "")
+          .row
+            .span12
+              .alert.alert-success.fade.in.text-center
+                button.close(type="button", data-dismiss="alert") ×
+                span #{success}
+                
+        .row
+          block partial
+        hr
+      #push
+    #footer
+      .container
+        include footer

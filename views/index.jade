@@ -1,39 +1,31 @@
 extends layout
+block partial
 
-block head
-  //-
-    script(src="/js/lib/ui-bootstrap.min.js")
-  // script(src="/js/lib/angular.min.js")
-  script(src="/js/lib/jquery.js")
-  script(src="/js/lib/bootstrap.min.js")
+  .jumbotron
+    h2 Money saved is money earned.
+    br
+    br
+    p.lead 
+      span Amdavad's e-procurement platform helps streamline your business process
+      br
+      span and maximize savings.
+    br
+    a.btn.btn-large.btn-primary(href="/register") Get started now
+  br
+  hr
+  .row
+    .span4
+      p.lead.text-center  Request For Quotes
+      p.text-center Get quotes within a day.
+      //- p
+      //-   a.btn(href="#") View details &raquo;
 
-  block script
-  
-block body
-  #wrap
-    .container
-      .row
-        .span12
-          include partials/navbar
+    .span4
+      p.lead.text-center  Purchase Orders
+      p.text-center Create and send purchase orders with a single click.
 
-      if ( typeof(error) != "undefined" && error != "" )
-        .row
-          .span12
-            .alert.alert-error.fade.in.text-center
-              button.close(type="button", data-dismiss="alert") ×
-              span #{error}
-
-      if ( typeof(success) != "undefined" && success != "")
-        .row
-          .span12
-            .alert.alert-success.fade.in.text-center
-              button.close(type="button", data-dismiss="alert") ×
-              span #{success}
-              
-      .row
-        block partial
-      hr
-    #push
-  #footer
-    .container
-      include footer
+      //- p
+      //-   a.btn(href="#") View details &raquo;
+    .span4
+      p.lead.text-center  Best Prices
+      p.text-center Get the latest price updates by industry and product, right in your inbox.

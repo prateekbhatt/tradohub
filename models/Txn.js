@@ -96,6 +96,19 @@ TxnSchema.methods.getProductByPid = function getProductByPid (pid, fn) {
   return fn(null, null);
 };
 
+TxnSchema.methods.getTotalValue = function getTotalValue () {
+  var totalValue = 0
+    , p = this.products
+    ;
+  for (var i in p) {
+    if (p[i].quantity) {
+      totalValue += p[i].quantity*p[i].quote;
+      console.log(i, p[i].quantity, p[i].quote, totalValue)      
+    }
+  }
+  return totalValue;
+};
+
 var Txn = mongoose.model('Txn', TxnSchema);
 
 module.exports = Txn;

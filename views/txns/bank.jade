@@ -1,0 +1,45 @@
+extends index
+block txns
+
+  .lead Add Bank Detail
+  table.table
+    tbody
+      tr
+        td Order ID
+        td #{txn.tid}
+      tr
+        td Query Date
+        td #{txn.created.toDateString()}
+      tr
+        td Status
+        td
+          include _txnStatus
+      tr
+        td Total Contract Value
+        td #{'$ ' + totalValue}
+
+  if (txn.status == 'quote' || txn.status == 'bid')
+    h5 Add your bank detail and proceed to make a purchase order
+    form.form-horizontal(method="POST", action="/orders/#{txn.tid}/pay")
+      .control-group
+        label.control-label(for="bankName") Bank Name
+        .controls
+          input.input-xlarge(type="text", id="bankName", name="bank[name]", placeholder="Bank Name", required)
+      .control-group
+        label.control-label(for="address") Bank Address
+        .controls
+          textarea.input-xlarge(type="text", id="address", rows="2", name="bank[address]", placeholder="Bank Address", required)
+      .control-group
+        label.control-label(for="accNo") Account Number
+        .controls
+          input.input-xlarge(type="text", id="accNo", name="bank[accNo]", placeholder="Account Number", required)
+      .control-group
+        label.control-label(for="accName") Account Name
+        .controls
+          input.input-xlarge(type="text", id="accName", name="bank[accName]", placeholder="Account Name", required)
+      .control-group
+        label.control-label(for="code") Swift Code
+        .controls
+          input.input-xlarge(type="text", id="code", name="bank[bankCode]", placeholder="Swift Code", required)
+
+      input.btn.btn-success(type="submit", value="Make Purchase Order")

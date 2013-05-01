@@ -1,0 +1,9 @@
+extends index
+block products
+  .row
+    .span6
+      h3 #{product.name}
+      hr
+      p #{product.description}
+    .span3
+      a.btn.btn-large.btn-success(href="/quote") Request For Quote

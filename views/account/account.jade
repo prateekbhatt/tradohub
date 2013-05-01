@@ -1,4 +1,4 @@
-extends ../../index
+extends ../layout
 
 block script
   script(src="/js/lib/angular.min.js")
@@ -7,19 +7,16 @@ block script
 
 block partial
   .span2.well
-    include ../sidenav
+    include ../_sidenav
 
   .span9.well
     form.form-horizontal(name="accountForm", method="POST", action="/account")
-      //- {{ form }}
       .lead
         strong Your Account
 
       .lead Password
       p
         a.btn(href='/account/password') Change Password
-        // &nbsp;&nbsp|&nbsp;&nbsp
-        // a.btn(href='') Forgot Password?
 
       .lead Company
 

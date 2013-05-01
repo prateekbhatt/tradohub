@@ -23,10 +23,32 @@ function quotePage (req, res, next) {
     res.locals.countryList = countryList;
     res.locals.reqDue = termsData.reqDue;
     res.locals.user = req.user;
-    res.render('partials/quote',
+    res.render('txns/quote',
       { error: req.flash('error'), success: req.flash('success') });
   });
 };
+
+function bankPage (req, res, next) {
+  var uid = req.user._id
+    , tid = req.params.tid
+    ;
+  Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
+    if (err) return next(err);
+    if (txn) {
+      var s = txn.status;
+      if (s == 'po') {
+        return res.redirect('/orders/'+tid+'/po');
+      }
+      if (s == 'quote' || s == 'bid') {
+        res.locals.txn = txn;
+        res.locals.totalValue = txn.getTotalValue();
+        return res.render('txns/bank',
+          { error: req.flash('error'), success: req.flash('success') });
+      }
+    }
+    res.redirect('/orders/'+tid);
+  });
+}
 
 function poPage (req, res, next) {
   var uid = req.user._id
@@ -35,10 +57,11 @@ function poPage (req, res, next) {
   Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
     if (err) return next(err);
     if (txn) {
-      if (txn.status == 'quote' || txn.status == 'bid') {
+      if (txn.status == 'po') {
         res.locals.txn = txn;
-        return res.render('partials/po',
-          { error: req.flash('error'), success: req.flash('success') });        
+        res.locals.totalValue = txn.getTotalValue();
+        return res.render('txns/po',
+          { error: req.flash('error'), success: req.flash('success') });
       } else {
         req.flash('error', 'You can\'t make a purchase order on this order now.');
         return res.redirect('/orders/'+tid);
@@ -56,7 +79,7 @@ function get (req, res, next) {
     if (err) return next(err);
     if (txn) {      
       res.locals.txn = txn;
-      return res.render('partials/txn',
+      return res.render('txns/get',
         { error: req.flash('error'), success: req.flash('success') });        
     }
     res.render('404');
@@ -67,7 +90,7 @@ function list (req, res, next) {
   Txn.find({ uid: req.user._id }, function (err, txns) {
     if (err) return next(err);
     res.locals.txns = txns;
-    res.render('partials/txns',
+    res.render('txns/list',
       { error: req.flash('error'), success: req.flash('success') });
   });
 };
@@ -199,6 +222,7 @@ function updatePayInfo (req, res,  next) {
     ;
   Txn.findOne({ tid: tid, uid: uid }, function (err, t) {
     if (err) return next(err);
+    t.status = 'po';
     t.payment.bank = b.name;
     t.payment.address = b.address;
     t.payment.accName = b.accName;
@@ -235,6 +259,7 @@ function cancel (req, res, next) {
 
 module.exports = {
     quotePage: quotePage
+  , bankPage: bankPage
   , poPage: poPage
   , get: get
   , list: list

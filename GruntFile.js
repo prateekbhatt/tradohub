@@ -68,6 +68,7 @@ var SRC_JS = 'public/js/'
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-less');
   
+  grunt.registerTask('css', ['less'])
   grunt.registerTask('test', ['jshint', 'concat']);
   grunt.registerTask('js', ['concat', 'uglify']);
 

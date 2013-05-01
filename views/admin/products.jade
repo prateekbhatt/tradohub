@@ -1,0 +1,38 @@
+extends index
+block admin
+
+  legend Products List
+  table.table.table-condensed
+    thead
+      tr
+        th Name
+        th Description
+        th Edit
+        th Delete
+    tbody
+      for product in products
+        tr
+          td 
+            a(href="/products/#{product.url}") #{product.name}
+          td.span5 #{product.description}
+          td
+            a.btn.btn-primary(href="/admin/products/#{product.url}") Edit
+          td
+            form(name="deleteProduct", method="POST", action="/admin/products/#{product._id}")
+              input(type="hidden", name="_method", value="DELETE")
+              input.btn.btn-danger(type="submit", value="Delete")
+  hr
+
+  form(name="addProductForm", method="POST", action="/admin/products")
+    fieldset
+      legend Add a new product
+
+      input(type="text", name="name", placeholder="product name", required)
+      br
+
+      textarea(type="text", name="description", placeholder="description")
+      
+      br
+
+      button.btn.btn-large.btn-primary(type="submit")
+        span Submit

@@ -18,7 +18,7 @@ function get (req, res, next) {
       res.locals.txn = txn;
       res.locals.shippingTerms = shippingTerms;
       res.locals.paymentTerms = paymentTerms;
-      return res.render('partials/admin/txn',
+      return res.render('admin/txn',
         { error: req.flash('error'), success: req.flash('success') });
     }
     res.render('404');
@@ -29,7 +29,7 @@ function list (req, res, next) {
   Txn.find({}, function (err, txns) {
     if (err) return next(err);
     res.locals.txns = txns;
-    res.render('partials/admin/txns',
+    res.render('admin/txns',
       { error: req.flash('error'), success: req.flash('success') });
   });
 };

@@ -146,12 +146,12 @@ function updateAccount (req, res, next) {
 function accountPage (req, res) {
   res.locals.countryList = countryList;
   res.locals.user = req.user;
-  res.render('partials/account/account',
+  res.render('account/account',
     { error: req.flash('error'), success: req.flash('success') });
 };
 
 function passwordPage (req, res) {
-  res.render('partials/account/password', 
+  res.render('account/password', 
     {error: req.flash('error'), success: req.flash('success')});
 };
 

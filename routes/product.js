@@ -10,7 +10,7 @@ function get (req, res, next) {
       return res.format({
         html: function(){
           res.locals.product = product;
-          res.render('partials/product');
+          res.render('products/get');
         },
         json: function(){ res.json(200, product); }
       });
@@ -28,7 +28,7 @@ function list (req, res, next) {
     res.format({
       html: function(){
         res.locals.products = products;
-        res.render('partials/products');
+        res.render('products/list');
       },
       json: function(){ res.json(200, products); }
     });
