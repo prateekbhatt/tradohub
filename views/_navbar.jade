@@ -1,19 +1,50 @@
-.navbar
+.navbar.navbar-static-top
   .navbar-inner
-    a(href='/').brand #{title}
-    ul.nav.pull-left
-      li
-        a(href="/products") Products
-      li
-        a(href='/quote') Request Quote
-    if user
-      ul.nav.pull-right
-        li(style="padding:10px 15px 10px;")  Welcome, #{user.email}
-        li
-          a(href='/logout') Logout
-    else
-      ul.nav.pull-right
-        li
-          a(href='/login') Login
-        li
-          a(href='/register') Register
+    .container
+      .row
+        .span12
+          a(href='/').brand #{title}
+          ul.nav.pull-left
+            li
+              a(href='/offers') Buy Offers
+            li
+              a(href='/quote') Quote
+            li
+              a(href='/about/contact') Contact
+            li.dropdown
+              a.dropdown-toggle(data-toggle="dropdown", href="#") Products
+                b.caret
+              ul.dropdown-menu
+                for c in category
+                  li.dropdown-submenu
+                    a(href="#")= c.name
+                    ul.dropdown-menu
+                      for p in c.products
+                        li
+                          a(href="/products/#{p.url}")= p.name
+                li.divider
+                li
+                  a(href="/products") All Products
+
+          form.navbar-search
+            .input-append
+              select.select2.input-medium#single-append(onchange="location = this.options[this.selectedIndex].value;")
+                option Search Products
+                for c in category
+                  for p in c.products
+                    option(value="/products/#{p.url}") #{p.name}
+              button.btn(type="button", data-select2-open="single-append")
+                i.icon-search
+
+          if user
+            ul.nav.pull-right
+              li
+                a(href='/quote') Welcome, #{user.name.first}
+              li
+                a(href='/logout') Logout
+          else
+            ul.nav.pull-right
+              li
+                a(href='/login') Login
+              li
+                a(href='/register') Register

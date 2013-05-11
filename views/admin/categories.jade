@@ -1,0 +1,33 @@
+extends index
+block admin
+
+  legend Manage Categories
+  table.table.table-condensed
+    thead
+      tr
+        th Name
+        th Description
+        th Edit
+    tbody
+      for c in category
+        tr
+          td 
+            a(href="/category/#{c.url}") #{c.name}
+          td.span5 #{c.description}
+          td
+            a.btn.btn-primary(href="/admin/category/#{c.url}") Edit
+  hr
+
+  form(method="POST", action="/admin/category")
+    fieldset
+      legend Add a new category
+
+      input(type="text", name="name", placeholder="category name", required)
+      br
+
+      textarea(type="text", name="description", placeholder="description")
+      
+      br
+
+      button.btn.btn-large.btn-primary(type="submit")
+        span Submit

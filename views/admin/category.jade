@@ -1,0 +1,14 @@
+extends index
+block admin
+
+  form(method="POST", action="/admin/category/#{category._id}")
+    legend Edit Category
+    input(type="hidden", name="_method", value="PUT")
+    input(type="text", name="name", placeholder="category name", value="#{category.name}", required)
+    br
+
+    textarea(type="text", rows="10", name="description", placeholder="description") #{category.description}
+    br
+
+    input.btn.btn-large.btn-primary(type="submit")
+      span Submit

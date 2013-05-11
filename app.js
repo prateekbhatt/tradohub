@@ -21,19 +21,19 @@ var dbPath = 'mongodb://localhost/amdavad'
 
 var seed = require('./helpers/seed');
 
-// check mailer
-
-// mailer.sendOne({email: 'prattbhatt@gmail.com', subject: 'testing tradohub email', text: 'tradohub email working'},
-//   function(err, response) {
-//     console.log(err, ' : ', response)
-//   })
-
 // Import route middleware
 
 var loggedIn = require('./routes/middlewares').loggedIn
   , isAdmin = require('./routes/middlewares').isAdmin
   , activated = require('./routes/middlewares').activated
   ;
+
+// Import required models
+
+var models = {
+    Product: require('./models/Product')
+  , Category: require('./models/Category')
+};
 
 // Import the routes
 var routes = {
@@ -47,9 +47,11 @@ var routes = {
 // import admin routes
 var admin = {
     product: require('./routes/admin/product')
+  , category: require('./routes/admin/category')
   , user: require('./routes/admin/user')
   , txn: require('./routes/admin/txn')
 };
+
 
 // Config settings
 app.configure(function(){
@@ -70,9 +72,17 @@ app.configure(function(){
   // add user to res.locals to make it available in layout.jade
   app.use(function (req, res, next) {
     app.locals.pretty = true;
-    res.locals.user = req.user ? { 'email': req.user.email } : null;
+    res.locals.user = req.user ? { 'email': req.user.email, 'name': req.user.name } : null;
     next();
+  });  
+  // middleware to pass products and category to all views 
+  app.use(function categories (req, res, next) {
+    models.Category.find({}).populate('products').sort({ 'name': 1 }).exec(function (err, c) {
+      res.locals.category = c;
+      next();
+    });
   });
+
   app.use(app.router);
   app.use(function (err, req, res, next){
     res.status(err.status || 500);
@@ -111,17 +121,20 @@ app.configure('development', function(){
 
 
 // Locals (available inside all templates)
+
 app.locals({
-  title: 'tradohub'
+  title: 'TRADOHUB'
 });
 
 // Routes are defined here
 app.get('/', routes.index.index);
+app.get('/about', routes.index.about);
+app.get('/about/:page', routes.index.pages);
 
 // Product API routes
-
 app.get('/products', routes.product.list);
 app.get('/products/:url', routes.product.get);
+app.get('/offers', routes.product.offers);
 
 
 app.get('/quote', loggedIn, activated, routes.txn.quotePage);
@@ -162,6 +175,11 @@ app.post('/account/password', loggedIn, routes.user.updatePassword);
 
 // Admin Routes
 // TODO: Admin Checks
+
+app.get('/admin/category', admin.category.list);
+app.get('/admin/category/:url', admin.category.get);
+app.post('/admin/category', admin.category.create);
+app.put('/admin/category/:id', admin.category.update);
 
 app.get('/admin/products', admin.product.list);
 app.get('/admin/products/:url', admin.product.get);

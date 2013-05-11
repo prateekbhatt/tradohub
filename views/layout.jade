@@ -7,39 +7,34 @@ html(lang="en", ng-app='tradohub')
     link(rel='stylesheet', href='/css/bootstrap.css')
     link(rel='stylesheet', href='/css/custom.css')
     link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet', type='text/css')
+    link(rel='stylesheet', href='/css/select2.css')
+    link(rel='stylesheet', href='/css/select2-bootstrap.css')
     //-
       script(src="/js/lib/ui-bootstrap.min.js")
     // script(src="/js/lib/angular.min.js")
     script(src="/js/lib/jquery.js")
     script(src="/js/lib/bootstrap.min.js")
+    script(src="/js/lib/select2.min.js")
 
     block script
     
   body
     #wrap
+      include _navbar
       .container
-        .row
-          .span12
-            include _navbar
-
-        if ( typeof(error) != "undefined" && error != "" )
-          .row
-            .span12
-              .alert.alert-error.fade.in.text-center
-                button.close(type="button", data-dismiss="alert") ×
-                span #{error}
-
-        if ( typeof(success) != "undefined" && success != "")
-          .row
-            .span12
-              .alert.alert-success.fade.in.text-center
-                button.close(type="button", data-dismiss="alert") ×
-                span #{success}
-                
-        .row
-          block partial
-        hr
+        include _flash
+        block partial
+      block indexPage
+      
       #push
+    script(type="text/javascript")
+      $('.select2').select2({ placeholder : '' });
+      
+      $('.select2-remote').select2({ data: [{id:'A', text:'A'}]});
+
+      $('button[data-select2-open]').click(function(){
+        $('#' + $(this).data('select2-open')).select2('open');
+      });
     #footer
       .container
-        include footer
+        include _footer

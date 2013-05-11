@@ -11,17 +11,18 @@ var User = require('../models/User')
 
 function create (req, res, next) {
 
-  console.log('inside user create route');
-  console.log(req.files)  
+  // console.log('inside user create route');
+  // console.log(req.files)
+  // Get the file for business verfication
   var file = req.files.imexFile
     , fileType = 'imex'
     , fileExt = fileValidate(req.files.imexFile.name)
     ;
+  // Send error message if file has not been uploaded
   if (!file.size || !fileExt) {
     req.flash('error', 'Please upload Import / Export Document in pdf/doc/docx/jpg/png formats');
     return res.redirect('/register');
   }
-  console.log('fileExt: ',fileExt);  
 
   var u = req.body
     , c = u.company
@@ -65,10 +66,10 @@ function create (req, res, next) {
       return next(err);
     }
     if (usr) {
+      // send email verification link to user's email
       // Create a token UserToken
       UserToken.new(usr._id, function (err, token) {
         var verifyUrl = req.protocol + '://' + req.host + '/forgot-password/' + token.token;
-        // Create the template vars 
         var locals = {
             email: usr.email
           , subject: 'Confirm your email address'
@@ -78,8 +79,10 @@ function create (req, res, next) {
           console.log('email sending')
         });
       });
+
+      // upload file to aws ses
       File.create(file.path, fileType, fileExt, function (err, saved) {
-        console.log(err);
+        if (err) console.log(err);
         if (saved) {
           console.log(saved);
           usr.updateImex(saved._id, function (err, updated) {

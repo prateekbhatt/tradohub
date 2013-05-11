@@ -1,6 +1,6 @@
 extends index
 
-block childScript
+block script
   script(src="/js/lib/angular.min.js")
   script(src="/js/lib/ui-bootstrap.min.js")  
   script(src="/js/app2.js")
@@ -39,8 +39,8 @@ block txns
         tbody
           tr(ng-repeat="product in form.txn.products")
             td
-              select.input-medium(name="products[{{$index}}][detail]", required)
-                option(value="") Select Product
+              select.select2.input-medium#single(name="products[{{$index}}][detail]", required)
+                option Select Product
                 for p in products
                   option(value='{"_id":"#{p._id}","name":"#{p.name}","unit":"MT"}') #{p.name}
             td
@@ -127,6 +127,6 @@ block txns
         &nbsp;&nbsp;
         input.input-small(type="number", id="phoneNumber", name="contact[phone][number]", placeholder="Number", required )
     
-    br
-    button.btn.btn-large.btn-success.span6(type="submit")
-      span Submit
+    .form-actions
+      button.btn.btn-large.btn-success.span3(type="submit")
+        span Submit

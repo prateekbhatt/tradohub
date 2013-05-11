@@ -1,8 +1,8 @@
-extends ../index
+extends ../layout
 block partial
+  .row
+    .span2.well
+      include admin_nav
 
-  .span2.well
-    include admin_nav
-
-  .span9.well
-    block admin
+    .span9.well
+      block admin

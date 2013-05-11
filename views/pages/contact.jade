@@ -1,0 +1,29 @@
+extends index
+block page
+  .lead Contact Us
+  hr
+  form.form-horizontal.span8(method="POST", action="/contact")
+    .control-group
+      label.control-label(for="email") Tradohub Email
+      .controls
+        a(href="mailto:info@tradohub.com?Subject=Query") info@tradohub.com
+    .control-group
+      label.control-label(for="email") Your Email *
+      .controls
+        input.input-block-level(type="text", id="email", name="email", placeholder="Email Address", required)
+    
+    .control-group
+      label.control-label(for="subject") Issue Type *
+      .controls
+        select.input-block-level(name="subject")
+          option Select Type
+          for m in ['Product related query', 'Payment related query', 'Order related query', 'Supplier related query', 'Other query']
+            option(value="#{m}") #{m}
+        
+    .control-group
+      label.control-label(for="message") Message *
+      .controls
+        textarea.input-block-level(type="text", id="message", rows="5", name="message", placeholder="Write your message here...")
+
+    .form-actions
+      input.btn.btn-large.btn-primary(type="submit", value="Send Message")

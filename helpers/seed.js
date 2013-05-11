@@ -1,17 +1,41 @@
 'use strict';
 
 var Product = require('../models/Product')
+  , Category = require('../models/Category')
   , User = require('../models/User')
   , Txn = require('../models/Txn')
   ;
+
+// Seed category
+
+var category = [
+    { name: 'Aluminum' }
+  , { name: 'Copper' }
+];
+
+function seedCat (category) {
+  Category.create(category, function (err, saved) {
+    if (err) {
+      if (err.code === 11000) {
+        return console.log('category ', category.name, ' already exists.');
+      }
+      return console.log(err);
+    }
+    if (saved) {
+      console.log('category ', saved.name, ' is saved.');
+    } else {
+      console.log('category ', category.name, ' is not saved');
+    }
+  });
+}
+
 // Seed Products
 
 var products = [
-    { name: 'Long Product Steel' }
-  , { name: 'Flat Product Steel' }
-  , { name: 'Chemical A' }
-  , { name: 'Chemical B' }
-  , { name: 'Chemical C' }
+    { name: 'Aluminum Scrap' }
+  , { name: 'Aluminum Sheet' }
+  , { name: 'Copper Scrap' }
+  , { name: 'Copper Cathode' }
 ];
 
 function seedPro (product) {
@@ -23,16 +47,20 @@ function seedPro (product) {
       return console.log(err);
     }
     if (saved) {
-      console.log('PRODUCT ' + isSaved.name + ' is saved');
+      console.log('PRODUCT ' + saved.name + ' is saved');
     } else {
       console.log('PRODUCT is NOT saved NOW');
     }
   });    
 }
 
+for (var i in category) {
+  seedCat(category[i])
+};
+
 for (var i in products) {
   seedPro(products[i])
-}
+};
 
 // Seed Txn
 

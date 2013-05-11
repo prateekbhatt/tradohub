@@ -1,23 +1,26 @@
 extends ../layout
 block partial
-  .span6.offset3
-    form.form-signin(name="loginForm", method="POST", action="/login")
+  .row.form-signin
+    .span5
+      legend Welcome Back
+      include _infoBar
+    .span5.well.pull-right(style="background-color:#F0F0F0;")
+      form(name="loginForm", method="POST", action="/login")
 
-      //- h3.form-signin-heading Log In
+        h4 Log In
+        p Email:
+        input.input-block-level(type="email", name="email", placeholder="email", required, autofocus)
+        br
 
-      p Email:
-      input.input-block-level(type="email", name="email", placeholder="email", required, autofocus)
-      br
+        p Password: &nbsp;&nbsp;
+          a(href="/forgot-password") 
+            small Forgot Password?
+        input.input-block-level(type="password", name="password", placeholder="password", required)
 
-      p Password: &nbsp;&nbsp;
-        a(href="/forgot-password") 
-          small Forgot Password?
-      input.input-block-level(type="password", name="password", placeholder="password", required)
+        br
+        button.btn.btn-block.btn-large.btn-primary(type="submit")
+          span Log In
+        hr
 
-      br
-      button.btn.btn-block.btn-large.btn-primary(type="submit")
-        span Log In
-      hr
-
-      p 
-        a(href="/register") Don't have an account? Register
+        p 
+          a(href="/register") Don't have an account? Register

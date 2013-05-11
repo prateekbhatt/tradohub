@@ -5,48 +5,50 @@ block script
   script(src="/js/lib/bootstrap-fileupload.min.js")
 
 block partial
+  .row.form-signin
+    .span5
+      legend Create your Tradohub account
+      include _infoBar
 
-  .span6.offset3
-    form.form-signin(name="registerForm", method="POST", action="/register", enctype="multipart/form-data")
-
-      .lead Create a new account
-      
-      //- p Name:
-      input.input-medium(type="text", name="name[first]", placeholder="First Name", autofocus)
-      &nbsp;&nbsp;&nbsp;
-      input.input-medium(type="text", name="name[last]", placeholder="Last Name")
+    .span5.well.pull-right(style="background-color:#F0F0F0;")
+      h4 Create account
       br
+      form(name="registerForm", method="POST", action="/register", enctype="multipart/form-data")
 
-      //- p Email:
-      input.input-block-level(type="email", name="email", placeholder="Email Address")
-      br
+        input.input-medium(type="text", name="name[first]", placeholder="First Name", autofocus)
+        input.input-medium.pull-right(type="text", name="name[last]", placeholder="Last Name")
+        br
 
-      //- p Password:
-      input.input-block-level(type="password", name="password", placeholder="Password")
-      br
+        input.input-block-level(type="email", name="email", placeholder="Email Address")
+        br
 
-      //- p Company Name:
-      input.input-block-level(type="text", name="company[name]", placeholder="Company Name")
-      br
+        input.input-block-level(type="password", name="password", placeholder="Password")
+        br
 
-      //- p Country
-      select.input-block-level(name="company[country]", required)
-        option(value="") Select Country
-        each i in countryList
-          option(value=i.cca3) #{i.name}
+        input.input-block-level(type="text", name="company[name]", placeholder="Company Name")
+        br
 
-      .fileupload.fileupload-new(data-provides="fileupload")
-        P Import / Export Document:
-        span.btn.btn-file.btn-block
-          span.fileupload-new Select file
-          span.fileupload-exists Change
-          input(type="file", name="imexFile")
-        &nbsp;
-        span.fileupload-preview
-        &nbsp;
-        a.close.fileupload-exists(href="#", data-dismiss="fileupload", style="float: none")×
+        select.input-block-level(name="company[country]", required)
+          option(value="IND") India
 
-      button.btn.btn-block.btn-large.btn-primary(type="submit")
-        span Create Account
-      br
-      small By signing up you agree to our Terms and Privacy Policy
+        br
+        .fileupload.fileupload-new(data-provides="fileupload")
+          P Upload CIN / VAT / Import-Export Document:
+            br
+            small (for business verification)
+          span.btn.btn-file.btn-block
+            span.fileupload-new Select file
+            span.fileupload-exists Change
+            input(type="file", name="imexFile")
+          &nbsp;
+          span.fileupload-preview
+          &nbsp;
+          a.close.fileupload-exists(href="#", data-dismiss="fileupload", style="float: none")×
+
+        button.btn.btn-block.btn-large.btn-primary(type="submit")
+          span Create Account
+        br
+        small By creating an account you agree to our 
+          a(href="/about/terms") Terms 
+          span and 
+          a(href="/about/privacy") Privacy Policy

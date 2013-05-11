@@ -7,12 +7,8 @@
 
 function gotoLogin (req, res) {
   req.session.redirectTo = req.path;
-  res.format({
-    html: function(){
-      req.flash('error', 'Login to view page.')
-      res.redirect('/login'); },
-    json: function(){ res.json(401, { error: { message: 'Please login to proceed.'}}); }
-  });
+  req.flash('error', 'Please login to continue.');
+  res.redirect('/login');
 };
 
 exports.loggedIn = function loggedIn (req, res, next) {

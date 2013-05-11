@@ -1,12 +1,15 @@
 extends index
 block admin
-
-  form(name="editProductForm", method="POST", action="/admin/products/#{product._id}")
+  form(method="POST", action="/admin/products/#{product._id}")
     legend Edit Product
     input(type="hidden", name="_method", value="PUT")
     input(type="text", name="name", placeholder="product name", value="#{product.name}", required)
     br
-
+    select.select2.input-medium#single(name="category")
+      option Select Category
+      for c in category
+        option(value="#{c._id}") #{c.name}
+    br
     textarea(type="text", rows="10", name="description", placeholder="description") #{product.description}
     br
 

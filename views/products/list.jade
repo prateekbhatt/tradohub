@@ -1,7 +1,9 @@
 extends index
 block products
-  .lead Products
-  ul
-    for product in products
-      li 
-        a(href="/products/#{product.url}") #{product.name}
+  legend Products
+  for c in category
+    h5= c.name
+    ul.unstyled
+      for p in c.products
+        li 
+          a(href="/products/#{p.url}") #{p.name}

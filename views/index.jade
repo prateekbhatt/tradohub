@@ -1,31 +1,57 @@
 extends layout
-block partial
-
+block indexPage
   .jumbotron
-    h2 Money saved is money earned.
-    br
-    br
-    p.lead 
-      span Amdavad's e-procurement platform helps streamline your business process
+    .container
       br
-      span and maximize savings.
+      br
+      h2 Enabling small business to succeed in India
+      br
+      p.lead 
+        span Get quotes and buy all your material supplies online,
+        br 
+        span at 
+        em(style="border-bottom: 2px solid white;") large volume rates.
+      
+
+      br
+      a.btn.btn-large.btn-primary(href="/register") Get Started Today
     br
-    a.btn.btn-large.btn-primary(href="/register") Get started now
+    br
   br
-  hr
-  .row
-    .span4
-      p.lead.text-center  Request For Quotes
-      p.text-center Get quotes within a day.
-      //- p
-      //-   a.btn(href="#") View details &raquo;
+  .container
+    .row.well
+      .span4
+        h3 Products
+        #points
+          ul.unstyled
+            for c in category
+              for p in c.products
+                li #{p.name}
+            a(href="/products") All products &rarr;
 
-    .span4
-      p.lead.text-center  Purchase Orders
-      p.text-center Create and send purchase orders with a single click.
-
-      //- p
-      //-   a.btn(href="#") View details &raquo;
-    .span4
-      p.lead.text-center  Best Prices
-      p.text-center Get the latest price updates by industry and product, right in your inbox.
+      .span4
+        .lead Why Buy With Us ?
+        #points
+          p Save money and raise your profit margins
+          p Multiply your buying power and compete with big businesses
+          p Flexible Payment Terms
+          p Loyalty programs
+          a Learn More &rarr;
+    
+    
+      
+      .span5
+        .lead How It Works ?
+        #points
+          ol
+            li
+              strong Request a quote for the product.
+              ul
+                li We aggregate demand from other businesses like you.
+                li We negotiate price for aggregated demand from supplier.
+                li We decide the payment terms.
+                li We send you the quote and purchase order form.
+            li
+              strong Print, sign, scan and upload the purchase order.
+            li
+              strong We send you the product, before or after the payment based on the terms.

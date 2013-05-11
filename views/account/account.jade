@@ -6,41 +6,42 @@ block script
   script(src="/js/app2.js")
 
 block partial
-  .span2.well
-    include ../_sidenav
+  .row
+    .span2.well
+      include ../_sidenav
 
-  .span9.well
-    form.form-horizontal(name="accountForm", method="POST", action="/account")
-      .lead
-        strong Your Account
+    .span9.well
+      form.form-horizontal(name="accountForm", method="POST", action="/account")
+        .lead
+          strong Your Account
 
-      .lead Password
-      p
-        a.btn(href='/account/password') Change Password
+        .lead Password
+        p
+          a.btn(href='/account/password') Change Password
 
-      .lead Company
+        .lead Company
 
-      include ../_companyForm
-      
-      .lead Contact
-      
-      .control-group
-        label.control-label(for="userName") Your Name
-        .controls
-          input.span2(type="text", id="userName", name="user[name][first]", value="#{user.name.first}", placeholder="First Name", required )
-          input.span2(type="text", name="user[name][last]", value="#{user.name.last}", placeholder="Last Name", required )
-      
-      .control-group
-        label.control-label(for="phoneNumber") Phone Number
-        .controls
-          input.input-mini(type="number", name="user[phone][country]", value="#{user.phone.country || ''}", placeholder="Country")
-          &nbsp; - &nbsp;
-          input.input-mini(type="number", name="user[phone][area]", value="#{user.phone.area || ''}", placeholder="Area")
-          &nbsp; - &nbsp;
-          input.input-small(type="number", id="phoneNumber", name="user[phone][number]", value="#{user.phone.number || ''}", placeholder="Number")
-      
-      br
-      button.btn.btn-primary(type="submit")
-        span Update account
-      &nbsp;&nbsp;
-      a.btn(href="/account") Cancel changes
+        include ../_companyForm
+        
+        .lead Contact
+        
+        .control-group
+          label.control-label(for="userName") Your Name
+          .controls
+            input.span2(type="text", id="userName", name="user[name][first]", value="#{user.name.first}", placeholder="First Name", required )
+            input.span2(type="text", name="user[name][last]", value="#{user.name.last}", placeholder="Last Name", required )
+        
+        .control-group
+          label.control-label(for="phoneNumber") Phone Number
+          .controls
+            input.input-mini(type="number", name="user[phone][country]", value="#{user.phone.country || ''}", placeholder="Country")
+            &nbsp; - &nbsp;
+            input.input-mini(type="number", name="user[phone][area]", value="#{user.phone.area || ''}", placeholder="Area")
+            &nbsp; - &nbsp;
+            input.input-small(type="number", id="phoneNumber", name="user[phone][number]", value="#{user.phone.number || ''}", placeholder="Number")
+        
+        br
+        button.btn.btn-primary(type="submit")
+          span Update account
+        &nbsp;&nbsp;
+        a.btn(href="/account") Cancel changes

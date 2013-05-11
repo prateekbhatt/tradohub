@@ -5,7 +5,9 @@ body {
 /*  padding-bottom: 20px;
   padding-left: 10px;
   padding-right: 10px;*/
+  background-image: url('/img/p6.png');
   background-color: #f5f5f5;
+  border-top: 1px solid #049cdb;
 }
 .well {
   background-color: #fefefe;
@@ -32,14 +34,19 @@ body {
 #footer {
   height: 60px;
 }
-#footer {
+/*#footer {
   background-color: #f5f5f5;
-}
+}*/
 
 /* Main marketing message and sign up button */
 .jumbotron {
-  margin: 50px 0;
+  /*margin: 50px 0;*/
   text-align: center;
+  color: #fff;
+  background-image: url('/img/backg.jpg');
+  background-color: #000;
+  background-size: 100% 100%;
+  text-shadow: 2px 2px rgb(10, 10, 10);
 }
 .jumbotron h1 {
   font-size: 100px;
@@ -54,6 +61,19 @@ body {
   padding: 14px 24px;
 }
 
+#points {
+  font-size: 17px;
+  font-weight: 200;
+  line-height: 25px;
+}
+
+#points ul {
+  margin: 0 0 10px 10px;
+}
+
+#points ol li {
+  line-height: 25px;
+}
 /* login/register template css */
 .form-signin {
   /*max-width: 300px;*/
@@ -77,6 +97,7 @@ body {
   margin-bottom: 15px;
   padding: 7px 9px;
 }
+
 /* dashboard */
 .side-nav {
   padding: 10px 10px 10px;

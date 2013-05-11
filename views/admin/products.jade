@@ -1,37 +1,62 @@
 extends index
+
+block script
+  link(rel='stylesheet', href='/js/lib/bootstrap-fileupload.min.css')
+  script(src="/js/lib/bootstrap-fileupload.min.js")
+
 block admin
 
-  legend Products List
+  legend Manage Products
   table.table.table-condensed
     thead
       tr
         th Name
         th Description
+        th Category
         th Edit
         th Delete
     tbody
-      for product in products
-        tr
-          td 
-            a(href="/products/#{product.url}") #{product.name}
-          td.span5 #{product.description}
-          td
-            a.btn.btn-primary(href="/admin/products/#{product.url}") Edit
-          td
-            form(name="deleteProduct", method="POST", action="/admin/products/#{product._id}")
-              input(type="hidden", name="_method", value="DELETE")
-              input.btn.btn-danger(type="submit", value="Delete")
+      for c in category
+        for p in c.products
+          tr
+            td 
+              a(href="/products/#{p.url}")= p.name
+            td.span4= p.description
+            td
+              if (p.category)
+                a(href="/admin/category")= c.name
+            td
+              a.btn.btn-primary(href="/admin/products/#{p.url}") Edit
+            td
+              form(name="deleteProduct", method="POST", action="/admin/products/#{p._id}")
+                input(type="hidden", name="_method", value="DELETE")
+                input.btn.btn-danger(type="submit", value="Delete")
   hr
 
-  form(name="addProductForm", method="POST", action="/admin/products")
+  form(method="POST", action="/admin/products", enctype="multipart/form-data")
     fieldset
       legend Add a new product
 
       input(type="text", name="name", placeholder="product name", required)
       br
-
+      select.select2.input-medium#single
+        option Select Category
+        for c in category
+          option(value="#{c._id}") #{c.name}
+      br
       textarea(type="text", name="description", placeholder="description")
       
+      br
+      .fileupload.fileupload-new(data-provides="fileupload")
+        P Upload Product Image:
+        span.btn.btn-file
+          span.fileupload-new Select file
+          span.fileupload-exists Change
+          input(type="file", name="image")
+        &nbsp;
+        span.fileupload-preview
+        &nbsp;
+        a.close.fileupload-exists(href="#", data-dismiss="fileupload", style="float: none")×
       br
 
       button.btn.btn-large.btn-primary(type="submit")

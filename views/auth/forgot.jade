@@ -1,17 +1,27 @@
 extends ../layout
 block partial
-  .span6.offset3
-    form.form-signin(name="forgotPasswordForm", method="POST", action="/forgot-password")
+  .span10.offset1
+    .row.form-signin
+      .span4
+        h4 Instructions
+        ol
+          li Submit your email and we will send you the reset password email.
+          br
+          li Click on the Reset Password link in the email.
+          br
+          li Enter your new password.
+      .span5
+        form(name="forgotPasswordForm", method="POST", action="/forgot-password")
 
-      //- h3.form-signin-heading Forgot My Password
+          //- h3.form-signin-heading Forgot My Password
 
-      p Email:
-      input.input-block-level(type="email", name="email", placeholder="email", required, autofocus)
-      br
-      button.btn.btn-block.btn-large.btn-primary(type="submit")
-        span Send password reset link
+          p Email:
+          input.input-block-level(type="email", name="email", placeholder="email", required, autofocus)
+          br
+          button.btn.btn-block.btn-large.btn-primary(type="submit")
+            span Send Me Reset Password Email
 
-      hr
+          hr
 
-      p &larr; &nbsp;
-        a(href="/login") Go back to Login
+          p &larr; &nbsp;
+            a(href="/login") Go back to Login

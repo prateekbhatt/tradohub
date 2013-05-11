@@ -1,13 +1,17 @@
 'use strict';
 
 exports.index = function (req, res) {
-  res.format({
-    html: function(){
-      res.render ('index',
-        { success: req.flash('success'), error: req.flash('error') });
-    },
-    json: function(){
-      res.json(200, { message: 'Welcome to Tradohub!'});
-    }
-  });
+  res.render('index',
+    { success: req.flash('success'), error: req.flash('error') });
+};
+
+exports.about = function (req, res) {
+  res.render('pages/about',
+    { success: req.flash('success'), error: req.flash('error') });
+};
+
+exports.pages = function (req, res) {
+  var page = req.params.page;
+  res.render('pages/'+page,
+    { success: req.flash('success'), error: req.flash('error') });
 };

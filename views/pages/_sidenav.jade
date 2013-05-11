@@ -1,0 +1,19 @@
+ul.nav.nav-list(style="padding:0;")
+  li.nav-header Company
+    a(href="/about") About
+    a(href="/about/contact") Contact
+    a(href="/about/terms") Terms
+    a(href="/about/privacy") Privacy
+
+  li.nav-header Catalog
+    a(href="/products")  Products
+  if user
+    li.nav-header  Orders
+      a(href="/quote") Request For Quote
+      a(href="/orders") Order Status    
+    li.nav-header  Settings
+      a(href="/account") Account
+  
+  li.divider
+  li.nav-header
+    a(href="/faq") Frequently Asked Questions

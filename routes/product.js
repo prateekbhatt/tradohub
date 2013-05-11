@@ -1,41 +1,38 @@
 'use strict';
 
-var Product = require('../models/Product');
+var Product = require('../models/Product')
+  , Category = require('../models/Category')
+  ;
 
 function get (req, res, next) {
   Product.findOne({ url: req.params.url }, function (err, product) {
     if (err) return next(err);
     console.log(product)
     if (product) {
-      return res.format({
-        html: function(){
-          res.locals.product = product;
-          res.render('products/get');
-        },
-        json: function(){ res.json(200, product); }
-      });
+      res.locals.product = product;
+      return res.render('products/get',
+        { success: req.flash('success'), error: req.flash('error') });
     }
-    res.format({
-      html: function(){ res.render('404'); },
-      json: function(){ res.json(404, { error: { message: 'Product Not Found' }}); }
-    });
+    res.render('404');
   });
 };
 
 function list (req, res, next) {
-  Product.find({}, function (err, products) {
+  Category.find({}).populate('products').sort({'name': 1}).exec(function (err, category) {
     if (err) return next(err);
-    res.format({
-      html: function(){
-        res.locals.products = products;
-        res.render('products/list');
-      },
-      json: function(){ res.json(200, products); }
-    });
+    res.locals.category = category;
+    res.render('products/list',
+      { success: req.flash('success'), error: req.flash('error') });
   });
+};
+
+function offers (req, res, next) {
+  res.render('products/offers',
+    { success: req.flash('success'), error: req.flash('error') });
 };
 
 module.exports = {
     get: get
   , list: list
+  , offers: offers
 };
