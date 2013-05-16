@@ -8,13 +8,14 @@ block partial
       form(name="loginForm", method="POST", action="/login")
 
         h4 Log In
-        p Email:
-        input.input-block-level(type="email", name="email", placeholder="email", required, autofocus)
+        label(for="email") Email
+        input.input-block-level#email(type="email", name="email", placeholder="Email Address", required, autofocus)
         br
 
-        p Password: &nbsp;&nbsp;
+        p
+          strong Password &nbsp;&nbsp;
           a(href="/forgot-password") 
-            small Forgot Password?
+            span Forgot Password?
         input.input-block-level(type="password", name="password", placeholder="password", required)
 
         br

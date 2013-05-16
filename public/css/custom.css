@@ -74,6 +74,10 @@ body {
 #points ol li {
   line-height: 25px;
 }
+
+#points ul li {
+  font-size: 15px;
+}
 /* login/register template css */
 .form-signin {
   /*max-width: 300px;*/
@@ -97,7 +101,11 @@ body {
   margin-bottom: 15px;
   padding: 7px 9px;
 }
-
+.form-signin label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
 /* dashboard */
 .side-nav {
   padding: 10px 10px 10px;
@@ -107,4 +115,16 @@ body {
   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
           box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+ul.nav li.dropdown:hover > ul.dropdown-menu{
+  display: block;
+  margin: 0;
+}
+
+.pointSpan {
+  width: 170px;
+  float: left;
+  min-height: 1px;
+  margin-left: 10px;
 }

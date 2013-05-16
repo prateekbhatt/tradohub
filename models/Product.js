@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
+  , timestamps = require('mongoose-timestamp')
   ;
 
 var ProductSchema = mongoose.Schema({
@@ -12,17 +13,13 @@ var ProductSchema = mongoose.Schema({
   , image: { type: Schema.Types.ObjectId, ref: 'File' }
 });
 
+// adds createdAt and updatedAt timestamps to the document
+ProductSchema.plugin(timestamps);
+
 ProductSchema.pre('save', function(next) {
   this.url = this.name.toLowerCase().split(' ').join('-');
   return next();
 });
-
-ProductSchema.methods.updateImage = function updateImage (fid, fn) {
-  this.image = fid;
-  this.save(function (err, updated) {
-    fn(err, updated);
-  });
-};
 
 var Product = mongoose.model('Product', ProductSchema);
 

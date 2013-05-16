@@ -1,10 +1,12 @@
 'use strict';
 
 var mongoose = require('mongoose')
+  , timestamps = require('mongoose-timestamp')
   , knox = require('knox')
   , fs = require('fs')
   , aws = require('../config').aws
   , util = require('util')
+  , fileValidate = require('../helpers/fileValidate')
   ;
 
 var client = knox.createClient({
@@ -16,8 +18,9 @@ var client = knox.createClient({
 var FileSchema = mongoose.Schema({
     name: { type: String, required: true, unique: true }
   , type: { type: String, required: true }
-  , created: { type: Date, default: Date.now }
 });
+
+FileSchema.plugin(timestamps);
 
 function generateName (ext) {
   var name = Date.now().toString()
@@ -31,36 +34,131 @@ function generateName (ext) {
   return name;
 };
 
-FileSchema.statics.create = function create (file, type, ext, fn) {
-  fs.readFile(file, function (err, data) {
+function getPath (name, type) {
+  var path = type + '/' + name;
+  return path;
+};
+
+FileSchema.statics.create = function create (file, type, permission, fn) {
+
+  // check if file is valid, if it is valid return the extension of the file
+  var ext = fileValidate(file.name)
+    , path = file.path
+    , headers = (permission == 'public') ? { 'x-amz-acl': 'public-read' } : null
+    ;
+
+  if (ext) {
+
     var name = generateName(ext)
-      , newPath = type + '/' + name
+      , newPath = getPath(name, type)
       ;
-    var newFile = new File({ name: name, type: type });
-    newFile.save(function (err, saved) {
-      client.putFile(file, newPath, function (err, res) {
-        if (res.statusCode == 200) {
-          console.log('file', file, 'uploaded to s3');
-          fs.unlink(file, function (err) {
-            if (err) {
-              console.log('cannot delete tmp file ', file);
-              console.log(err);
-            } else {
-              console.log('successfully deleted tmp file', file);
-            }
-          });
+
+    // upload file to s3
+    client.putFile(path, newPath, headers, function (err, res) {
+      if (res.statusCode == 200) {
+        
+        console.log('file', path, 'uploaded to s3');
+        
+        // delete tmp file
+        fs.unlink(path, function (err) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log('successfully deleted tmp file');
+          }
+        });
+
+        // add file to files collection in db
+        var newFile = new File({ name: name, type: type });
+        newFile.save(function (err, saved) {
           return fn(err, saved);
-        } else {
-          console.log('failed to upload file', file, 'to s3');
-          return fn(new Error('Failed to upload file.'));
-        }
-      });
+        });
+
+      } else {
+        console.log('failed to upload file', path, 'to s3');
+        return fn(new Error('Failed to upload file.'));
+      }
+
     });
+    
+  } else {
+    return fn(new Error('Not a valid file.'));
+  }
+};
+
+FileSchema.statics.remove = function remove (id, fn) {
+  File.findById(id, function (err, f) {
+    var path = getPath(f.name, f.type);
+    client.deleteFile(path, function (err, res) {
+      console.log('inside delete file')
+      console.log(res)
+      if (!err) {
+        File.findByIdAndRemove(f._id, function (err, deleted) {
+          return fn(err, deleted);
+        });
+      }
+    });    
   });
 };
 
-FileSchema.statics.getUrl = function getUrl (filename, minutes) {
-  var name = filename || '/imex/13666430688938A2PA.jpg'
+FileSchema.statics.update = function update (id, file, permission, fn) {
+  File.findById(id, function (err, f) {
+    var valid = fileValidate(file.name)
+      , awsPath = getPath(f.name, f.type)
+      , headers = (permission == 'public') ? { 'x-amz-acl': 'public-read' } : null
+      ;
+
+    // TODO: allow updating to file with a different extension
+    if (valid) {
+      // delete old file
+      client.deleteFile(awsPath, function (err, res) {
+        console.log('inside update file')
+        console.log(res.statusCode)
+        if (!err) {
+          var path = file.path;
+          // upload new file
+          client.putFile(path, awsPath, headers, function (err, res) {
+            if (res.statusCode == 200) {
+            
+              console.log('file', path, 'uploaded to s3');
+              
+              // delete tmp file
+              fs.unlink(path, function (err) {
+                if (err) {
+                  console.log(err);
+                } else {
+                  console.log('successfully deleted tmp file');
+                }
+              });
+
+              return fn(null, true);
+
+            } else {
+              console.log('failed to upload file', path, 'to s3');
+              return fn(new Error('Failed to upload new file.'));
+            }
+          })        
+        }
+      });  
+    } else {
+      return fn(new Error('Provide a valid file.'));
+    }
+
+  });
+};
+
+FileSchema.methods.getPath = function () {
+  var path = '/' + this.type + '/' + this.name;
+  return path
+};
+
+FileSchema.methods.getFullPath = function () {
+  var path = 'https://s3.amazonaws.com/' + aws.bucket + this.getPath();
+  return path;
+};
+
+FileSchema.methods.getUrl = function (minutes) {
+  var path = this.getPath() // || '/imex/13666430688938A2PA.jpg'
     , expiration = new Date()
     , validity = minutes || 15
     ;

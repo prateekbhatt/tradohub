@@ -1,11 +1,27 @@
 extends index
 block products
   .row
-    .span6
+    .span5
       h3.lead #{product.name}
-    .span3
-      a.btn.btn-large.btn-success(href="/quote") Request For Quote
+    .span4
+      a.btn.btn-large.btn-success.span3(href="/quote") Request For Quote
   .row
-    .span9
+    hr
+    .span5      
+      p(style="text-align: justify;") #{product.description}
       hr
-      p #{product.description}
+      - for c in category
+        - if ((c._id).toString() == (product.category._id).toString()) {
+            //- if (c.products.length > 1)
+            h5 All products in #{c.name}:
+            ul.unstyled
+              for p in c.products
+                li: a(href="/products/#{p.url}") #{p.name}
+        -   break;
+        - }
+      hr
+      include ../_newProductRequest
+
+    .span4
+      if (imageUrl)
+        img(src="#{imageUrl}", alt="#{product.name}")

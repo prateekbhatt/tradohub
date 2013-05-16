@@ -19,7 +19,7 @@ var dbPath = 'mongodb://localhost/amdavad'
 
 // Seed Application DB
 
-var seed = require('./helpers/seed');
+// var seed = require('./helpers/seed');
 
 // Import route middleware
 
@@ -77,7 +77,7 @@ app.configure(function(){
   });  
   // middleware to pass products and category to all views 
   app.use(function categories (req, res, next) {
-    models.Category.find({}).populate('products').sort({ 'name': 1 }).exec(function (err, c) {
+    models.Category.find({}).populate('products').exec(function (err, c) {
       res.locals.category = c;
       next();
     });
@@ -185,6 +185,7 @@ app.get('/admin/products', admin.product.list);
 app.get('/admin/products/:url', admin.product.get);
 app.post('/admin/products', admin.product.create);
 app.put('/admin/products/:id', admin.product.update);
+app.put('/admin/products/:id/image', admin.product.updateImage);
 app.delete('/admin/products/:id', admin.product.remove);
 
 app.get('/admin/orders', admin.txn.list);

@@ -4,13 +4,13 @@ block indexPage
     .container
       br
       br
-      h2 Enabling small business to succeed in India
+      h2 Empowering small businesses to succeed in India
       br
       p.lead 
-        span Get quotes and buy all your material supplies online,
+        span Join together with other small businesses, and procure your raw materials
         br 
-        span at 
-        em(style="border-bottom: 2px solid white;") large volume rates.
+        span 
+        em(style="border-bottom: 2px solid white;") at low prices that only large companies get.
       
 
       br
@@ -20,38 +20,76 @@ block indexPage
   br
   .container
     .row.well
-      .span4
-        h3 Products
-        #points
-          ul.unstyled
-            for c in category
-              for p in c.products
-                li #{p.name}
-            a(href="/products") All products &rarr;
+      .row
+        .span12
+          cats = ['Aluminum', 'Copper', 'Engineering Polymers', 'Commodity Polymers', 'Nickel']
+          for c in category
+            for cat in cats
+              if c.name == cat
+                .pointSpan
+                  #points
+                    ul.unstyled
+                      p
+                        strong= c.name
+                      for p in c.products
+                        li
+                          a(href="/products/#{p.url}") #{p.name}
+      .row
+        .span12.text-center
+          a(href="/products")
+            hr
+            h4 See All Products &rarr;
+          include _newProductRequest          
 
-      .span4
-        .lead Why Buy With Us ?
-        #points
-          p Save money and raise your profit margins
-          p Multiply your buying power and compete with big businesses
-          p Flexible Payment Terms
-          p Loyalty programs
-          a Learn More &rarr;
+    .row.well
+      .lead.text-center Why buy with us ?
+      .row
+        .span12
+          .pointSpan
+            h5 Increase profit margins
+            small Get competitive prices for all products.
+          .pointSpan
+            h5 Compete with big companies
+            small We group orders from small businesses like you and negotiate 
+              | better prices from manufacturers / producers.
+          .pointSpan
+            h5 Direct from manufacturer / producer
+            small We supply your raw materials directly from the the manufacturer / producer.
+          .pointSpan
+            h5 Online procurement platform
+            small Now you can manage all your raw material procurement easily on our platform.
+          .pointSpan
+            h5 Loyalty programs
+            small We have exciting loyalty programs, to empower you grow even faster.
+      .row
+        .span12.text-center
+          a(href="#")
+            hr
+            h4 Learn More &rarr;
     
     
-      
-      .span5
-        .lead How It Works ?
-        #points
-          ol
-            li
-              strong Request a quote for the product.
-              ul
-                li We aggregate demand from other businesses like you.
-                li We negotiate price for aggregated demand from supplier.
-                li We decide the payment terms.
-                li We send you the quote and purchase order form.
-            li
-              strong Print, sign, scan and upload the purchase order.
-            li
-              strong We send you the product, before or after the payment based on the terms.
+    .row.well
+      .row
+        .lead.text-center How it works ?
+        .span12
+          .pointSpan
+            h5 You Request Quote
+            small Get competitive prices for all products.
+          .pointSpan
+            h5 We aggregate demand
+            small We group orders from small businesses like you and negotiate 
+              | better prices from manufacturers / producers.
+          .pointSpan
+            h5 We negotiate price with manufacturer
+            small We have exciting loyalty programs, to empower you grow even faster.
+          .pointSpan
+            h5 You make payment
+            small We supply your raw materials directly from the the manufacturer / producer.
+          .pointSpan
+            h5 We deliver the product at your factory / warehouse
+            small Now you can manage all your raw material procurement easily on our platform.
+      .row
+        .span12.text-center
+          a(href='#', onclick="javascript:FreshWidget.show();")
+            hr
+            h4 Got Questions ?

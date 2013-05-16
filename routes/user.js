@@ -1,28 +1,13 @@
 'use strict';
 
 var User = require('../models/User')
-  , File = require('../models/File')
   , UserToken = require('../models/UserToken')
   , errorHelper = require('../helpers/errorHelper')
-  , fileValidate = require('../helpers/fileValidate')
   , countryList = require('../helpers/countryList')
   , sendMail = require('../helpers/mailer').sendMail
   ;
 
 function create (req, res, next) {
-
-  // console.log('inside user create route');
-  // console.log(req.files)
-  // Get the file for business verfication
-  var file = req.files.imexFile
-    , fileType = 'imex'
-    , fileExt = fileValidate(req.files.imexFile.name)
-    ;
-  // Send error message if file has not been uploaded
-  if (!file.size || !fileExt) {
-    req.flash('error', 'Please upload Import / Export Document in pdf/doc/docx/jpg/png formats');
-    return res.redirect('/register');
-  }
 
   var u = req.body
     , c = u.company
@@ -44,7 +29,7 @@ function create (req, res, next) {
       , zip: c.zip
       , imex: c.imex
     }
-    , phone: {
+    , mobile: {
         country: p.country
       , area: p.area
       , number: p.number
@@ -58,7 +43,6 @@ function create (req, res, next) {
     if (err) {
       if (err.name == 'ValidationError') {
         return errorHelper(err, function(errors){
-          console.log(errors)
           req.flash('error', errors.join(' | '))
           return res.redirect('/register')            
         });
@@ -80,17 +64,6 @@ function create (req, res, next) {
         });
       });
 
-      // upload file to aws ses
-      File.create(file.path, fileType, fileExt, function (err, saved) {
-        if (err) console.log(err);
-        if (saved) {
-          console.log(saved);
-          usr.updateImex(saved._id, function (err, updated) {
-            console.log('imex updated!\n\n')
-            console.log(err, updated);
-          });
-        }
-      });
       req.flash('success', 'You have registered successfully. Please verify your email address.');
       return res.redirect('/login');
     }

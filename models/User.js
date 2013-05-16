@@ -15,7 +15,8 @@ var emailValidator = [
   , validate({message: "Email Address is not correct"},'isEmail')
 ];
 
-var statusTypes = ['notVerified', 'verified', 'activated', 'blocked']
+var statusTypes = ['notVerified', 'verified', 'activated', 'blocked'];
+
 // User Schema
 var UserSchema = new Schema({
     email: { type: String, unique: true, lowercase: true, validate: emailValidator }
@@ -33,13 +34,12 @@ var UserSchema = new Schema({
     , state: { type: String }
     , country: { type: String, required: true }
     , zip: { type: String }
-    , imex: { type: Schema.Types.ObjectId, ref: 'File' }
   }
-  , phone: {
-      country: { type: Number }
-    , area: { type: Number }
-    , number: { type: Number }
-  }  
+  , mobile: { type: Number } // mobile number
+  , landline: { // landline
+      a: { type: Number } // area code
+    , n: { type: Number } // number
+  }
 });
 
 // Bcrypt middleware

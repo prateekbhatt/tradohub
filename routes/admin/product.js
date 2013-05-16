@@ -3,14 +3,14 @@
 var Product = require('../../models/Product')
   , Category = require('../../models/Category')
   , File = require('../../models/File')
-  , fileValidate = require('../../helpers/fileValidate')
   ;
 
 
 function get (req, res, next) {
-  Product.findOne({ url: req.params.url }).populate('category').exec(function (err, product) {
+  Product.findOne({ url: req.params.url }).populate('category').populate('image').exec(function (err, product) {
     if (err) return next(err);
     if (product) {
+      res.locals.imageUrl = product.image ? product.image.getFullPath() : null;
       res.locals.product = product;
       return res.render('admin/product');      
     } else {
@@ -21,7 +21,10 @@ function get (req, res, next) {
 
 function list (req, res, next) {
   // passing category using the 'categories' middleware on app.js
-  res.render('admin/products');
+  Product.find({}).populate('category').sort({ 'name': 1 }).exec(function (err, products) {
+    res.locals.products = products;
+    res.render('admin/products');
+  });
 };
 
 function create (req, res, next) {
@@ -31,12 +34,9 @@ function create (req, res, next) {
     , description: req.body.description
   };
 
-  // console.log(req);
-  console.log('\n\n\n', req.files);
-
-  var file = req.files.image
+  var file = req.files ? req.files.image : null
     , fileType = 'products'
-    , fileExt = fileValidate(file.name)
+    , permission = 'public'
     ;
 
   Product.create(product, function (err, savedP) {
@@ -44,18 +44,19 @@ function create (req, res, next) {
     if (savedP) {
 
       // upload image file to aws ses
-      File.create(file.path, fileType, fileExt, function (err, savedF) {
+      File.create(file, fileType, permission, function (err, savedF) {
         if (err) console.log(err);
         if (savedF) {
-          savedP.updateImage(savedF._id, function (err, updated) {
-            console.log('image updated!\n\n')
-            console.log(err, updated);
+          savedP.image = savedF._id;
+          savedP.save(function (err, imageSaved) {
+            console.log('image updated!\n\n');              
           });
         }
       });
 
       Category.findById(savedP.category, function (err, c) {
         if (err) return next(err);
+        if (!c.products || !c.products.length) c.products = [];
         c.products.push(savedP._id);
         c.save(function (err, savedC) {
           res.redirect('/admin/products');
@@ -109,13 +110,46 @@ function update (req, res, next) {
   });
 };
 
-function remove (req, res, next) {
-  Product.findByIdAndRemove(req.params.id, function(err, deleted) {
+function updateImage (req, res, next) {
+  var pid = req.params.id;
+  Product.findById(pid).exec(function (err, p) {
     if (err) return next(err);
-    if (deleted) {
+    if (p) {
+      var file = req.files ? req.files.image : null
+        , fileType = 'products'
+        , permission = 'public'
+        ;
+      // if product has an existing image, update the file
+      if (p.image) {
+        File.update(p.image, file, permission, function (err, f) {
+          if (err) return next(err);
+          return res.redirect('/admin/products/'+p.url);
+        });
+      } else {
+        // if product doesnot have an existing image, create a new file
+        File.create(file, fileType, permission, function (err, f) {
+          if (err) return next(err);
+          return res.redirect('/admin/products/'+p.url);
+        });
+      }
+    } else {
       res.redirect('/admin/products');
     }
-    res.redirect('/admin/products');
+  }
+)};
+
+function remove (req, res, next) {
+  Product.findByIdAndRemove(req.params.id, function(err, p) {
+    if (err) return next(err);
+    if (p) {
+      Category.removeProduct(p.category, p._id, function (err, r) {
+        if (r) {
+          return res.redirect('/admin/products');          
+        }
+      });
+    } else {
+      return res.redirect('/admin/products');      
+    }
   });
 };
 
@@ -124,5 +158,6 @@ module.exports = {
   , list: list
   , create: create
   , update: update
+  , updateImage: updateImage
   , remove: remove
 };

@@ -1,12 +1,17 @@
 extends index
+
+block script
+  link(rel='stylesheet', href='/js/lib/bootstrap-fileupload.min.css')
+  script(src="/js/lib/bootstrap-fileupload.min.js")
+
 block admin
   form(method="POST", action="/admin/products/#{product._id}")
-    legend Edit Product
+    legend Update Product
     input(type="hidden", name="_method", value="PUT")
     input(type="text", name="name", placeholder="product name", value="#{product.name}", required)
     br
     select.select2.input-medium#single(name="category")
-      option Select Category
+      option(value="#{product.category._id}") #{product.category.name}
       for c in category
         option(value="#{c._id}") #{c.name}
     br
@@ -15,3 +20,23 @@ block admin
 
     input.btn.btn-large.btn-primary(type="submit")
       span Submit
+
+  legend Update Image
+
+  if (imageUrl)
+    p Current Image
+    img(src="#{imageUrl}", alt="#{product.name}", height="400", width="400")
+
+  form(method="POST", action="/admin/products/#{product._id}/image", enctype="multipart/form-data")  
+    input(type="hidden", name="_method", value="PUT")
+    .fileupload.fileupload-new(data-provides="fileupload")
+      P Upload New Product Image:
+      span.btn.btn-file
+        span.fileupload-new Select file
+        span.fileupload-exists Change
+        input(type="file", name="image")
+      &nbsp;
+      span.fileupload-preview
+      &nbsp;
+      a.close.fileupload-exists(href="#", data-dismiss="fileupload", style="float: none")×
+    input.btn.btn-primary(type="submit", value="Update Image")

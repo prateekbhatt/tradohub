@@ -16,21 +16,20 @@ block admin
         th Edit
         th Delete
     tbody
-      for c in category
-        for p in c.products
-          tr
-            td 
-              a(href="/products/#{p.url}")= p.name
-            td.span4= p.description
-            td
-              if (p.category)
-                a(href="/admin/category")= c.name
-            td
-              a.btn.btn-primary(href="/admin/products/#{p.url}") Edit
-            td
-              form(name="deleteProduct", method="POST", action="/admin/products/#{p._id}")
-                input(type="hidden", name="_method", value="DELETE")
-                input.btn.btn-danger(type="submit", value="Delete")
+      for p in products
+        tr
+          td 
+            a(href="/products/#{p.url}")= p.name
+          td.span4= p.description
+          td
+            if (p.category)
+              a(href="/admin/category")= p.category.name
+          td
+            a.btn.btn-primary(href="/admin/products/#{p.url}") Edit
+          td
+            form(name="deleteProduct", method="POST", action="/admin/products/#{p._id}")
+              input(type="hidden", name="_method", value="DELETE")
+              input.btn.btn-danger(type="submit", value="Delete")
   hr
 
   form(method="POST", action="/admin/products", enctype="multipart/form-data")
@@ -39,7 +38,7 @@ block admin
 
       input(type="text", name="name", placeholder="product name", required)
       br
-      select.select2.input-medium#single
+      select.select2.input-medium#single(name="category")
         option Select Category
         for c in category
           option(value="#{c._id}") #{c.name}

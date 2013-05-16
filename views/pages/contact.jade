@@ -2,6 +2,7 @@ extends index
 block page
   .lead Contact Us
   hr
+  .btn(onclick="javascript:FreshWidget.show();") Contact Us
   form.form-horizontal.span8(method="POST", action="/contact")
     .control-group
       label.control-label(for="email") Tradohub Email

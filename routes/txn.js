@@ -16,6 +16,7 @@ var Product = require('../models/Product')
 function quotePage (req, res, next) {
   Product.find({}, function (err, products) {
     if (err) return next(err);
+    res.locals.products = products;
     res.locals.paymentTerms = paymentTerms;
     res.locals.shippingTerms = shippingTerms;
     res.locals.originCountries = originCountries;
