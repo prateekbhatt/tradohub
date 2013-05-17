@@ -1,50 +1,36 @@
 .navbar.navbar-static-top
   .navbar-inner
     .container
-      .row
-        .span12
-          a(href='/').brand #{title}
-          ul.nav.pull-left
-            //- li
-            //-   a(href='/offers') Buy Offers
-            li
-              a(href='/quote') Quote
-            //- li
-            //-   a(href='#', onclick="javascript:FreshWidget.show();") Contact
-            li.dropdown
-              a.dropdown-toggle(data-toggle="dropdown", href="/products", onclick="location = '/products'") Products
-                b.caret
-              ul.dropdown-menu
-                for c in category
-                  li.dropdown-submenu
-                    a(href="#")= c.name
-                    ul.dropdown-menu
-                      for p in c.products
-                        li
-                          a(href="/products/#{p.url}")= p.name
-                li.divider
-                li
-                  a(href="/products") All Products
-
-          form.navbar-search
-            .input-append
-              select.select2.input-large#single-append(onchange="location = this.options[this.selectedIndex].value;")
-                option Search Products
-                for c in category
+      a.brand(href='/')
+        em
+          strong TRADOHUB
+      ul.nav.pull-left
+        li: a(href='/quote') Quote
+        li.dropdown
+          a.dropdown-toggle(data-toggle="dropdown", href="/products", onclick="location = '/products'") Products
+            b.caret
+          ul.dropdown-menu
+            for c in category
+              li.dropdown-submenu
+                a(href="#")= c.name
+                ul.dropdown-menu
                   for p in c.products
-                    option(value="/products/#{p.url}") #{p.name}
-              button.btn(type="button", data-select2-open="single-append")
-                i.icon-search
+                    li: a(href="/products/#{p.url}")= p.name
+            li.divider
+            li: a(href="/products") All Products
 
-          if user
-            ul.nav.pull-right
-              li
-                a(href='/quote') Welcome, #{user.name.first}
-              li
-                a(href='/logout') Logout
-          else
-            ul.nav.pull-right
-              li
-                a(href='/login') Login
-              li
-                a(href='/register') Register
+      form.navbar-search
+        select.select2.input-xlarge#single(onchange="location = this.options[this.selectedIndex].value;")
+          option Search Products
+          for c in category
+            for p in c.products
+              option(value="/products/#{p.url}") #{p.name}
+
+      if user
+        ul.nav.pull-right
+          li: a(href='/quote') Welcome, #{user.name.first}
+          li: a(href='/logout') Logout
+      else
+        ul.nav.pull-right
+          li: a(href='/login') Login
+          li: a(href='/register') Register

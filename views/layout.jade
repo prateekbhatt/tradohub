@@ -4,19 +4,8 @@ html(lang="en", ng-app='tradohub')
     meta(charset="utf-8")
     title= title
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='stylesheet', href='/css/bootstrap.css')
-    link(rel='stylesheet', href='/css/custom.css')
+    link(rel='stylesheet', href='/css/tradohub-main.min.css')
     link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet', type='text/css')
-    link(rel='stylesheet', href='/css/select2.css')
-    link(rel='stylesheet', href='/css/select2-bootstrap.css')
-    //-
-      script(src="/js/lib/ui-bootstrap.min.js")
-    // script(src="/js/lib/angular.min.js")
-    script(src="/js/lib/jquery.js")
-    script(src="/js/lib/bootstrap.min.js")
-    script(src="/js/lib/select2.min.js")
-
-    block script
     
   body
     #wrap
@@ -27,16 +16,13 @@ html(lang="en", ng-app='tradohub')
       block indexPage
       
       #push
+      
+    script(type="text/javascript", src="/js/tradohub-main.min.js")
+    block script
 
     //- Select2 search bar start
     script(type="text/javascript")
       $('.select2').select2({ placeholder : '' });
-      
-      // $('.select2-remote').select2({ data: [{id:'A', text:'A'}]});
-
-      //- $('button[data-select2-open]').click(function(){
-      //-   $('#' + $(this).data('select2-open')).select2('open');
-      //- });
 
     //- select2 end
 

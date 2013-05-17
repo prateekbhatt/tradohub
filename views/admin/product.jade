@@ -1,9 +1,5 @@
 extends index
 
-block script
-  link(rel='stylesheet', href='/js/lib/bootstrap-fileupload.min.css')
-  script(src="/js/lib/bootstrap-fileupload.min.js")
-
 block admin
   form(method="POST", action="/admin/products/#{product._id}")
     legend Update Product

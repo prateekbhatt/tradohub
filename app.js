@@ -1,4 +1,5 @@
 'use strict';
+
 // Module dependencies
 var express = require('express')  
   , http = require('http')
@@ -16,6 +17,9 @@ var app = express();
 var dbPath = 'mongodb://localhost/amdavad'
   , db = require('./db')(dbPath)
   ;
+
+process.env.NODE_ENV = 'production';
+console.log('\n\nenvironment', process.env.NODE_ENV);
 
 // Seed Application DB
 

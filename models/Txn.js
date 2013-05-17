@@ -91,6 +91,7 @@ TxnSchema.methods.getProductByPid = function getProductByPid (pid, fn) {
   for (var i in p) {
     if (p[i].pid == pid) {
       return fn(null, p[i]);
+      break;
     }
   }
   return fn(null, null);

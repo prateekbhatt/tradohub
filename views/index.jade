@@ -23,17 +23,18 @@ block indexPage
       .row
         .span12
           cats = ['Aluminum', 'Copper', 'Engineering Polymers', 'Commodity Polymers', 'Nickel']
-          for c in category
-            for cat in cats
-              if c.name == cat
-                .pointSpan
-                  #points
-                    ul.unstyled
-                      p
-                        strong= c.name
-                      for p in c.products
-                        li
-                          a(href="/products/#{p.url}") #{p.name}
+          - for c in category
+            - for cat in cats
+                if c.name == cat
+                  .pointSpan
+                    #points
+                      ul.unstyled
+                        p
+                          strong= c.name
+                        for p in c.products
+                          li
+                            a(href="/products/#{p.url}") #{p.name}
+                  - break
       .row
         .span12.text-center
           a(href="/products")
@@ -65,8 +66,7 @@ block indexPage
         .span12.text-center
           a(href="#")
             hr
-            h4 Learn More &rarr;
-    
+            h4 Learn More &rarr;    
     
     .row.well
       .row
