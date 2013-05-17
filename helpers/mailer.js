@@ -1,6 +1,6 @@
 'use strict';
 
-var config = require('../config');
+var config = require('config');
 var nodemailer = require('nodemailer');
 
 var EmailAddressRequiredError = new Error('email address and subject required');

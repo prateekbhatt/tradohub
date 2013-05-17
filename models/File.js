@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
   , timestamps = require('mongoose-timestamp')
   , knox = require('knox')
   , fs = require('fs')
-  , aws = require('../config').aws
+  , aws = require('config').aws
   , util = require('util')
   , fileValidate = require('../helpers/fileValidate')
   ;

@@ -7,7 +7,6 @@ var Product = require('../models/Product')
 function get (req, res, next) {
   Product.findOne({ url: req.params.url }).populate('category').populate('image').exec(function (err, product) {
     if (err) return next(err);
-    console.log(product)
     if (product) {
       res.locals.imageUrl = product.image ? product.image.getFullPath() : null;
       res.locals.product = product;

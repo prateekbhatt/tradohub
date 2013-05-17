@@ -31,7 +31,8 @@
     "mongoose-validator": "~0.2.1",
     "knox": "~0.7.0",
     "mongoose-timestamp": "~0.1.0",
-    "mongoose-troop": "~0.0.8"
+    "mongoose-troop": "~0.0.8",
+    "config": "~0.4.24"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

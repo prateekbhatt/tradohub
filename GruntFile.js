@@ -2,7 +2,7 @@ module.exports = function (grunt) {
 
   var SRC_JS = 'public/js/',
       SRC_CSS = 'public/css/',
-      config = require('./config');
+      config = require('config');
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -121,8 +121,8 @@ module.exports = function (grunt) {
         ]
       }
     }
-
   });
+
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');

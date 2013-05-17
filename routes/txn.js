@@ -2,7 +2,7 @@
 
 var Product = require('../models/Product')
   , Txn = require('../models/Txn')
-  , config = require('../config')
+  , config = require('config')
   , termsData = require('../helpers/termsData')
   , shippingTerms = termsData.shippingTerms
   , paymentTerms = termsData.paymentTerms

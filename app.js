@@ -8,17 +8,12 @@ var express = require('express')
   , passport = require('passport')
   , expressValidator = require('express-validator')
   , flash = require('connect-flash')
+  , db = require('./db')
   ;
 
 // Create app
 var app = express();
 
-// Import the data layer
-var dbPath = 'mongodb://localhost/amdavad'
-  , db = require('./db')(dbPath)
-  ;
-
-process.env.NODE_ENV = 'production';
 console.log('\n\nenvironment', process.env.NODE_ENV);
 
 // Seed Application DB
@@ -78,7 +73,7 @@ app.configure(function(){
     app.locals.pretty = true;
     res.locals.user = req.user ? { 'email': req.user.email, 'name': req.user.name } : null;
     next();
-  });  
+  });
   // middleware to pass products and category to all views 
   app.use(function categories (req, res, next) {
     models.Category.find({}).populate('products').exec(function (err, c) {
