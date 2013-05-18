@@ -2,14 +2,18 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
+  , troop = require('mongoose-troop')
   ;
 
-var CategorySchema = mongoose.Schema({
+var CategorySchema = Schema({
     name: { type: String, required: true, unique: true }
   , description: { type: String }
   , url: { type: String, unique: true }
   , products: [{ type: Schema.Types.ObjectId, ref: 'Product' }]
 });
+
+// adds created and updated timestamps to the document
+CategorySchema.plugin(troop.timestamp, {modifiedPath: 'updated', useVirtual: false});
 
 CategorySchema.pre('save', function(next) {
   this.url = this.name.toLowerCase().split(' ').join('-');

@@ -2,7 +2,7 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
-  , timestamps = require('mongoose-timestamp')
+  , troop = require('mongoose-troop')
   ;
 
 var ProductSchema = mongoose.Schema({
@@ -13,8 +13,8 @@ var ProductSchema = mongoose.Schema({
   , image: { type: Schema.Types.ObjectId, ref: 'File' }
 });
 
-// adds createdAt and updatedAt timestamps to the document
-ProductSchema.plugin(timestamps);
+// adds created and updated timestamps to the document
+ProductSchema.plugin(troop.timestamp, {modifiedPath: 'updated', useVirtual: false});
 
 ProductSchema.pre('save', function(next) {
   this.url = this.name.toLowerCase().split(' ').join('-');

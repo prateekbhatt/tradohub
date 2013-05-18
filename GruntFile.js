@@ -1,8 +1,8 @@
 module.exports = function (grunt) {
 
   var SRC_JS = 'public/js/',
-      SRC_CSS = 'public/css/',
-      config = require('config');
+    SRC_CSS = 'public/css/',
+    config = require('config');
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -73,7 +73,6 @@ module.exports = function (grunt) {
     },
     uglify: {
       options: {
-        // the banner is inserted at the top of the output
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
       },
       'tradohub-main-js': {
@@ -86,37 +85,20 @@ module.exports = function (grunt) {
       options: {
         key: config.aws.key,
         secret: config.aws.secret,
-        bucket: config.aws.bucket,
+        bucket: config.aws.prodBucket,
         access: 'public-read'
       },
-      dev: {
-        // These options override the defaults
-        options: {
-          encodePaths: true,
-          maxOperations: 20
-        },
-        // Files to be uploaded.
+      static: {
         upload: [
           {
-            src: 'important_document.txt',
-            dest: 'documents/important.txt',
+            src: SRC_CSS + 'tradohub-main.min.css',
+            dest: 'static/css/tradohub-main.min.css',
             gzip: true
           },
           {
-            src: 'passwords.txt',
-            dest: 'documents/ignore.txt',
-
-            // These values will override the above settings.
-            bucket: 'some-specific-bucket',
-            access: 'authenticated-read'
-          },
-          {
-            // Wildcards are valid *for uploads only* until I figure out a good implementation
-            // for downloads.
-            src: 'documents/*.txt',
-
-            // But if you use wildcards, make sure your destination is a directory.
-            dest: 'documents/'
+            src: SRC_JS + 'tradohub-main.min.js',
+            dest: 'static/js/tradohub-main.min.js',
+            gzip: true
           }
         ]
       }

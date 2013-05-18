@@ -5,6 +5,7 @@
 var mongoose = require('mongoose')
   , crypto = require('crypto')
   , Schema = mongoose.Schema
+  , troop = require('mongoose-troop')
   ;
 
 var UserToken;
@@ -17,6 +18,9 @@ var userTokenSchema = new Schema({
  userId: {type: Schema.ObjectId, index: true},
  token: {type: String, index: true}
 });
+
+// adds created and updated timestamps to the document
+userTokenSchema.plugin(troop.timestamp, {modifiedPath: 'updated', useVirtual: false});
 
 userTokenSchema.statics.new = function (userId, fn) {
  var user = new UserToken();

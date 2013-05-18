@@ -8,6 +8,7 @@ var validate = require('mongoose-validator').validate
   , bcrypt = require('bcrypt')
   , SALT_WORK_FACTOR = 10
   , Schema = mongoose.Schema
+  , troop = require('mongoose-troop')
   ;
 
 var emailValidator = [
@@ -41,6 +42,9 @@ var UserSchema = new Schema({
     , n: { type: Number } // number
   }
 });
+
+// adds created and updated timestamps to the document
+UserSchema.plugin(troop.timestamp, {modifiedPath: 'updated', useVirtual: false});
 
 // Bcrypt middleware
 UserSchema.pre('save', function(next) {

@@ -16,10 +16,6 @@ var app = express();
 
 console.log('\n\nenvironment', process.env.NODE_ENV);
 
-// Seed Application DB
-
-// var seed = require('./helpers/seed');
-
 // Import route middleware
 
 var loggedIn = require('./routes/middlewares').loggedIn
@@ -57,7 +53,7 @@ app.configure(function(){
   app.set('port', process.env.PORT || 8000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  // app.use(express.favicon());
+  app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.limit('1mb'));
   app.use(express.bodyParser());

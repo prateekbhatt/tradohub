@@ -1,7 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose')
-  , timestamps = require('mongoose-timestamp')
+  , troop = require('mongoose-troop')
   , knox = require('knox')
   , fs = require('fs')
   , aws = require('config').aws
@@ -20,7 +20,8 @@ var FileSchema = mongoose.Schema({
   , type: { type: String, required: true }
 });
 
-FileSchema.plugin(timestamps);
+// adds created and updated timestamps to the document
+FileSchema.plugin(troop.timestamp, {modifiedPath: 'updated', useVirtual: false});
 
 function generateName (ext) {
   var name = Date.now().toString()
