@@ -11,12 +11,9 @@ var ProductListSchema = new Schema({
   , specs: { type: String }
   , quantity: { type: Number, required: true }
   , unit: { type: String, required: true }
-  // , bid: { type: Number } // remove this
   , quote: { type: Number }
 });
 
-// Txn status types
-// var statusTypes = ['request', 'quote', 'bid', 'po', 'invoice', 'cancel'];
 var statusTypes = ['requested', 'quoted', 'ordered', 'paid', 'delivered', 'cancelled'];
 
 var TxnSchema = new Schema({
@@ -24,7 +21,6 @@ var TxnSchema = new Schema({
   , uid: { type: Schema.Types.ObjectId, ref: 'User' }
   , products: [ ProductListSchema ]
   , info: { type: String }
-  // , bidNo: { type: Number, default: 0 } // remove this
   , status: { type: String, required: true, enum: statusTypes }
   , company: {
       name: { type: String, required: true }
@@ -40,36 +36,18 @@ var TxnSchema = new Schema({
         , last: { type: String, required: true }
       }
     , email: { type: String, required: true }
-    , phone: {
-        country: { type: Number }
-      , area: { type: Number }
-      , number: { type: Number }
+    , mobile: { type: Number }
+    , landline: {
+        area: { type: Number }
+      , no: { type: Number }
     }
   }
-  , shipping: {
-      address: {        
-        street: { type: String }
-      , city: { type: String }
-      , state: { type: String }
-      , country: { type: String, required: true, default: 'IND' }
-      , zip: { type: String }
-      }
-      // destPort: { type: String, required: true } // remove this
-    , reqDue: { type: Date, required: true }
-    // , terms: { type: String, required: true } // remove this
-  }
-  , payment: {
-      bank: { type: String }
-    , address: { type: String }
+  , reqDue: { type: Date, required: true }
+  , payMode: { type: String }
+  , bank: {
+      name: { type: String }
+    , accNo: { type: String }
     , accName: { type: String }
-    , accNo: { type: Number }
-    , bankCode: { type: String }
-    , terms: { type: String }
-  }
-  , files: {
-      reg: { type: String }
-    , imex: { type: String }
-    , inv: { type: String }
   }
 });
 

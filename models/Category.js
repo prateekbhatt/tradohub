@@ -5,7 +5,7 @@ var mongoose = require('mongoose')
   , troop = require('mongoose-troop')
   ;
 
-var CategorySchema = Schema({
+var CategorySchema = new Schema({
     name: { type: String, required: true, unique: true }
   , description: { type: String }
   , url: { type: String, unique: true }

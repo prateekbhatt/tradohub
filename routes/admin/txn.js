@@ -3,9 +3,9 @@
 var Product = require('../../models/Product')
   , Txn = require('../../models/Txn')
   , termsData = require('../../helpers/termsData')
-  , shippingTerms = termsData.shippingTerms
+  // , shippingTerms = termsData.shippingTerms
+  // , originCountries = termsData.originCountries
   , paymentTerms = termsData.paymentTerms
-  , originCountries = termsData.originCountries
   , countryList = require('../../helpers/countryList')
   , sendMail = require('../../helpers/mailer').sendMail
   ;
@@ -15,7 +15,6 @@ function get (req, res, next) {
     if (err) return next(err);
     if (txn) {
       res.locals.txn = txn;
-      res.locals.shippingTerms = shippingTerms;
       res.locals.paymentTerms = paymentTerms;
       return res.render('admin/txn',
         { error: req.flash('error'), success: req.flash('success') });
@@ -36,60 +35,63 @@ function list (req, res, next) {
 function updateQuote (req, res, next) {
   var tid = req.params.tid
     , pid = req.params.pid
-    , uid = req.user._id
     ;
-  Txn.findOne({ tid: tid, uid: uid, 'products.pid': pid }, function (err, txn) {
+  Txn.findOne({ tid: tid, 'products.pid': pid }, function (err, txn) {
     if (err) return next(err);
     txn.getProductByPid(pid, function (err, product) {
       if (product) {
         product.quote = req.body.quote;
+        txn.status = 'quoted';
         txn.save(function(err, isSaved) {
           if (err) return next(err);
           if (isSaved) {
+            console.log('saved')
             req.flash('success', 'Quote updated');
+            return res.redirect('/admin/orders/'+tid);
           } else {
-            req.flash('error', 'Quote not updated. Try again.');              
+            req.flash('error', 'Quote not updated. Try again.');   
+            return res.redirect('/admin/orders/'+tid);           
           }
         });          
       } else {
         req.flash('error', 'Quote not updated. Try again.');
+        return res.redirect('/admin/orders/'+tid);
       }
-      res.redirect('/admin/orders/'+tid);
     });
   });
 };
 
-function updateShippingTerms (req, res, next) {
-  var tid = req.params.tid
-    , uid = req.user._id
-    , terms = req.body.shippingTerms
-    ;
-  Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
-    if (err) return next(err);
-    txn.shipping.terms = terms;
-    txn.save(function (err, saved) {
-      if (err) return next(err)
-      if (saved) req.flash('success', 'Shipping Terms updated.');
-      res.redirect('/admin/orders/' + tid);      
-    });
-  });
-};
+// function updateShippingTerms (req, res, next) {
+//   var tid = req.params.tid
+//     , uid = req.user._id
+//     , terms = req.body.shippingTerms
+//     ;
+//   Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
+//     if (err) return next(err);
+//     txn.shipping.terms = terms;
+//     txn.save(function (err, saved) {
+//       if (err) return next(err)
+//       if (saved) req.flash('success', 'Shipping Terms updated.');
+//       res.redirect('/admin/orders/' + tid);      
+//     });
+//   });
+// };
 
-function updatePaymentTerms (req, res, next) {
-  var tid = req.params.tid
-    , uid = req.user._id
-    , terms = req.body.paymentTerms
-    ;
-  Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
-    if (err) return next(err);
-    txn.payment.terms = terms;
-    txn.save(function (err, saved) {
-      if (err) return next(err)
-      if (saved) req.flash('success', 'Payment Terms updated.');
-      res.redirect('/admin/orders/' + tid);      
-    });
-  });
-};
+// function updatePaymentTerms (req, res, next) {
+//   var tid = req.params.tid
+//     , uid = req.user._id
+//     , terms = req.body.paymentTerms
+//     ;
+//   Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
+//     if (err) return next(err);
+//     txn.payment.terms = terms;
+//     txn.save(function (err, saved) {
+//       if (err) return next(err)
+//       if (saved) req.flash('success', 'Payment Terms updated.');
+//       res.redirect('/admin/orders/' + tid);      
+//     });
+//   });
+// };
 
 function sendQuote (req, res, next) {
   var tid = req.params.tid
@@ -122,8 +124,8 @@ module.exports = {
     get: get
   , list: list
   , updateQuote: updateQuote
-  , updateShippingTerms: updateShippingTerms
-  , updatePaymentTerms: updatePaymentTerms
+  // , updateShippingTerms: updateShippingTerms
+  // , updatePaymentTerms: updatePaymentTerms
   , sendQuote: sendQuote
   , remove: remove
 };

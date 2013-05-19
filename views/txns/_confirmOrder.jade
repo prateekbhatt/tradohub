@@ -1,0 +1,12 @@
+a.btn.btn-success.btn-large(href="#confirmModal", role="button", data-toggle="modal")
+  span Confirm Order
+#confirmModal(class="modal hide", tabindex="-1", role="dialog", aria-labelledby="confirmModalLabel", aria-hidden="true")
+  form.form-horizontal(method="POST", action="/orders/#{txn.tid}/confirm")
+    .modal-header
+      button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
+      .lead(id="confirmModalLabel") Confirm Order
+    .modal-body
+      p I confirm the order.
+    .modal-footer
+      input.btn.btn-success(type="submit", value="Confirm Order")
+      button.btn(data-dismiss="modal", aria-hidden="true") Go Back

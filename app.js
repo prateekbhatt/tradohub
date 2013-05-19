@@ -136,11 +136,10 @@ app.get('/quote', loggedIn, activated, routes.txn.quotePage);
 app.get('/orders', loggedIn, activated, routes.txn.list);
 app.get('/orders/:tid', loggedIn, activated, routes.txn.get);
 app.post('/orders', loggedIn, activated, routes.txn.create);
-app.post('/orders/:tid/bid', loggedIn, activated, routes.txn.updateBid);
-app.get('/orders/:tid/pay', loggedIn, activated, routes.txn.bankPage);
-app.post('/orders/:tid/pay', loggedIn, activated, routes.txn.updatePayInfo);
+app.post('/orders/:tid/bank', loggedIn, activated, routes.txn.updateBank);
 app.post('/orders/:tid/cancel', loggedIn, activated, routes.txn.cancel);
-app.get('/orders/:tid/po', loggedIn, activated, routes.txn.poPage);
+app.post('/orders/:tid/confirm', loggedIn, activated, routes.txn.confirm);
+app.get('/orders/:tid/invoice', loggedIn, activated, routes.txn.invoicePage);
 
 // Auth Routes
 
@@ -186,8 +185,8 @@ app.delete('/admin/products/:id', admin.product.remove);
 app.get('/admin/orders', admin.txn.list);
 app.get('/admin/orders/:tid', admin.txn.get);
 app.post('/admin/orders/:tid/products/:pid/quote', admin.txn.updateQuote);
-app.post('/admin/orders/:tid/shippingTerms', admin.txn.updateShippingTerms);
-app.post('/admin/orders/:tid/paymentTerms', admin.txn.updatePaymentTerms);
+// app.post('/admin/orders/:tid/shippingTerms', admin.txn.updateShippingTerms);
+// app.post('/admin/orders/:tid/paymentTerms', admin.txn.updatePaymentTerms);
 app.post('/admin/orders/:tid/send', admin.txn.sendQuote);
 app.delete('/admin/orders/:tid', admin.txn.remove);
 

@@ -11,7 +11,6 @@ function create (req, res, next) {
 
   var u = req.body
     , c = u.company
-    , p = u.phone
     ;
   var newUser = {
       email: u.email
@@ -29,11 +28,11 @@ function create (req, res, next) {
       , zip: c.zip
       , imex: c.imex
     }
-    , mobile: {
-        country: p.country
-      , area: p.area
-      , number: p.number
-    }  
+    , mobile: u.mobile
+    , landline: {
+        area: u.landline.area
+      , no: u.landline.no
+    }
     , status: 'notVerified'
   };
 
@@ -79,7 +78,6 @@ function updateAccount (req, res, next) {
     
     var u = req.body.user
       , c = req.body.company
-      , p = u.phone
       ;
     console.log(u)
     user.name = {
@@ -95,11 +93,10 @@ function updateAccount (req, res, next) {
       , country: c.country
       , zip: c.zip
     };
-    
-    user.phone = {
-        country: p.country
-      , area: p.area
-      , number: p.number
+    user.mobile = u.mobile;
+    user.landline = {
+        area: u.landline.area
+      , no: u.landline.no
     };
 
     user.save(function (err, updated) {

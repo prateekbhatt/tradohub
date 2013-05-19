@@ -2,15 +2,12 @@ extends index
 
 block script
   script(src="/js/lib/angular.min.js")
-  script(src="/js/lib/ui-bootstrap.min.js")  
+  script(src="/js/lib/ui-bootstrap.min.js")
+  script(src="/js/lib/ui-select2.js")  
   script(src="/js/app2.js")
   script
-    function shipTU (value){
-      var terms = document.getElementById('shippingTerms')
-      terms.value = value;
-    };
     function payTU (value){
-      var terms = document.getElementById('paymentTerms')
+      var terms = document.getElementById('paymentMode')
       terms.value = value;
     };
     function reqDueU (value){
@@ -22,90 +19,57 @@ block txns
 
   form.form-horizontal(name="txnForm", method="POST", action="/orders", ng-controller="TxnCtrl")
     .lead Request For Quote
-
-    h5 Products
     
+    h5 Products
     .form-inline
       table.table.table-condensed.table-hover
         thead
           tr
             th Name
             th Quantity
-            th Base Price
             th Specification
             th
               i.icon-plus(ng-click="addProductField()")
         tbody
           tr(ng-repeat="product in form.txn.products")
             td
-              select.select2.input-medium#single(name="products[{{$index}}][detail]", required)
+              select.input-large("ui-select2", name="products[{{$index}}][detail]", required)
                 option Select Product
                 for p in products
                   option(value='{"_id":"#{p._id}","name":"#{p.name}","unit":"MT"}') #{p.name}
             td
               .input-append
-                input.input-mini(type="number", name="products[{{$index}}][quantity]", placeholder="Quantity", required)
+                input.input-small(type="number", name="products[{{$index}}][quantity]", placeholder="Quantity", required)
                 span.add-on MT
             td
-              .input-prepend
-                span.add-on $
-                input.input-mini(type="text", name="products[{{$index}}][bid]", placeholder="Price")
-            td
-              input.input-small(type="text", name="products[{{$index}}][specs]", placeholder="Specification")
+              input.input(type="text", name="products[{{$index}}][specs]", placeholder="Specification")
             td
               i.icon-remove(ng-click="removeProductField($index)", ng-show="form.txn.products.length > 1")
-    br
-    .control-group
-      label.control-label(for="origin") Country of Origin
-      .controls
-        select.input-xlarge(name="origin")
-          option(value="") Select Country
-          each country, i in originCountries
-            option(value=i) #{country}
 
     h5 Shipping and Payment
-    
-    .control-group
-      label.control-label(for="port") Destination Port
-      .controls
-        input.input-xlarge(type="text", id="port", name="shipping[destPort]", placeholder="Destination Port")
 
     .control-group
       label.control-label(for="reqDue") Delivery Time
       .controls
         .btn-group(data-toggle="buttons-radio")
-          input(type="hidden", name="shipping[reqDue]", value="", id="reqDue")            
+          input#reqDue(type="hidden", name="reqDue", value="")
           for i in reqDue
             button.btn.btn-info(type="button", onclick="reqDueU('#{i}');") #{i} days
-    .control-group
-      label.control-label(for="shippingTerms") Shipping Terms
-      .controls
-        .btn-group(data-toggle="buttons-radio")
-          input(type="hidden", name="shipping[terms]", value="", id="shippingTerms")
-          each term, i in shippingTerms
-            button.btn.btn-info(type="button", id="shippingTerms", data-toggle="button", value="'#{i}'", onclick="shipTU('#{i}');") #{i}
-        //- select.input-xlarge(name="shippingTerms")
-        //-   option(value="") Select Terms
-        //-     option(value=i) #{i} : #{term}
 
     .control-group
-      label.control-label(for="paymentTerms") Payment Terms
+      label.control-label(for="paymentMode") Payment Mode
       .controls
         .btn-group(data-toggle="buttons-radio")
-          input(type="hidden", name="payment[terms]", value="", id="paymentTerms")            
+          input#paymentMode(type="hidden", name="payMode", value="")
           each term, i in paymentTerms
             button.btn.btn-info(type="button", value="'#{i}'", onclick="payTU('#{i}');") #{i}
-        //- select.input-xlarge(name="paymentTerms")
-        //-   option(value="") Select Terms
-        //-   each term, i in paymentTerms
-        //-     option(value=i) #{i} : #{term}
 
     .control-group
       label.control-label(for="info") More Information
       .controls
-        textarea.input-xlarge(type="text", id="info", rows="3", name="info", placeholder="More Information")
+        textarea.input-xlarge(type="text", id="info", rows="3", name="info", placeholder="Provide more information here")
 
-    h5 Company
+    h5 Shipping Address
 
     include ../_companyForm
     
@@ -114,17 +78,22 @@ block txns
     .control-group
       label.control-label(for="userName") Your Name
       .controls
-        input.span2(type="text", id="userName", name="contact[name][first]", value="#{user.name.first}", placeholder="First Name", required )
-        input.span2(type="text", name="contact[name][last]", value="#{user.name.last}", placeholder="Last Name", required )
+        input.span2(type="text", id="userName", name="contact[name][first]", value="#{user.name.first || ''}", placeholder="First Name", required)
+        input.span2(type="text", name="contact[name][last]", value="#{user.name.last || ''}", placeholder="Last Name", required)
     
     .control-group
-      label.control-label(for="phoneNumber") Phone Number
+      label.control-label(for="mobile") Mobile Number
       .controls
-        input.input-mini(type="number", name="contact[phone][country]", placeholder="Country", required )
+        .input-prepend
+          span.add-on +91 - 
+          input.input-medium#mobile(type="number", name="contact[mobile]", value="#{user.mobile || ''}", placeholder="Number", required)
+    
+    .control-group
+      label.control-label(for="landline") Landline Number
+      .controls
+        input.input-mini(type="number", name="contact[landline][area]", value="#{user.landline.area || ''}", placeholder="Area", required)
         &nbsp;&nbsp;
-        input.input-mini(type="number", name="contact[phone][area]", placeholder="Area", required )
-        &nbsp;&nbsp;
-        input.input-small(type="number", id="phoneNumber", name="contact[phone][number]", placeholder="Number", required )
+        input.input-small#landline(type="number", name="contact[landline][no]", value="#{user.landline.no || ''}", placeholder="Number", required)
     
     .form-actions
       button.btn.btn-large.btn-success.span3(type="submit")

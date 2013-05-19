@@ -1,6 +1,6 @@
 'use strict';
 
-var tradohub = angular.module('tradohub', []);
+var tradohub = angular.module('tradohub', ['ui.bootstrap', 'ui.select2']);
 
 function TxnCtrl($scope, $location) {
   $scope.form = {"txn": {"products": [{}], "rfq": {}},

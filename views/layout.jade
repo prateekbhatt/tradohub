@@ -10,10 +10,11 @@ html(lang="en", ng-app='tradohub')
   body
     #wrap
       include _navbar
-      .container
-        include _flash
-        block partial
-      block indexPage
+      #content-wrap
+        .container
+          include _flash
+          block partial
+        block indexPage
       
       #push
       

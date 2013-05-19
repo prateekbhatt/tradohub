@@ -11,34 +11,37 @@ block partial
       include ../_sidenav
 
     .span9.well
-      form.form-horizontal(name="accountForm", method="POST", action="/account")
-        .lead
-          strong Your Account
+      form.form-horizontal(method="POST", action="/account")
+        legend Account Settings
 
-        .lead Password
+        h5 Password
         p
           a.btn(href='/account/password') Change Password
 
-        .lead Company
+        h5 Company
 
         include ../_companyForm
         
-        .lead Contact
+        h5 Contact
         
         .control-group
           label.control-label(for="userName") Your Name
           .controls
             input.span2(type="text", id="userName", name="user[name][first]", value="#{user.name.first}", placeholder="First Name", required )
             input.span2(type="text", name="user[name][last]", value="#{user.name.last}", placeholder="Last Name", required )
-        
+
         .control-group
-          label.control-label(for="phoneNumber") Phone Number
+          label.control-label(for="landline") Mobile Number
           .controls
-            input.input-mini(type="number", name="user[phone][country]", value="#{user.phone.country || ''}", placeholder="Country")
+            .input-prepend
+              .add-on +91 - 
+              input#mobile(type="number", name="user[mobile]", value="#{user.mobile || ''}", placeholder="Mobile No")
+        .control-group
+          label.control-label(for="landline") Landline Number
+          .controls
+            input.input-small(type="number", name="user[landline][area]", value="#{user.landline.area || ''}", placeholder="Area Code")
             &nbsp; - &nbsp;
-            input.input-mini(type="number", name="user[phone][area]", value="#{user.phone.area || ''}", placeholder="Area")
-            &nbsp; - &nbsp;
-            input.input-small(type="number", id="phoneNumber", name="user[phone][number]", value="#{user.phone.number || ''}", placeholder="Number")
+            input.input-medium#landline(type="number", name="user[landline][no]", value="#{user.landline.no || ''}", placeholder="Number")
         
         br
         button.btn.btn-primary(type="submit")

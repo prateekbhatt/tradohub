@@ -4,9 +4,6 @@ var Product = require('../models/Product')
   , Txn = require('../models/Txn')
   , config = require('config')
   , termsData = require('../helpers/termsData')
-  , shippingTerms = termsData.shippingTerms
-  , paymentTerms = termsData.paymentTerms
-  , originCountries = termsData.originCountries
   , countryList = require('../helpers/countryList')
   , sendMail = require('../helpers/mailer').sendMail
   ;
@@ -17,9 +14,7 @@ function quotePage (req, res, next) {
   Product.find({}, function (err, products) {
     if (err) return next(err);
     res.locals.products = products;
-    res.locals.paymentTerms = paymentTerms;
-    res.locals.shippingTerms = shippingTerms;
-    res.locals.originCountries = originCountries;
+    res.locals.paymentTerms = termsData.paymentTerms;
     res.locals.countryList = countryList;
     res.locals.reqDue = termsData.reqDue;
     res.locals.user = req.user;
@@ -28,46 +23,50 @@ function quotePage (req, res, next) {
   });
 };
 
-function bankPage (req, res, next) {
-  var uid = req.user._id
-    , tid = req.params.tid
-    ;
-  Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
-    if (err) return next(err);
-    if (txn) {
-      var s = txn.status;
-      if (s == 'po') {
-        return res.redirect('/orders/'+tid+'/po');
-      }
-      if (s == 'quote' || s == 'bid') {
-        res.locals.txn = txn;
-        res.locals.totalValue = txn.getTotalValue();
-        return res.render('txns/bank',
-          { error: req.flash('error'), success: req.flash('success') });
-      }
-    }
-    res.redirect('/orders/'+tid);
-  });
-}
+// function bankPage (req, res, next) {
+//   var uid = req.user._id
+//     , tid = req.params.tid
+//     ;
+//   Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
+//     if (err) return next(err);
+//     if (txn) {
+//       var s = txn.status;
+//       if (s == 'ordered') {
+//         return res.redirect('/orders/'+tid+'/po');
+//       } else if (s == 'quoted') {
+//         res.locals.txn = txn;
+//         res.locals.totalValue = txn.getTotalValue();
+//         return res.render('txns/bank',
+//           { error: req.flash('error'), success: req.flash('success') });
+//       }
+//     }
+//     res.redirect('/orders/'+tid);
+//   });
+// };
 
-function poPage (req, res, next) {
+function invoicePage (req, res, next) {
   var uid = req.user._id
     , tid = req.params.tid
     ;
   Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
     if (err) return next(err);
     if (txn) {
-      if (txn.status == 'po') {
-        res.locals.txn = txn;
-        res.locals.totalValue = txn.getTotalValue();
-        return res.render('txns/po',
-          { error: req.flash('error'), success: req.flash('success') });
-      } else {
-        req.flash('error', 'You can\'t make a purchase order on this order now.');
+      if (txn.status == 'requested'){
+        req.flash('error', 'Please wait till you receive price quote.');
         return res.redirect('/orders/'+tid);
+      } else if (txn.status == 'quoted'){
+        req.flash('error', 'Please confirm your order.');
+        return res.redirect('/orders/'+tid);
+      } else {
+        res.locals.txn = txn;
+        res.locals.bank = termsData.tradohubBank;
+        res.locals.totalValue = txn.getTotalValue();
+        return res.render('txns/invoice',
+          { error: req.flash('error'), success: req.flash('success') });
       }
+    } else {
+      res.render('404');      
     }
-    res.render('404');
   });
 };
 
@@ -99,11 +98,18 @@ function create (req, res, next) {
   var txn = req.body
     , usr = req.user
     ;
+
+  console.log('txn body \n\n')
+  console.log(txn)
+
   var t = new Txn({
       uid: usr._id
-    , status: 'request'
+    , status: 'requested'
     , info: txn.info
   });
+  
+  t.reqDue = t.reqDueTime(txn.reqDue);
+  t.payMode = txn.payMode;
   
   t.tid = t.generateTid(); // TODO : check if txn id already exists
   
@@ -122,115 +128,61 @@ function create (req, res, next) {
         , last: txn.contact.name.last
       }  
     , email: usr.email
-    , phone: {
-        country: txn.contact.phone.country
-      , area: txn.contact.phone.area
-      , number: txn.contact.phone.number
+    , mobile: txn.contact.mobile
+    , landline: {
+        area: txn.contact.landline.area
+      , no: txn.contact.landline.no
     }
   };
 
-  t.shipping = {
-      destPort: txn.shipping.destPort
-    , reqDue: t.reqDueTime(txn.shipping.reqDue)
-    , terms: txn.shipping.terms
-  };
-
-  t.payment = {
-      bank: txn.payment.bank
-    , acc: txn.payment.acc
-    , terms: txn.payment.terms
-  };
   console.log(JSON.parse(txn.products[0].detail))
+  
   t.products = [];
+  
   for (var i in txn.products) {
     var p = txn.products[i]
     var newProduct = {
         pid: JSON.parse(p.detail)['_id']
       , name: JSON.parse(p.detail)['name']
-      , unit: JSON.parse(p.detail)['unit']
       , specs: p.specs
       , quantity: p.quantity
-      , bid: p.bid
+      , unit: JSON.parse(p.detail)['unit']
       , quote: p.quote
-      , origin: txn.origin
     };
     t.products.push(newProduct);
   };
+
+  console.log('\nfull txn object\n\n')
+  console.log(t)
 
   t.save(function (err, saved) {
     if (err) return next(err);
     if (saved) {
       var msg = 'Request For Quote saved.'
-      res.format({
-        html: function(){
-          req.flash('success', msg);
-          res.redirect('/orders');
-        },
-        json: function(){ res.json(200, { success: { message: msg }}); }
-      });        
+      req.flash('success', msg);
+      res.redirect('/orders');
     } else {
       var msg = 'Request For Quote not saved. Check all input fields.'
-      res.format({
-        html: function(){
-          req.flash('error', msg);
-          res.redirect('/quote');
-        },
-        json: function(){ res.json(400, { error: { message: msg }}); }
-      });
+      req.flash('error', msg);
+      res.redirect('/quote');
     }
   });
 };
 
-function updateBid (req, res, next) {
-  var tid = req.params.tid
-    , uid = req.user._id
-    , bids = req.body.bids
-    ;
-  Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
-    if (err) return next(err);
-    var p = txn.products
-    for (var i in p) {
-      p[i].bid = bids[p[i].pid];
-    }
-    txn.status = 'bid';
-    txn.bidNo += 1; // tracks the numberof times the user has bid. we limit it to one.
-    txn.save(function(err, isSaved) {
-      if (err) return next(err);
-      if (isSaved) {
-        req.flash('success', 'Price change request sent.');
-      } else {
-        req.flash('error', 'Price not updated. Try again.');              
-      }
-      var locals = {
-          email: config.adminMail
-        , subject: 'Negotiation for order: ' + tid
-        , text: 'User: '+req.user.email+' has initiated a price change request.'
-      };
-      sendMail(locals, function (err, respMs) {
-        if (err) return next(err);
-        console.log('email sending');
-      });
-      res.redirect('/orders/' + tid);
-    });
-  });
-};
-
-function updatePayInfo (req, res,  next) {
+function updateBank (req, res,  next) {
   var tid = req.params.tid
     , uid = req.user._id
     , b = req.body.bank
     ;
   Txn.findOne({ tid: tid, uid: uid }, function (err, t) {
     if (err) return next(err);
-    t.status = 'po';
-    t.payment.bank = b.name;
-    t.payment.address = b.address;
-    t.payment.accName = b.accName;
-    t.payment.accNo = b.accNo;
-    t.payment.bankCode = b.bankCode;
+    t.status = 'ordered';
+    t.bank.name = b.name;
+    t.bank.accNo = b.accNo;
+    t.bank.accName = b.accName;
     t.save(function (err, saved) {
       if (err) return next(err);
-      req.flash('success', 'Payment Info updated.');
+      req.flash('success', 'Bank Info recieved and order confirmed.');
       res.redirect('/orders/'+tid+'/po');
     });
   });
@@ -241,8 +193,8 @@ function cancel (req, res, next) {
     , uid = req.user._id
     ;
   Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
-    if (txn.status != 'po' || txn.status != 'invoice') {
-      txn.status = 'cancel';
+    if (txn.status == 'quoted' || txn.status == 'requested') {
+      txn.status = 'cancelled';
       txn.save(function (err, cancelled) {
         if (err) return next(err);
         if (cancelled) {
@@ -251,7 +203,31 @@ function cancel (req, res, next) {
         res.redirect('/orders');
       });      
     } else {
-      req.flash('error', 'You can\'t cancel the order after purchase order has been made.');
+      req.flash('error', 'You can\'t cancel after you confirmed the order.');
+      res.redirect('/orders/'+tid);
+    }
+  });
+};
+
+function confirm (req, res, next) {
+  var tid = req.params.tid
+    , uid = req.user._id
+    ;
+  Txn.findOne({ tid: tid, uid: uid }, function (err, txn) {
+    if (txn.status == 'quoted') {
+      txn.status = 'ordered';
+      txn.save(function (err, ordered) {
+        if (err) return next(err);
+        if (ordered) {
+          req.flash('success', 'Order confirmed.')
+        }
+        res.redirect('/orders/'+tid);
+      });      
+    } else if (txn.status == 'requested'){
+      req.flash('error', 'Please wait for our price quote.');
+      res.redirect('/orders/'+tid);
+    } else {
+      req.flash('error', 'The order is already confirmed.');
       res.redirect('/orders/'+tid);
     }
   });
@@ -259,12 +235,12 @@ function cancel (req, res, next) {
 
 module.exports = {
     quotePage: quotePage
-  , bankPage: bankPage
-  , poPage: poPage
+  // , bankPage: bankPage
+  , invoicePage: invoicePage
   , get: get
   , list: list
   , create: create
-  , updateBid: updateBid
-  , updatePayInfo: updatePayInfo
+  , updateBank: updateBank
   , cancel: cancel
+  , confirm: confirm
 };

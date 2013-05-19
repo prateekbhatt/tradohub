@@ -1,10 +1,12 @@
-if (txn.status == 'request')
-  span Request For Quote
-else if (txn.status == 'quote')
+if (txn.status == 'requested')
+  span Requested Quote
+else if (txn.status == 'quoted')
   span Quote Received
-else if (txn.status == 'bid')
-  span Negotiate Request Sent
-else if (txn.status == 'po')
-  span Purchase Order
-else if (txn.status == 'invoice')
-  span Invoice
+else if (txn.status == 'ordered')
+  span Payment Awaited
+else if (txn.status == 'paid')
+  span Payment Made
+else if (txn.status == 'delivered')
+  span Delivered
+else if (txn.status == 'cancelled')
+  span Order Cancelled

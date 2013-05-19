@@ -38,8 +38,8 @@ var UserSchema = new Schema({
   }
   , mobile: { type: Number } // mobile number
   , landline: { // landline
-      a: { type: Number } // area code
-    , n: { type: Number } // number
+      area: { type: Number } // area code
+    , no: { type: Number } // number
   }
 });
 

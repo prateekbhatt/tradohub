@@ -1,6 +1,6 @@
 html,
 body {
-  /*padding-top: 15px;*/
+  /*padding-top: 35px;*/
   height: 100%;
 /*  padding-bottom: 20px;
   padding-left: 10px;
@@ -23,11 +23,17 @@ body {
 }*/
 /* Wrapper for page content to push down footer */
 #wrap {
+  /*padding-top: 35px;*/
   min-height: 100%;
   height: auto !important;
   height: 100%;
   /* Negative indent footer by it's height */
   margin: 0 auto -60px;
+}
+
+/*content wrapper for fixed navbar height*/
+#content-wrap {
+  padding-top: 70px; 
 }
 
 /* Set the fixed height of the footer here */
@@ -129,4 +135,8 @@ ul.nav li.dropdown:hover > ul.dropdown-menu{
   float: left;
   min-height: 1px;
   margin-left: 10px;
+}
+
+.search-bar {
+  width: 400px;
 }

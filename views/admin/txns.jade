@@ -6,20 +6,24 @@ block admin
       thead
         tr
           th Order #
-          th Contact
           th Info
           th Status
           th Quote
-          th Created
+          th Contact
       tbody
         for order in txns
           tr
             td 
               a(href="/admin/orders/#{order.tid}") #{order.tid}
-            td #{(order.contact.name.first || '') + ' ' + (order.contact.name.last || '')}
               br
-              span #{order.contact.email}
+              span #{order.created.toDateString()}
             td #{order.info || '--'}
             td #{order.status}
-            td #{order.quote || '--'}
-            td #{order.created.toDateString()}
+            td
+              for p in order.products
+                span #{p.name} : #{p.quote ? ('$ ' + p.quote + ' / ' + p.unit) : 'Not quoted'}
+                br
+            td 
+              span #{(order.contact.name.first || '') + ' ' + (order.contact.name.last || '')}
+              br
+              span #{order.contact.email}

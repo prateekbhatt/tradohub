@@ -19,7 +19,7 @@ block txns
 
           td
             for p in txn.products
-              span #{p.name} : #{'$ ' + p.quote + ' / ' + p.unit}
+              span #{p.name} : #{p.quote ? ('$ ' + p.quote + ' / ' + p.unit) : 'Not quoted'}
               br
           td
             button.btn.btn-success Purchase Order

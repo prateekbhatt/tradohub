@@ -1,9 +1,37 @@
 extends index
 block txns
 
-  legend Order Detail
+  legend Invoice
   //- .pull-right
   //-   a(href="#", onclick="window.print(); return false;") Print
+  .well
+    if (txn.status == 'ordered')
+      p We are awaiting your payment. We will ship your product once we receive the payment.
+      h5 Tradohub Bank Detail
+      table.table
+        tbody
+          tr
+            td Bank
+            td= bank.name
+          tr
+            td Account Name
+            td= bank.accName
+          tr
+            td Account Number
+            td= bank.accNo
+          tr
+            td Bank Branch
+            td= bank.address          
+          tr
+            td IFSC Code
+            td= bank.ifscCode
+
+    else if (txn.status == 'paid')
+      p We have received your payment. We will ship your product as soon as possible.
+    else if (txn.status == 'delivered')
+      p Your product has been shipped.
+
+  h4 Order Detail
   table.table
     tbody
       tr
@@ -42,7 +70,7 @@ block txns
   table.table
     tbody
       tr
-        td Delivery Time
+        td Expected Delivery Date
         td #{txn.reqDue.toDateString()}
       tr
         td Payment Mode
@@ -72,25 +100,3 @@ block txns
         span #{txn.contact.landline.area + '-' + txn.contact.landline.no}
       p Email:&nbsp;&nbsp;
         span #{txn.contact.email}
-
-  if (txn.status == 'requested')
-    p We are working hard to get you the best prices. Wait for the price quote.
-  else if (txn.status == 'quoted')
-    if (txn.payMode == 'RTGS')
-      include _bankModal
-    else
-      include _confirmOrder    
-  else if (txn.status == 'ordered')
-    p We are awaiting your payment. We will ship your product once we receive the payment.
-    a.btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
-  else if (txn.status == 'paid')
-    .btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
-  else if (txn.status == 'delivered')
-    p Your product has been shipped.
-    .btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
-  
-  if (txn.status == 'requested' || txn.status == 'quoted')
-    p
-      br
-      span OR
-    .btn Cancel Order

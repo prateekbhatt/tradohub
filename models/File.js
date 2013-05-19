@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose')
+  , Schema = mongoose.Schema
   , troop = require('mongoose-troop')
   , knox = require('knox')
   , fs = require('fs')
@@ -15,7 +16,7 @@ var client = knox.createClient({
   , bucket: aws.bucket
 });
 
-var FileSchema = mongoose.Schema({
+var FileSchema = new Schema({
     name: { type: String, required: true, unique: true }
   , type: { type: String, required: true }
 });

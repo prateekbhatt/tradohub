@@ -1,0 +1,25 @@
+a.btn.btn-success.btn-large(href="#bankModal", role="button", data-toggle="modal")
+  span Provide Bank Detail and Confirm Order
+#bankModal(class="modal hide", tabindex="-1", role="dialog", aria-labelledby="bankModalLabel", aria-hidden="true")
+  form.form-horizontal(method="POST", action="/orders/#{txn.tid}/bank")
+    .modal-header
+      button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
+      .lead(id="bankModalLabel") Provide Bank Detail
+      small.text-center We will verify your RTGS payment against this bank account.
+    .modal-body
+      .control-group
+        label.control-label(for="bankName") Bank Name
+        .controls
+          input.input-xlarge(type="text", id="bankName", name="bank[name]", placeholder="Bank Name", required)
+      .control-group
+        label.control-label(for="accNo") Account Number
+        .controls
+          input.input-xlarge(type="text", id="accNo", name="bank[accNo]", placeholder="Account Number", required)
+      .control-group
+        label.control-label(for="accName") Account Name
+        .controls
+          input.input-xlarge(type="text", id="accName", name="bank[accName]", placeholder="Account Name", required)
+ 
+    .modal-footer
+      input.btn.btn-success(type="submit", value="Confirm Order")
+      button.btn(data-dismiss="modal", aria-hidden="true") Go Back

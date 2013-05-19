@@ -1,11 +1,10 @@
-.navbar.navbar-static-top
+.navbar.navbar-fixed-top
   .navbar-inner
     .container
       a.brand(href='/')
         em
           strong TRADOHUB
       ul.nav.pull-left
-        li: a(href='/quote') Quote
         li.dropdown
           a.dropdown-toggle(data-toggle="dropdown", href="/products", onclick="location = '/products'") Products
             b.caret
@@ -19,16 +18,18 @@
             li.divider
             li: a(href="/products") All Products
 
-      form.navbar-search
-        select.select2.input-xlarge#single(onchange="location = this.options[this.selectedIndex].value;")
+      form.navbar-search.pull-left
+        select.select2.search-bar#single(onchange="location = this.options[this.selectedIndex].value;")
           option Search Products
           for c in category
             for p in c.products
               option(value="/products/#{p.url}") #{p.name}
+      ul.nav.pull-left
+        li: a(href='/quote') Request Quote
 
       if user
         ul.nav.pull-right
-          li: a(href='/quote') Welcome, #{user.name.first}
+          li: a(href='/quote') #{user.name.first}
           li: a(href='/logout') Logout
       else
         ul.nav.pull-right
