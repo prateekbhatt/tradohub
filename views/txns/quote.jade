@@ -33,8 +33,8 @@ block txns
         tbody
           tr(ng-repeat="product in form.txn.products")
             td
-              select.input-large("ui-select2", name="products[{{$index}}][detail]", required)
-                option Select Product
+              select.input-large("ui-select2", name="products[{{$index}}][detail]", data-placeholder="Select Product", required)
+                option
                 for p in products
                   option(value='{"_id":"#{p._id}","name":"#{p.name}","unit":"MT"}') #{p.name}
             td

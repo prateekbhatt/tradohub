@@ -86,7 +86,7 @@ function get (req, res, next) {
 };
 
 function list (req, res, next) {
-  Txn.find({ uid: req.user._id }, function (err, txns) {
+  Txn.find({ uid: req.user._id }).sort({'created' : -1}).exec(function (err, txns) {
     if (err) return next(err);
     res.locals.txns = txns;
     res.render('txns/list',

@@ -66,7 +66,8 @@ module.exports = function (grunt) {
                 SRC_CSS + 'custom.css',
                 SRC_CSS + 'select2.css',
                 SRC_CSS + 'select2-bootstrap.css',
-                SRC_CSS + 'bootstrap-fileupload.min.css'
+                SRC_CSS + 'bootstrap-fileupload.min.css',
+                SRC_CSS + 'print.css'
               ]
         }
       }

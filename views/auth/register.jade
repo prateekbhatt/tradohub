@@ -5,6 +5,11 @@ block partial
     .span5
       legend CREATE A NEW ACCOUNT
       include _infoBar
+      br
+      br
+      h5 
+        strong Are you a manufacturer / supplier? 
+          a(href="/partners") Partner With Us.
 
     .span5.well.pull-right(style="background-color:#F0F0F0;")
       form(method="POST", action="/register")
@@ -45,7 +50,7 @@ block partial
         select.input-block-level#industry(name="company[industry]", required)
           option(value="IND") India
 
-        button.btn.btn-block.btn-large.btn-primary(type="submit")
+        button.btn.btn-block.btn-large.btn-success(type="submit")
           span Create Account
         br
         small By creating an account you agree to our 

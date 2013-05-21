@@ -1,0 +1,43 @@
+!!! transitional
+html(xmlns='http://www.w3.org/1999/xhtml')
+  head
+    meta(name='viewport', content='width=device-width')
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    title Tradohub
+    
+  body(bgcolor='#FFFFFF')
+    
+    table.head-wrap(bgcolor='#FFFFFF')
+      tr
+        td
+        td.header.container
+          .content
+            table(bgcolor='#FFFFFF')
+              tr
+                td
+                  img(src='https://s3.amazonaws.com/tradohub/static/img/tradohub-logo.png', alt="Tradohub", title="Tradohub", width="140px")
+                //- td(align='right')
+                //-   h3.collapse Tradohub
+        td
+
+    table.body-wrap
+      tr
+        td
+        td.container(bgcolor='#FFFFFF')
+          .content
+            table
+              tr
+                td
+                  h3 Hi, #{user.name.first + ' ' + user.name.last}
+                  p.lead
+                    block message
+                  p
+                    br
+                    | If you need any help, reply to this email.
+                    | We will get back to you as soon as possible.
+                  p Thank you,
+                    br
+                    br
+                    | Tradohub Support
+                    br
+                    a(href='emailto:info@tradohub.com') info@tradohub.com

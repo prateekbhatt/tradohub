@@ -1,23 +1,23 @@
 'use strict';
 
 var User = require('../../models/User')
-  , sendMail = require('../../helpers/mailer').sendMail
+  , mailer = require('../../helpers/mailer')
+  , config = require('config')
   ;
 
 function updateStatus (req, res, next) {
   User.findById(req.params.id, function (err, user) {
     user.status = req.params.status;
     user.save(function (err, saved) {
-      var msg = 'Your account has been ' + saved.status + '.';
-      var locals = {
-          email: saved.email
-        , subject: 'Tradohub account update'
-        , text: msg
-      };
-      sendMail(locals, function (err, respMs) {
-        console.log('email sent')
-      });
-      if (saved) req.flash('success', 'User: ' + saved.email + ' status updated to ' + saved.status);
+      if (saved) {
+        var s = saved.status;
+        if (s == 'activated') {
+          saved.linkUrl = config.baseUrl + 'login';
+          saved.linkName = 'Log in to your Tradohub Account'
+        }
+        mailer.sendAccountStatus(saved);
+        req.flash('success', 'User: ' + saved.email + ' status updated to ' + saved.status);
+      }
       res.redirect('/admin/users');
     });
   });

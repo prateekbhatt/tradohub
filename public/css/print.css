@@ -1,0 +1,34 @@
+.invoice {
+  display: none;
+}
+@media print {
+  body {
+    color: #000;
+    background: #fff;
+    margin-left: 3cm;
+  }
+  .navbar {
+    display: none;
+  }
+  .nav {
+    display: none;
+  }
+  #sidenav {
+    display: none;
+  }
+  #footer {
+    display: none;
+  }
+  .freshwidget-button {
+    display: none;
+  }
+  .dont-print {
+    display: none;
+  }
+  .freshwidget-button a {
+    display: none;
+  }
+  .invoice {
+    display: block;
+  }
+}

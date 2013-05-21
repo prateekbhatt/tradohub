@@ -28,9 +28,15 @@ exports.isAdmin =  function isAdmin (req, res, next) {
 
 exports.activated = function activated (req, res, next) {
   var status = req.user.status;
+  
   if (status == 'activated') return next();
-  if (status == 'verified') req.flash('error', 'Your account has not been activated yet.');
-  else if (status == 'notVerified') req.flash('error', 'Please verify your email.');
-  else if (status == 'blocked') req.flash('error', 'Your account has been blocked.');
+  
+  if (status == 'verified') {
+    req.flash('error', 'We will activate your account after verifying your business. Please make sure you have provided the correct phone numbers.');
+  } else if (status == 'notVerified') {
+    req.flash('error', 'Please verify your email.');
+  } else if (status == 'blocked') {
+    req.flash('error', 'Your account has been blocked.');
+  }
   res.redirect('/account');
 };

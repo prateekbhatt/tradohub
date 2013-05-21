@@ -1,0 +1,7 @@
+extends layout
+
+block message
+  p Thank you for creating a Tradohub account.
+  p Please confirm your email address by clicking on the link below:
+    br
+    a(href="#{user.verifyUrl}", target="_blank") Confirm Email

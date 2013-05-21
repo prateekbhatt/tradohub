@@ -14,7 +14,7 @@ var express = require('express')
 // Create app
 var app = express();
 
-console.log('\n\nenvironment', process.env.NODE_ENV);
+console.log('\n\nNode Environment: ', process.env.NODE_ENV);
 
 // Import route middleware
 
@@ -125,6 +125,8 @@ app.locals({
 app.get('/', routes.index.index);
 app.get('/about', routes.index.about);
 app.get('/about/:page', routes.index.pages);
+app.get('/partners', routes.index.partnersPage);
+app.post('/partners', routes.index.partners);
 
 // Product API routes
 app.get('/products', routes.product.list);
@@ -188,6 +190,7 @@ app.post('/admin/orders/:tid/products/:pid/quote', admin.txn.updateQuote);
 // app.post('/admin/orders/:tid/shippingTerms', admin.txn.updateShippingTerms);
 // app.post('/admin/orders/:tid/paymentTerms', admin.txn.updatePaymentTerms);
 app.post('/admin/orders/:tid/send', admin.txn.sendQuote);
+app.put('/admin/orders/:tid/:status', admin.txn.updateStatus);
 app.delete('/admin/orders/:tid', admin.txn.remove);
 
 app.get('/admin/users', admin.user.list);

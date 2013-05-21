@@ -39,6 +39,9 @@ block admin
       tr
         td Payment Mode
         td #{txn.payMode}
+
+  if (txn.payMode == 'RTGS' && txn.bank.name)
+    include ../txns/_showBankDetail
           //- a.btn.btn-info(href="#payModal", role="button", data-toggle="modal") #{txn.payMode}
           //- #payModal(class="modal hide", tabindex="-1", role="dialog", aria-labelledby="payModalLabel", aria-hidden="true")
           //-   form(method="POST", action="/admin/orders/#{txn.tid}/paymentTerms")
@@ -92,9 +95,16 @@ block admin
           td #{p.specs}
           td #{p.quantity + ' ' + p.unit}
           td
-            if p.quote
-              a.btn.btn-info(href="#{'#quoteModal' + p._id}", role="button", data-toggle="modal")
-                span #{'$ ' + p.quote}
+            if (p.quote)
+              case txn.status
+                when 'quoted'
+                  a.btn.btn-info(href="#{'#quoteModal' + p._id}", role="button", data-toggle="modal")
+                    span #{'$ ' + p.quote}
+                when 'requested'
+                  a.btn.btn-info(href="#{'#quoteModal' + p._id}", role="button", data-toggle="modal")
+                    span #{'$ ' + p.quote}
+                default
+                  span #{'$ ' + p.quote}   
             else
               a.btn.btn-warning(href="#{'#quoteModal' + p._id}", role="button", data-toggle="modal")
                 span Add Quote
@@ -111,5 +121,31 @@ block admin
                   input.btn.btn-info(type="submit", value="Save")
                   button.btn(data-dismiss="modal", aria-hidden="true") Cancel
   br
-  form.offset1(method="POST", action="/admin/orders/#{txn.tid}/send")
-    input.btn.btn-success.btn-large.span6(type="submit", value="Send Quote")
+  case txn.status
+
+    when 'requested'
+      form.offset1(method="POST", action="/admin/orders/#{txn.tid}/send")
+        input.btn.btn-success.btn-large.span6(type="submit", value="Send Quote")
+  
+    when 'quoted'
+      p.text-error.text-center
+        strong Quote has been sent. Awaiting order confirmation.
+  
+    when 'ordered'
+      p.text-error.text-center
+        strong Order confirmed. Awaiting payment.
+      form.offset1(method="POST", action="/admin/orders/#{txn.tid}/paid")
+        input(type="hidden", name="_method", value="PUT")
+        input.btn.btn-warning.btn-large.span6(type="submit", value="Confirm Payment")
+  
+    when 'paid'
+      p.text-error.text-center
+        strong Payment received. Send Product.
+  
+    when 'delivered'
+      p.text-error.text-center
+        strong Product has been shipped.
+  
+    when 'cancelled'
+      p.text-error.text-center
+        strong Order has been cancelled.

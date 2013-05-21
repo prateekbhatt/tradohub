@@ -2,8 +2,9 @@
 
 var User = require('../models/User')
   , UserToken = require('../models/UserToken')
-  , sendMail = require('../helpers/mailer').sendMail
+  , mailer = require('../helpers/mailer')
   , countryList = require('../helpers/countryList')
+  , config = require('config')
   ;
 
 function loginPage (req, res) {
@@ -52,19 +53,13 @@ function passwordForgot (req, res, next) {
       UserToken.new(usr._id, function (err, token) {
         // build the reset url:
         // http://localhost:3000/password/forgot/12345TOKEN
-        var resetUrl = req.protocol + '://' + req.host + '/forgot-password/' + token.token;
-        // Create the template vars 
-        var locals = {
-            email: usr.email
-          , subject: 'Forgot Password'
-          , text: resetUrl
-        };
-        sendMail(locals, function (err, respMs) {
+        usr.resetUrl = config.baseUrl + 'forgot-password/' + token.token;
+        
+        mailer.sendForgotPassword(usr);
           // TODO add success message.
           // redirect to password_rest success page.
-          req.flash('success', 'Check your Email to reset password')
-          return res.redirect('/');
-        });
+        req.flash('success', 'Check your Email to reset password')
+        return res.redirect('/');
       });
     });      
   }

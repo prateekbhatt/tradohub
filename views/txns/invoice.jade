@@ -1,35 +1,21 @@
 extends index
 block txns
 
-  legend Invoice
-  //- .pull-right
-  //-   a(href="#", onclick="window.print(); return false;") Print
-  .well
-    if (txn.status == 'ordered')
-      p We are awaiting your payment. We will ship your product once we receive the payment.
-      h5 Tradohub Bank Detail
-      table.table
-        tbody
-          tr
-            td Bank
-            td= bank.name
-          tr
-            td Account Name
-            td= bank.accName
-          tr
-            td Account Number
-            td= bank.accNo
-          tr
-            td Bank Branch
-            td= bank.address          
-          tr
-            td IFSC Code
-            td= bank.ifscCode
+  .invoice
+    h4 Tradohub.com
+    p 
+      | 602, Rajvi Arcade, Opp. Gurukul,
+      br
+      | Memnagar, Ahmedabad,
+      br
+      | Gujarat, India
 
-    else if (txn.status == 'paid')
-      p We have received your payment. We will ship your product as soon as possible.
-    else if (txn.status == 'delivered')
-      p Your product has been shipped.
+  legend Invoice
+  .pull-right.dont-print
+    a.btn.btn-small.btn-success(href="#", onclick="window.print(); return false;") Print Invoice
+
+  .well.dont-print
+    include _paymentDetail
 
   h4 Order Detail
   table.table
@@ -100,3 +86,6 @@ block txns
         span #{txn.contact.landline.area + '-' + txn.contact.landline.no}
       p Email:&nbsp;&nbsp;
         span #{txn.contact.email}
+
+  .invoice
+    include _paymentDetail

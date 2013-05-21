@@ -12,6 +12,7 @@ var ProductListSchema = new Schema({
   , quantity: { type: Number, required: true }
   , unit: { type: String, required: true }
   , quote: { type: Number }
+  , quoted: { type: Date }
 });
 
 var statusTypes = ['requested', 'quoted', 'ordered', 'paid', 'delivered', 'cancelled'];
@@ -68,8 +69,9 @@ TxnSchema.methods.generateTid = function generateTid () {
 };
 
 TxnSchema.methods.reqDueTime = function reqDueTime (days) {
-  var reqDate = new Date();
-  reqDate.setDate(reqDate.getDate() + days)
+  var reqDate = new Date()
+    , leftDays = days ? days : 30;
+  reqDate.setDate(reqDate.getDate() + parseInt(leftDays))
   return reqDate;
 };
 

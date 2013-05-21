@@ -8,7 +8,7 @@ block txns
         th ID
         th Status
         th Products : Quote
-        th Purchase Order
+        th Action
     tbody
       for txn in txns
         tr
@@ -22,4 +22,22 @@ block txns
               span #{p.name} : #{p.quote ? ('$ ' + p.quote + ' / ' + p.unit) : 'Not quoted'}
               br
           td
-            button.btn.btn-success Purchase Order
+            case txn.status
+
+              when 'requested'
+                a.btn.btn-primary(href="#") Order Detail
+            
+              when 'quoted'
+                a.btn.btn-primary(href="#") Confirm Order
+            
+              when 'ordered'
+                a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Payment Detail
+
+              when 'paid'
+                a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Invoice
+
+              when 'delivered'
+                a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Invoice
+
+              when 'cancelled'
+                p.text-error Cancelled

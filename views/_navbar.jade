@@ -2,8 +2,10 @@
   .navbar-inner
     .container
       a.brand(href='/')
-        em
-          strong TRADOHUB
+        img(src="https://s3.amazonaws.com/tradohub/static/img/tradohub-logo.png", alt="tradohub.com", title="tradohub.com", width="130px;", style="margin-top:-10px;")
+        //- em
+        //-   strong tradohub
+        //-     span(style="color:#777; font-size: 18px;") .com
       ul.nav.pull-left
         li.dropdown
           a.dropdown-toggle(data-toggle="dropdown", href="/products", onclick="location = '/products'") Products
@@ -19,8 +21,8 @@
             li: a(href="/products") All Products
 
       form.navbar-search.pull-left
-        select.select2.search-bar#single(onchange="location = this.options[this.selectedIndex].value;")
-          option Search Products
+        select.select2.search-bar#single(onchange="location = this.options[this.selectedIndex].value;", data-placeholder="Search Products")
+          option
           for c in category
             for p in c.products
               option(value="/products/#{p.url}") #{p.name}

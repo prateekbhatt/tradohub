@@ -1,0 +1,25 @@
+if (txn.status == 'ordered')
+  p.text-error We are awaiting your payment. We will ship your product once we receive the payment.
+  h5 Tradohub Bank Detail
+  table.table
+    tbody
+      tr
+        td Bank
+        td= bank.name
+      tr
+        td Account Name
+        td= bank.accName
+      tr
+        td Account Number
+        td= bank.accNo
+      tr
+        td Bank Branch
+        td= bank.address          
+      tr
+        td IFSC Code
+        td= bank.ifscCode
+
+else if (txn.status == 'paid')
+  p We have received your payment. We will ship your product as soon as possible.
+else if (txn.status == 'delivered')
+  p Your product has been shipped.

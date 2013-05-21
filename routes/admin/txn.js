@@ -3,11 +3,10 @@
 var Product = require('../../models/Product')
   , Txn = require('../../models/Txn')
   , termsData = require('../../helpers/termsData')
-  // , shippingTerms = termsData.shippingTerms
-  // , originCountries = termsData.originCountries
   , paymentTerms = termsData.paymentTerms
   , countryList = require('../../helpers/countryList')
-  , sendMail = require('../../helpers/mailer').sendMail
+  , mailer = require('../../helpers/mailer')
+  , config = require('config')
   ;
 
 function get (req, res, next) {
@@ -24,7 +23,7 @@ function get (req, res, next) {
 };
 
 function list (req, res, next) {
-  Txn.find({}, function (err, txns) {
+  Txn.find({}).sort({ 'created': -1 }).exec(function (err, txns) {
     if (err) return next(err);
     res.locals.txns = txns;
     res.render('admin/txns',
@@ -41,6 +40,7 @@ function updateQuote (req, res, next) {
     txn.getProductByPid(pid, function (err, product) {
       if (product) {
         product.quote = req.body.quote;
+        product.quoted = new Date();
         txn.status = 'quoted';
         txn.save(function(err, isSaved) {
           if (err) return next(err);
@@ -93,23 +93,45 @@ function updateQuote (req, res, next) {
 //   });
 // };
 
+function updateStatus (req, res, next) {
+  var tid = req.params.tid
+    , statusTypes = {
+        'cancel': 'cancelled'
+      , 'paid': 'paid'
+    }
+    , status = statusTypes[req.params.status]
+    ;
+  Txn.findOne({ tid: tid }, function (err, txn) {
+    var s = txn.status;
+    if (status == 'paid') {
+      if (s == 'ordered') {
+        txn.status = status;
+      } 
+      txn.save(function (err, updated) {
+        if (err) return next(err);
+        if (updated) {
+          req.flash('success', 'Status updated.')
+        }
+        return res.redirect('/admin/orders/'+tid);
+      });      
+    } else {
+      req.flash('error', 'Your action could not be performed. Try again.');
+      res.redirect('/admin/orders/'+tid);
+    }
+  });
+};
+
 function sendQuote (req, res, next) {
   var tid = req.params.tid
     ;
-  Txn.findOne({ tid: tid }, function (err, t) {
+  Txn.findOne({ tid: tid }).populate('uid').exec(function (err, t) {
     if (err) return next(err);
-    var quoteUrl = 'http://tradohub.com/orders/' + tid;
-    var locals = {
-        email: t.contact.email
-      , subject: 'Quote for your order: ' + tid
-      , text: quoteUrl
-    };
-    sendMail(locals, function (err, respMs) {
-      if (err) return next(err);
-      console.log('email sending')
-      req.flash('success', 'Quote sent to user.');
-      res.redirect('/admin/orders/' + tid);
-    });
+    var usr = t.uid;
+    usr.quoteUrl = config.baseUrl + 'orders/' + tid;
+    usr.tid = tid;
+    mailer.sendQuote(usr);
+    req.flash('success', 'Quote sent to user.');
+    res.redirect('/admin/orders/' + tid);
   });
 };
 
@@ -126,6 +148,7 @@ module.exports = {
   , updateQuote: updateQuote
   // , updateShippingTerms: updateShippingTerms
   // , updatePaymentTerms: updatePaymentTerms
+  , updateStatus: updateStatus
   , sendQuote: sendQuote
   , remove: remove
 };

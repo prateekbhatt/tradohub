@@ -13,7 +13,7 @@ block indexPage
         em(style="border-bottom: 2px solid white;") at low prices that only large companies get.    
 
       br
-      a.btn.btn-large.btn-primary(href="/register") Get Started Today
+      a.btn.btn-large.btn-success(href="/register") Get Started Today
     br
     br
   br
@@ -37,35 +37,46 @@ block indexPage
       .row
         .span12.text-center
           a(href="/products")
-            hr
             h4 See All Products &rarr;
-          include _newProductRequest          
+          hr
+        .span5.offset1.text-center
+          include _newProductRequest
+        .span5.text-center
+          strong
+            small Are you a manufacturer / supplier ?
+              br
+              a(href="/partners") Partner with Us.
 
     .row.well
       .lead.text-center Why buy with us ?
       .row
-        .span12
+        .span12.text-center
+          
           .pointSpan
             h5 Increase profit margins
             small Get competitive prices for all products.
+          
           .pointSpan
             h5 Compete with big companies
             small We group orders from small businesses like you and negotiate 
               | better prices from manufacturers / producers.
+          
           .pointSpan
             h5 Direct from manufacturer / producer
             small We supply your raw materials directly from the the manufacturer / producer.
+          
           .pointSpan
             h5 Online procurement platform
             small Now you can manage all your raw material procurement easily on our platform.
+          
           .pointSpan
             h5 Loyalty programs
             small We have exciting loyalty programs, to empower you grow even faster.
-      .row
-        .span12.text-center
-          a(href="#")
-            hr
-            h4 Learn More &rarr;    
+      //- .row
+      //-   .span12.text-center
+      //-     a(href="#")
+      //-       hr
+      //-       h4 Learn More &rarr;    
     
     .row.well
       .row
@@ -83,6 +94,6 @@ block indexPage
             h5 We deliver the product at your factory / warehouse
       .row
         .span12.text-center
+          hr
           a(href='#', onclick="javascript:FreshWidget.show();")
-            hr
             h4 Got Questions ?

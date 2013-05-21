@@ -4,14 +4,17 @@ var User = require('../models/User')
   , UserToken = require('../models/UserToken')
   , errorHelper = require('../helpers/errorHelper')
   , countryList = require('../helpers/countryList')
-  , sendMail = require('../helpers/mailer').sendMail
+  , mailer = require('../helpers/mailer')
+  , config = require('config')
   ;
 
 function create (req, res, next) {
 
   var u = req.body
     , c = u.company
+    , con = u.contact
     ;
+  console.log(u)
   var newUser = {
       email: u.email
     , name: {
@@ -28,10 +31,10 @@ function create (req, res, next) {
       , zip: c.zip
       , imex: c.imex
     }
-    , mobile: u.mobile
+    , mobile: con.mobile
     , landline: {
-        area: u.landline.area
-      , no: u.landline.no
+        area: con.landline.area
+      , no: con.landline.no
     }
     , status: 'notVerified'
   };
@@ -52,15 +55,8 @@ function create (req, res, next) {
       // send email verification link to user's email
       // Create a token UserToken
       UserToken.new(usr._id, function (err, token) {
-        var verifyUrl = req.protocol + '://' + req.host + '/forgot-password/' + token.token;
-        var locals = {
-            email: usr.email
-          , subject: 'Confirm your email address'
-          , text: verifyUrl
-        };
-        sendMail(locals, function (err, respMs) {
-          console.log('email sending')
-        });
+        usr.verifyUrl = config.baseUrl + 'forgot-password/' + token.token;
+        mailer.sendEmailVerification(usr);
       });
 
       req.flash('success', 'You have registered successfully. Please verify your email address.');

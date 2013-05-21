@@ -1,12 +1,19 @@
-if (txn.status == 'requested')
-  span Requested Quote
-else if (txn.status == 'quoted')
-  span Quote Received
-else if (txn.status == 'ordered')
-  span Payment Awaited
-else if (txn.status == 'paid')
-  span Payment Made
-else if (txn.status == 'delivered')
-  span Delivered
-else if (txn.status == 'cancelled')
-  span Order Cancelled
+case txn.status
+
+  when 'requested'
+    span Requested Quote
+
+  when 'quoted'
+    span Quote Received
+
+  when 'ordered'
+    span Payment Awaited
+
+  when 'paid'
+    span Payment Made
+
+  when 'delivered'
+    span Delivered
+    
+  when 'cancelled'
+    span Order Cancelled
