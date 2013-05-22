@@ -33,8 +33,9 @@ var UserSchema = new Schema({
     , street: { type: String }
     , city: { type: String }
     , state: { type: String }
-    , country: { type: String, required: true }
+    , country: { type: String, required: true, default: 'IND' }
     , zip: { type: String }
+    , industry: { type: String }
   }
   , mobile: { type: Number } // mobile number
   , landline: { // landline

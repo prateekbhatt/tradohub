@@ -5,9 +5,12 @@ block partial
       legend Welcome Back
       include _infoBar
     .span5.well.pull-right(style="background-color:#F0F0F0;")
-      form(name="loginForm", method="POST", action="/login")
-
-        h4 Log In
+      form(method="POST", action="/login")
+        span
+          strong.lead Log In
+        a.btn.btn-danger.pull-right(href="/register") Create Account
+        br
+        br
         label(for="email") Email
         input.input-block-level#email(type="email", name="email", placeholder="Email Address", required, autofocus)
         br
@@ -21,7 +24,3 @@ block partial
         br
         button.btn.btn-block.btn-large.btn-success(type="submit")
           span Log In
-        hr
-
-        p 
-          a(href="/register") Don't have an account? Register

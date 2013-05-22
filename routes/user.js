@@ -2,7 +2,6 @@
 
 var User = require('../models/User')
   , UserToken = require('../models/UserToken')
-  , errorHelper = require('../helpers/errorHelper')
   , countryList = require('../helpers/countryList')
   , mailer = require('../helpers/mailer')
   , config = require('config')
@@ -27,9 +26,8 @@ function create (req, res, next) {
       , street: c.street
       , city: c.city
       , state: c.state
-      , country: c.country
       , zip: c.zip
-      , imex: c.imex
+      , industry: c.industry
     }
     , mobile: con.mobile
     , landline: {
@@ -43,12 +41,7 @@ function create (req, res, next) {
 
   User.create(newUser, function (err, usr) {
     if (err) {
-      if (err.name == 'ValidationError') {
-        return errorHelper(err, function(errors){
-          req.flash('error', errors.join(' | '))
-          return res.redirect('/register')            
-        });
-      }
+      // error is handled inside errorHelper.js given by next
       return next(err);
     }
     if (usr) {
@@ -62,7 +55,7 @@ function create (req, res, next) {
       req.flash('success', 'You have registered successfully. Please verify your email address.');
       return res.redirect('/login');
     }
-    req.flash('error', 'User with same email already exists.');
+    req.flash('error', 'An account exists with the given email.');
     res.redirect('/register');
   });
 };

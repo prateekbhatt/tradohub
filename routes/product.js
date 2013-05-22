@@ -2,12 +2,14 @@
 
 var Product = require('../models/Product')
   , Category = require('../models/Category')
+  , specs = require('../helpers/specs')
   ;
 
 function get (req, res, next) {
   Product.findOne({ url: req.params.url }).populate('category').populate('image').exec(function (err, product) {
     if (err) return next(err);
     if (product) {
+      res.locals.specs = specs[product.url] ? specs[product.url] : null;
       res.locals.imageUrl = product.image ? product.image.getFullPath() : null;
       res.locals.product = product;
       return res.render('products/get',

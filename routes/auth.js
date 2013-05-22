@@ -4,6 +4,7 @@ var User = require('../models/User')
   , UserToken = require('../models/UserToken')
   , mailer = require('../helpers/mailer')
   , countryList = require('../helpers/countryList')
+  , data = require('../helpers/data')
   , config = require('config')
   ;
 
@@ -13,6 +14,8 @@ function loginPage (req, res) {
 
 function registerPage (req, res) {
   res.locals.countryList = countryList;
+  res.locals.states = data.states;
+  res.locals.industry = data.industry;
   res.render('auth/register', { error: req.flash('error') });
 };
 

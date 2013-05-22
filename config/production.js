@@ -11,4 +11,5 @@ module.exports = {
   , mailer: {
       debug: false
   }
+  , prettyHtml: false
 }

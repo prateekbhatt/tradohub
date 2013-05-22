@@ -6,10 +6,12 @@ block partial
       legend CREATE A NEW ACCOUNT
       include _infoBar
       br
+      p.text-error Please fill in the information carefully.
+        | We will activate your account after verifying your email, company and
+        | your phone number.
       br
-      h5 
-        strong Are you a manufacturer / supplier? 
-          a(href="/partners") Partner With Us.
+      h5 Are you a manufacturer / supplier? 
+        a(href="/partners") Partner With Us.
 
     .span5.well.pull-right(style="background-color:#F0F0F0;")
       form(method="POST", action="/register")
@@ -20,35 +22,43 @@ block partial
         br
 
         label(for="email") Your Email
-        input.input-block-level#email(type="email", name="email", placeholder="Email Address", required)
+        input.input-block-level#email(type="text", name="email", placeholder="Email Address", required)
         br
 
         label(for="password") Password
-        input.input-block-level#password(type="password", name="password", placeholder="Password", required)
+          .text-error(style="display: inline; font-weight: normal;") (minimum 8 characters)
+        input.input-block-level#password(type="password", name="password", min="8", placeholder="Password", required)
         br
 
         label(for="company") Company Name
-        input.input-block-level#company(type="text", name="company[name]", placeholder="Company Name", required, required)
-        br
+        input.input-block-level#company(type="text", name="company[name]", placeholder="Company Name", required)
 
         label(for="state") State
-        select.input-block-level#state(name="company[state]", required)
-          option(value="IND") India
+        select.select2.input-xlarge#state(name="company[state]", data-placeholder="Select State", required)
+          option
+          for s in states
+            option(value="#{s}") #{s}
+        br
+        br
 
         label(for="mobile") Mobile Number
         .input-prepend
           span.add-on +91 - 
-          input.input-block-level#mobile(type="number", name="contact[mobile]", placeholder="Mobile No")
+          input.input-block-level#mobile(type="number", name="contact[mobile]", placeholder="Mobile No", required)
         br
 
-        label(for="landline") Landline Number
+        label.optional(for="landline") Landline Number
         input.input-small#landline(type="number", name="contact[landline][area]", placeholder="Area Code")
         input.input-medium(type="number", name="contact[landline][no]", placeholder="Number")
         br
 
-        label(for="industry") Industry
-        select.input-block-level#industry(name="company[industry]", required)
-          option(value="IND") India
+        label.optional(for="industry") Industry
+        select.select2.input-xlarge#industry(name="company[industry]", data-placeholder="Select Industry")
+          option
+          for i in industry
+            option(value="#{i}") #{i}
+        br
+        br
 
         button.btn.btn-block.btn-large.btn-success(type="submit")
           span Create Account

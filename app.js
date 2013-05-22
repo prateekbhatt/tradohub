@@ -8,7 +8,10 @@ var express = require('express')
   , passport = require('passport')
   , expressValidator = require('express-validator')
   , flash = require('connect-flash')
+  , config = require('config')
   , db = require('./db')
+  , loadCategories = require('./helpers/loadCategories')
+  , errorHelper = require('./helpers/errorHelper')
   ;
 
 // Create app
@@ -66,35 +69,33 @@ app.configure(function(){
   app.use(flash());
   // add user to res.locals to make it available in layout.jade
   app.use(function (req, res, next) {
-    app.locals.pretty = true;
+    app.locals.pretty = config.prettyHtml;
     res.locals.user = req.user ? { 'email': req.user.email, 'name': req.user.name } : null;
     next();
   });
   // middleware to pass products and category to all views 
-  app.use(function categories (req, res, next) {
-    models.Category.find({}).populate('products').exec(function (err, c) {
-      res.locals.category = c;
-      next();
-    });
-  });
+  app.use(loadCategories);
 
   app.use(app.router);
-  app.use(function (err, req, res, next){
-    res.status(err.status || 500);
-    res.render('500', { error: err });
-  });
+
+  app.use(errorHelper);
 
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
+
   app.use(express.staticCache());
+
   app.use(express.compress({
     filter: function (req, res) {
       return /json|text|javascript|css/.test(res.getHeader('Content-Type'));
     },
     level: 9
   }));
+
   app.use(express.static(path.join(__dirname, 'public')));
+  
   app.use(function(req, res, next){
     res.status(404);
+    console.log('\n\ninside err function 404')
     // respond with html page
     if (req.accepts('html')) {
       res.render('404');

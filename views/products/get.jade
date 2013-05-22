@@ -5,11 +5,32 @@ block products
       h3.lead #{product.name}
     .span4
       a.btn.btn-large.btn-success.span3(href="/quote") Request For Quote
+  hr
   .row
-    hr
     .span5      
       p(style="text-align: justify;") #{product.description}
-      hr
+
+    .span4
+      if (imageUrl)
+        img(src="#{imageUrl}", alt="#{product.name}")
+  
+  if (specs)
+    hr
+    .row
+      .span9
+        h5 Specifications
+        for t in specs.title
+          p= t
+        table.table.table-bordered.table-striped.table-hover.table-condensed
+          for c in specs.columns
+            th= c
+          for r in specs.rows
+            tr
+              for v in r
+                  td= v
+  hr
+  .row          
+    .span4
       - for c in category
         - if ((c._id).toString() == (product.category._id).toString()) {
             //- if (c.products.length > 1)
@@ -19,9 +40,5 @@ block products
                 li: a(href="/products/#{p.url}") #{p.name}
         -   break;
         - }
-      hr
-      include ../_newProductRequest
-
     .span4
-      if (imageUrl)
-        img(src="#{imageUrl}", alt="#{product.name}")
+      include ../_newProductRequest
