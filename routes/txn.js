@@ -3,7 +3,7 @@
 var Product = require('../models/Product')
   , Txn = require('../models/Txn')
   , config = require('config')
-  , termsData = require('../helpers/termsData')
+  , data = require('../helpers/data')
   , countryList = require('../helpers/countryList')
   , sendMail = require('../helpers/mailer').sendMail
   ;
@@ -14,10 +14,11 @@ function quotePage (req, res, next) {
   Product.find({}, function (err, products) {
     if (err) return next(err);
     res.locals.products = products;
-    res.locals.paymentTerms = termsData.paymentTerms;
+    res.locals.paymentTerms = data.paymentTerms;
     res.locals.countryList = countryList;
-    res.locals.reqDue = termsData.reqDue;
+    res.locals.reqDue = data.reqDue;
     res.locals.user = req.user;
+    res.locals.states = data.states;
     res.render('txns/quote',
       { error: req.flash('error'), success: req.flash('success') });
   });
@@ -59,7 +60,7 @@ function invoicePage (req, res, next) {
         return res.redirect('/orders/'+tid);
       } else {
         res.locals.txn = txn;
-        res.locals.bank = termsData.tradohubBank;
+        res.locals.bank = data.tradohubBank;
         res.locals.totalValue = txn.getTotalValue();
         return res.render('txns/invoice',
           { error: req.flash('error'), success: req.flash('success') });

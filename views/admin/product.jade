@@ -11,7 +11,7 @@ block admin
       for c in category
         option(value="#{c._id}") #{c.name}
     br
-    textarea(type="text", rows="10", name="description", placeholder="description") #{product.description}
+    textarea.input-block-level(type="text", rows="10", name="description", placeholder="description") #{product.description}
     br
 
     input.btn.btn-large.btn-primary(type="submit")
@@ -26,7 +26,7 @@ block admin
   form(method="POST", action="/admin/products/#{product._id}/image", enctype="multipart/form-data")  
     input(type="hidden", name="_method", value="PUT")
     .fileupload.fileupload-new(data-provides="fileupload")
-      P Upload New Product Image:
+      P Upload New Product Image (jpg format only):
       span.btn.btn-file
         span.fileupload-new Select file
         span.fileupload-exists Change

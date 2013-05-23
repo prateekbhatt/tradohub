@@ -17,24 +17,24 @@ block partial
       form(method="POST", action="/register")
 
         label(for="name") Your Name        
-        input.input-medium#name(type="text", name="name[first]", placeholder="First Name", autofocus, required)
-        input.input-medium.pull-right(type="text", name="name[last]", placeholder="Last Name", required)
+        input.input-medium#name(type="text", name="name[first]", placeholder="First Name", title="Enter your first name", autofocus, required)
+        input.input-medium.pull-right(type="text", name="name[last]", placeholder="Last Name", title="Enter your last name", required)
         br
 
         label(for="email") Your Email
-        input.input-block-level#email(type="text", name="email", placeholder="Email Address", required)
+        input.input-block-level#email(type="email", name="email", placeholder="Email Address", title="Enter a valid email", required)
         br
 
         label(for="password") Password
           .text-error(style="display: inline; font-weight: normal;") (minimum 8 characters)
-        input.input-block-level#password(type="password", name="password", min="8", placeholder="Password", required)
+        input.input-block-level#password(type="password", name="password", placeholder="Password",  pattern=".{8,}", title="8 characters minimum", required)
         br
 
         label(for="company") Company Name
-        input.input-block-level#company(type="text", name="company[name]", placeholder="Company Name", required)
+        input.input-block-level#company(type="text", name="company[name]", placeholder="Company Name", title="Enter your company's name", required)
 
         label(for="state") State
-        select.select2.input-xlarge#state(name="company[state]", data-placeholder="Select State", required)
+        select.select2.input-xlarge#state(name="company[state]", data-placeholder="Select State", title="Select your state", required)
           option
           for s in states
             option(value="#{s}") #{s}
@@ -44,7 +44,7 @@ block partial
         label(for="mobile") Mobile Number
         .input-prepend
           span.add-on +91 - 
-          input.input-block-level#mobile(type="number", name="contact[mobile]", placeholder="Mobile No", required)
+          input.input-block-level#mobile(type="number", name="contact[mobile]", placeholder="Mobile No", min="7000000000", max="9999999999",  pattern=".{10}", title="Mobile no. must have 10 numbers", required)
         br
 
         label.optional(for="landline") Landline Number

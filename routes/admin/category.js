@@ -13,7 +13,8 @@ function get (req, res, next) {
         if (err) return next(err);
         res.locals.category = category;
         res.locals.products = p;
-        return res.render('admin/category');
+        return res.render('admin/category',
+          { success: req.flash('success'), error: req.flash('error') });
       });
     } else {
       res.render('404');      
@@ -25,7 +26,8 @@ function list (req, res, next) {
   Category.find({}, function (err, category) {
     if (err) return next(err);
     res.locals.category = category;
-    res.render('admin/categories');
+    res.render('admin/categories',
+      { success: req.flash('success'), error: req.flash('error') });
   });
 };
 

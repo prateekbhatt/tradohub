@@ -2,19 +2,19 @@
 
 var Product = require('../../models/Product')
   , Category = require('../../models/Category')
-  , File = require('../../models/File')
+  // , File = require('../../models/File')
   ;
 
-
 function get (req, res, next) {
-  Product.findOne({ url: req.params.url }).populate('category').populate('image').exec(function (err, product) {
+  Product.findOne({ url: req.params.url }).populate('category').exec(function (err, product) {
     if (err) return next(err);
     if (product) {
-      res.locals.imageUrl = product.image ? product.image.getFullPath() : null;
+      res.locals.imageUrl = product.image ? product.getImagePath() : null;
       res.locals.product = product;
-      return res.render('admin/product');      
+      return res.render('admin/product',
+        { success: req.flash('success'), error: req.flash('error') });
     } else {
-      res.render('404');      
+      res.render('404');
     }
   });
 };
@@ -23,7 +23,8 @@ function list (req, res, next) {
   // passing category using the 'categories' middleware on app.js
   Product.find({}).populate('category').sort({ 'name': 1 }).exec(function (err, products) {
     res.locals.products = products;
-    res.render('admin/products');
+    res.render('admin/products',
+      { success: req.flash('success'), error: req.flash('error') });
   });
 };
 
@@ -34,25 +35,25 @@ function create (req, res, next) {
     , description: req.body.description
   };
 
-  var file = req.files ? req.files.image : null
-    , fileType = 'products'
-    , permission = 'public'
-    ;
+  // var file = req.files ? req.files.image : null
+  //   , fileType = 'products'
+  //   , permission = 'public'
+  //   ;
 
   Product.create(product, function (err, savedP) {
     if (err) return next(err);
     if (savedP) {
 
       // upload image file to aws ses
-      File.create(file, fileType, permission, function (err, savedF) {
-        if (err) console.log(err);
-        if (savedF) {
-          savedP.image = savedF._id;
-          savedP.save(function (err, imageSaved) {
-            console.log('image updated!\n\n');              
-          });
-        }
-      });
+      // File.create(file, fileType, permission, function (err, savedF) {
+      //   if (err) console.log(err);
+      //   if (savedF) {
+      //     savedP.image = savedF._id;
+      //     savedP.save(function (err, imageSaved) {
+      //       console.log('image updated!\n\n');              
+      //     });
+      //   }
+      // });
 
       Category.findById(savedP.category, function (err, c) {
         if (err) return next(err);
@@ -111,32 +112,25 @@ function update (req, res, next) {
 };
 
 function updateImage (req, res, next) {
-  var pid = req.params.id;
-  Product.findById(pid).exec(function (err, p) {
-    if (err) return next(err);
-    if (p) {
-      var file = req.files ? req.files.image : null
-        , fileType = 'products'
-        , permission = 'public'
-        ;
-      // if product has an existing image, update the file
-      if (p.image) {
-        File.update(p.image, file, permission, function (err, f) {
-          if (err) return next(err);
-          return res.redirect('/admin/products/'+p.url);
-        });
+  var pid = req.params.id
+    , file = req.files ? req.files.image : null
+    ;
+
+  if (file) {
+    Product.updateImage(pid, file, function (err, updated) {
+      if (err) return next(err);
+      if (updated) {
+        req.flash('success', 'Product image updated');
       } else {
-        // if product doesnot have an existing image, create a new file
-        File.create(file, fileType, permission, function (err, f) {
-          if (err) return next(err);
-          return res.redirect('/admin/products/'+p.url);
-        });
+        req.flash('error', 'Product image not updated');
       }
-    } else {
-      res.redirect('/admin/products');
-    }
+      return res.redirect('/admin/products');
+    })    
+  } else {
+    req.flash('error', 'Please upload a valid file');
+    res.redirect('/admin/products');
   }
-)};
+};
 
 function remove (req, res, next) {
   Product.findByIdAndRemove(req.params.id, function(err, p) {

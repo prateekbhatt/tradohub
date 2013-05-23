@@ -2,8 +2,7 @@
 
 var Product = require('../../models/Product')
   , Txn = require('../../models/Txn')
-  , termsData = require('../../helpers/termsData')
-  , paymentTerms = termsData.paymentTerms
+  , data = require('../../helpers/data')
   , countryList = require('../../helpers/countryList')
   , mailer = require('../../helpers/mailer')
   , config = require('config')
@@ -14,7 +13,7 @@ function get (req, res, next) {
     if (err) return next(err);
     if (txn) {
       res.locals.txn = txn;
-      res.locals.paymentTerms = paymentTerms;
+      res.locals.paymentTerms = data.paymentTerms;
       return res.render('admin/txn',
         { error: req.flash('error'), success: req.flash('success') });
     }

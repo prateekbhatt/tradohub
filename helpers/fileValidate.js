@@ -1,6 +1,7 @@
 module.exports = function fileValidate (file) {
   'use strict';
-  var _validFileExtensions = [".jpg", ".jpeg", ".bmp", ".gif", ".png", ".pdf", ".doc", ".docx"];
+  // var _validFileExtensions = [".jpg", ".jpeg", ".bmp", ".gif", ".png", ".pdf", ".doc", ".docx"];
+  var _validFileExtensions = [".jpg", ".jpeg"];
   if (file.length > 0) {
     var fileValid = false;
     for (var j = 0; j < _validFileExtensions.length; j++) {

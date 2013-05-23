@@ -39,7 +39,7 @@ var routes = {
   , user: require('./routes/user')
   , product: require('./routes/product')
   , txn: require('./routes/txn')
-  , auth: require('./routes/auth')
+  // , auth: require('./routes/auth')
 };
 
 // import admin routes
@@ -70,6 +70,9 @@ app.configure(function(){
   // add user to res.locals to make it available in layout.jade
   app.use(function (req, res, next) {
     app.locals.pretty = config.prettyHtml;
+    res.locals.mainCss = config.mainCss;
+    res.locals.mainJs = config.mainJs;
+    res.locals.logoUrl = config.logoUrl;
     res.locals.user = req.user ? { 'email': req.user.email, 'name': req.user.name } : null;
     next();
   });
@@ -146,13 +149,13 @@ app.get('/orders/:tid/invoice', loggedIn, activated, routes.txn.invoicePage);
 
 // Auth Routes
 
-app.get('/login', routes.auth.loginPage);
-app.get('/register', routes.auth.registerPage);
-app.get('/forgot-password', routes.auth.passwordForgotPage);
-app.get('/forgot-password/:token', routes.auth.passwordForgotCheck);
-app.post('/forgot-password', routes.auth.passwordForgot);
-app.get('/users/:id/verify/:token', routes.auth.verifyEmail);
-app.get('/logout', routes.auth.logout);
+app.get('/login', routes.user.loginPage);
+app.get('/register', routes.user.registerPage);
+app.get('/forgot-password', routes.user.passwordForgotPage);
+app.get('/forgot-password/:token', routes.user.passwordForgotCheck);
+app.post('/forgot-password', routes.user.passwordForgot);
+app.get('/verify-email/:token', routes.user.verifyEmail);
+app.get('/logout', routes.user.logout);
 
 app.post('/register', routes.user.create);
 app.post('/login',

@@ -23,7 +23,16 @@ module.exports['aluminum-ingots'] = {
 }
 
 module.exports['copper-cathodes'] = {
-    "title": []
+    "title": [
+      'Copper Cathodes Grade A (Electrolytic Copper Grade)'
+    , 'LME OR NON-LME AS PER REQUIREMENTS '
+    , 'Dimension: 914mm x 914mm x 12mm (LME Standard)'
+    , 'Weight of each sheet: 125kgs (+/- 1%) '
+    , 'Net weight of each pallet: 2MTS (+/- 1%) '
+    , 'Min. weight in each container:  20MTS approx.'
+    , 'Gross weight of each container: 22.20MTS Approx.'
+    , 'Packing:  Palletized banded by aluminum bands'
+  ]
   , "columns": [ "Element", "Symbol", "Value" ]
   , "rows": [
       [ 'Copper', 'Cu', '99% Min.' ]

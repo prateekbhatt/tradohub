@@ -13,8 +13,12 @@
 .control-group
   label.control-label(for="state") State
   .controls
-    input.input-xlarge(type="text", id="state", name="company[state]", value="#{user.company.state || ''}", placeholder="State")
-
+    select.select2.input-xlarge#state(name="company[state]", data-placeholder="Select State", title="Select your state", required)
+      option(value="#{user.company.state || ''}") #{user.company.state || ''}
+      for s in states
+        option(value="#{s}") #{s}
+    br
+    br
 .control-group
   label.control-label(for="zip") Zip / Postal Code
   .controls
@@ -22,9 +26,10 @@
 
 .control-group
   label.control-label(for="country") Country
-  .controls
+  .controls(style="padding-top: 5px;")
     //- input.input-xlarge(type="text", id="country", name="address[country]", placeholder="Country", required)
-    select.input-xlarge(name="company[country]", required)
-      option(value="#{user.company.country}") #{user.company.country}
-      each i in countryList
-        option(value=i.cca3) #{i.name}
+    span INDIA
+    //- select.input-xlarge(name="company[country]", required)
+    //-   option(value="#{user.company.country}") #{user.company.country}
+    //-   each i in countryList
+    //-     option(value=i.cca3) #{i.name}

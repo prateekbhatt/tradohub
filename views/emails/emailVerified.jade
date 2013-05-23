@@ -1,10 +1,9 @@
 extends layout
 
 block message
-  p Thank you for creating a Tradohub account.
-  p Please confirm your email address by clicking on the link below:
+  p #{user.msg}
   br
   div(align='center', width='300', bgcolor='#51a351')
     a(href='#{user.linkUrl}', 
       style='color: #fff; text-decoration: none; background: #51a351; font-size:18px; padding-top: 6px; padding-right: 10px; padding-bottom: 6px; padding-left: 10px; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; color: #fff; font-weight: bold; text-decoration: none; font-family: Helvetica, Arial, sans-serif; display: block;')
-        | Confirm Email Address
+        | Update Profile

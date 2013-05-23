@@ -6,11 +6,11 @@ var Product = require('../models/Product')
   ;
 
 function get (req, res, next) {
-  Product.findOne({ url: req.params.url }).populate('category').populate('image').exec(function (err, product) {
+  Product.findOne({ url: req.params.url }).populate('category').exec(function (err, product) {
     if (err) return next(err);
     if (product) {
       res.locals.specs = specs[product.url] ? specs[product.url] : null;
-      res.locals.imageUrl = product.image ? product.image.getFullPath() : null;
+      res.locals.imageUrl = product.image ? product.getImagePath() : null;
       res.locals.product = product;
       return res.render('products/get',
         { success: req.flash('success'), error: req.flash('error') });

@@ -117,23 +117,23 @@ Mailer.prototype = {
  */
  
 /**
- * Sends a thank you message.
+ * Send a registration email confirmation message.
  */
-module.exports.sendThankyou = function(user) {
+module.exports.sendEmailVerification = function(user) {
   var mailer = new Mailer(user);
-  mailer._subject = 'Thank you for your purchase!';
-  mailer._template = 'thankyou.jade';
+  mailer._subject = 'Tradohub : Email Confirmation';
+  mailer._template = 'emailVerification.jade';
   mailer.send();
   return mailer;
 }
  
 /**
- * Send a registration email confirmation message.
+ * Sends a message after email is verified.
  */
-module.exports.sendEmailVerification = function(user) {
+module.exports.sendEmailVerified = function(user) {
   var mailer = new Mailer(user);
-  mailer._subject = 'Tradohub Email Confirmation';
-  mailer._template = 'emailVerification.jade';
+  mailer._subject = 'Tradohub : Email has been verified';
+  mailer._template = 'emailVerified.jade';
   mailer.send();
   return mailer;
 }
@@ -165,7 +165,11 @@ module.exports.sendQuote = function(user) {
  */
 module.exports.sendAccountStatus = function(user) {
   var mailer = new Mailer(user);
-  mailer._subject = 'Your account has been ' + user.status + '.';
+  if (user.status == 'activated') {
+    mailer._subject = ' Welcome to Tradohub! Account activated';
+  } else {
+    mailer._subject = ' Tradohub: Your account has been ' + user.status + '.';
+  }
   mailer._template = 'accountStatus.jade';
   mailer.send();
   return mailer;
@@ -177,7 +181,7 @@ module.exports.sendAccountStatus = function(user) {
 module.exports.sendPartnerRequest = function(user) {
   console.log(user);
   var mailer = new Mailer(user);
-  mailer._subject = 'New Partnership Request';
+  mailer._subject = 'Tradohub: New Partnership Request';
   mailer._template = 'partnerRequest.jade';
   mailer.send();
   return mailer;
