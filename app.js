@@ -176,30 +176,30 @@ app.post('/account/password', loggedIn, routes.user.updatePassword);
 // Admin Routes
 // TODO: Admin Checks
 
-app.get('/admin/category', admin.category.list);
-app.get('/admin/category/:url', admin.category.get);
-app.post('/admin/category', admin.category.create);
-app.put('/admin/category/:id', admin.category.update);
+app.get('/admin/category', isAdmin, admin.category.list);
+app.get('/admin/category/:url', isAdmin, admin.category.get);
+app.post('/admin/category', isAdmin, admin.category.create);
+app.put('/admin/category/:id', isAdmin, admin.category.update);
 
-app.get('/admin/products', admin.product.list);
-app.get('/admin/products/:url', admin.product.get);
-app.post('/admin/products', admin.product.create);
-app.put('/admin/products/:id', admin.product.update);
-app.put('/admin/products/:id/image', admin.product.updateImage);
-app.delete('/admin/products/:id', admin.product.remove);
+app.get('/admin/products', isAdmin, admin.product.list);
+app.get('/admin/products/:url', isAdmin, admin.product.get);
+app.post('/admin/products', isAdmin, admin.product.create);
+app.put('/admin/products/:id', isAdmin, admin.product.update);
+app.put('/admin/products/:id/image', isAdmin, admin.product.updateImage);
+app.delete('/admin/products/:id', isAdmin, admin.product.remove);
 
-app.get('/admin/orders', admin.txn.list);
-app.get('/admin/orders/:tid', admin.txn.get);
-app.post('/admin/orders/:tid/products/:pid/quote', admin.txn.updateQuote);
+app.get('/admin/orders', isAdmin, admin.txn.list);
+app.get('/admin/orders/:tid', isAdmin, admin.txn.get);
+app.post('/admin/orders/:tid/products/:pid/quote', isAdmin, admin.txn.updateQuote);
 // app.post('/admin/orders/:tid/shippingTerms', admin.txn.updateShippingTerms);
 // app.post('/admin/orders/:tid/paymentTerms', admin.txn.updatePaymentTerms);
-app.post('/admin/orders/:tid/send', admin.txn.sendQuote);
-app.put('/admin/orders/:tid/:status', admin.txn.updateStatus);
-app.delete('/admin/orders/:tid', admin.txn.remove);
+app.post('/admin/orders/:tid/send', isAdmin, admin.txn.sendQuote);
+app.put('/admin/orders/:tid/:status', isAdmin, admin.txn.updateStatus);
+app.delete('/admin/orders/:tid', isAdmin, admin.txn.remove);
 
-app.get('/admin/users', admin.user.list);
-app.get('/admin/users/:id', admin.user.get);
-app.put('/admin/users/:id/:status', admin.user.updateStatus);
+app.get('/admin/users', isAdmin, admin.user.list);
+app.get('/admin/users/:id', isAdmin, admin.user.get);
+app.put('/admin/users/:id/:status', isAdmin, admin.user.updateStatus);
 
 // Start server
 http.createServer(app).listen(app.get('port'), function(){
