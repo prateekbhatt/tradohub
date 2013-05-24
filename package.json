@@ -20,7 +20,6 @@
     "jade": "*",
     "passport": "*",
     "passport-local": "*",
-    "bcrypt": "0.7.3",
     "less": ">=1.3.3",
     "less-middleware": "0.1.9",
     "supervisor": "0.5.2",
