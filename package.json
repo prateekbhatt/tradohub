@@ -32,7 +32,9 @@
     "mongoose-timestamp": "~0.1.0",
     "mongoose-troop": "~0.0.8",
     "config": "~0.4.24",
-    "connect-redis": "~1.4.5"
+    "connect-redis": "~1.4.5",
+    "bcrypt": "~0.7.5",
+    "connect-flash": "~0.1.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

@@ -2,42 +2,53 @@ extends index
 block txns
 
   legend Order Status
-  table.table
-    thead
-      tr
-        th ID
-        th Status
-        th Products : Quote
-        th Action
-    tbody
-      for txn in txns
+
+  if (!txns.length)
+    .span6.well
+      p You have not made any requests for quote yet.
+        | You can manage all your orders here.
+      p
+        a(href='/products') Browse products
+        | &nbsp;or&nbsp;
+        a(href='/quote') request a quote
+        | &nbsp;for a product.
+  else
+    table.table
+      thead
         tr
-          td 
-            a(href="/orders/#{txn.tid}") #{txn.tid}
-          td 
-            include _txnStatus
+          th ID
+          th Status
+          th Products : Quote
+          th Action
+      tbody
+        for txn in txns
+          tr
+            td 
+              a(href="/orders/#{txn.tid}") #{txn.tid}
+            td 
+              include _txnStatus
 
-          td
-            for p in txn.products
-              span #{p.name} : #{p.quote ? ('$ ' + p.quote + ' / ' + p.unit) : 'Not quoted'}
-              br
-          td
-            case txn.status
+            td
+              for p in txn.products
+                span #{p.name} : #{p.quote ? ('$ ' + p.quote + ' / ' + p.unit) : 'Not quoted'}
+                br
+            td
+              case txn.status
 
-              when 'requested'
-                a.btn.btn-primary(href="#") Order Detail
-            
-              when 'quoted'
-                a.btn.btn-primary(href="#") Confirm Order
-            
-              when 'ordered'
-                a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Payment Detail
+                when 'requested'
+                  a.btn.btn-primary(href="#") Order Detail
+              
+                when 'quoted'
+                  a.btn.btn-primary(href="#") Confirm Order
+              
+                when 'ordered'
+                  a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Payment Detail
 
-              when 'paid'
-                a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Invoice
+                when 'paid'
+                  a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Invoice
 
-              when 'delivered'
-                a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Invoice
+                when 'delivered'
+                  a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Invoice
 
-              when 'cancelled'
-                p.text-error Cancelled
+                when 'cancelled'
+                  p.text-error Cancelled
