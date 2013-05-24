@@ -119,7 +119,7 @@ function create (req, res, next) {
     , street: txn.company.street
     , city: txn.company.city
     , state: txn.company.state
-    , country: txn.company.country
+    // , country: txn.company.country
     , zip: txn.company.zip
   };
 

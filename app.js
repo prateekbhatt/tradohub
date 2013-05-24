@@ -51,7 +51,6 @@ var routes = {
   , user: require('./routes/user')
   , product: require('./routes/product')
   , txn: require('./routes/txn')
-  // , auth: require('./routes/auth')
 };
 
 // import admin routes
@@ -75,11 +74,13 @@ app.configure(function(){
   app.use(expressValidator);
   app.use(express.methodOverride());
   app.use(express.cookieParser(config.cookieSecret));
+
   app.use(express.session({
       secret: config.sessionSecret
     , cookie: { maxAge: 1000*60*60 }
     , store: redisSessionStore
   }));
+  
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(flash());

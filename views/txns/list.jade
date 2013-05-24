@@ -36,10 +36,10 @@ block txns
               case txn.status
 
                 when 'requested'
-                  a.btn.btn-primary(href="#") Order Detail
+                  a.btn.btn-primary(href="/orders/#{txn.tid}") Order Detail
               
                 when 'quoted'
-                  a.btn.btn-primary(href="#") Confirm Order
+                  a.btn.btn-primary(href="/orders/#{txn.tid}") Confirm Order
               
                 when 'ordered'
                   a.btn.btn-primary(href="/orders/#{txn.tid}/invoice") Payment Detail

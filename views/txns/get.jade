@@ -71,24 +71,32 @@ block txns
       p Email:&nbsp;&nbsp;
         span #{txn.contact.email}
 
-  if (txn.status == 'requested')
-    p We are working hard to get you the best prices. Wait for the price quote.
-  else if (txn.status == 'quoted')
-    if (txn.payMode == 'RTGS')
-      include _bankModal
-    else
-      include _confirmOrder    
-  else if (txn.status == 'ordered')
-    p We are awaiting your payment. We will ship your product once we receive the payment.
-    a.btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
-  else if (txn.status == 'paid')
-    .btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
-  else if (txn.status == 'delivered')
-    p Your product has been shipped.
-    .btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
-  
-  if (txn.status == 'requested' || txn.status == 'quoted')
-    p
-      br
-      span OR
-    .btn Cancel Order
+  .well
+    case txn.status
+      when 'requested'
+        p.text-error We are working hard to get you the best prices. Wait for the price quote.
+
+      when 'quoted'
+        if (txn.payMode == 'RTGS')
+          include _bankModal
+        else
+          include _confirmOrder
+
+      when 'ordered'
+        p.text-error We are awaiting your payment. We will ship your product once we receive the payment.
+        a.btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
+
+      when 'paid'
+        .btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
+
+      when 'delivered'
+        p.text-error Your product has been shipped.
+        .btn.btn-info(href='/orders/#{txn.tid}/invoice') See Invoice
+
+      when 'cancelled'
+        p.text-error This order has been cancelled.
+    
+    if (txn.status == 'requested' || txn.status == 'quoted')
+      p
+       span OR
+      include _cancelModal

@@ -28,7 +28,7 @@ var TxnSchema = new Schema({
     , street: { type: String }
     , city: { type: String }
     , state: { type: String }
-    , country: { type: String, required: true, default: 'IND' }
+    , country: { type: String, default: 'IND' }
     , zip: { type: String }
   }
   , contact: { // add delivery address

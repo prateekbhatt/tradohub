@@ -1,8 +1,8 @@
 extends ../layout
-
-block script
-  script(src="/js/lib/angular.min.js")
-  script(src="/js/lib/ui-bootstrap.min.js")  
+//- 
+  block script
+    script(src="/js/lib/angular.min.js")
+    script(src="/js/lib/ui-bootstrap.min.js")  
   script(src="/js/app2.js")
 
 block partial
@@ -27,8 +27,8 @@ block partial
         .control-group
           label.control-label(for="userName") Your Name
           .controls
-            input.span2(type="text", id="userName", name="user[name][first]", value="#{user.name.first}", placeholder="First Name", required )
-            input.span2(type="text", name="user[name][last]", value="#{user.name.last}", placeholder="Last Name", required )
+            input.span2(type="text", id="userName", name="user[name][first]", value="#{user.name.first}", placeholder="First Name", required)
+            input.span2(type="text", name="user[name][last]", value="#{user.name.last}", placeholder="Last Name", required)
 
         .control-group
           label.control-label(for="landline") Mobile Number

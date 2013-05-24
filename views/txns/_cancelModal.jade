@@ -1,0 +1,12 @@
+a.btn(href="#cancelModal", role="button", data-toggle="modal")
+  span Cancel Order
+#cancelModal(class="modal hide", tabindex="-1", role="dialog", aria-labelledby="cancelModalLabel", aria-hidden="true")
+  form.form-horizontal(method="POST", action="/orders/#{txn.tid}/cancel")
+    .modal-header.text-center
+      button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
+      .lead(id="cancelModalLabel") Confirm Order Cancellation
+    .modal-body.text-center
+      input.btn.btn-danger.btn-large(type="submit", value="Cancel Order")
+      
+    //- .modal-footer
+    //-   button.btn(data-dismiss="modal", aria-hidden="true") Go Back
