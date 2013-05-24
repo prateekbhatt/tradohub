@@ -12,7 +12,19 @@ var express = require('express')
   , db = require('./db')
   , loadCategories = require('./helpers/loadCategories')
   , errorHelper = require('./helpers/errorHelper')
+  , RedisStore = require('connect-redis')(express)
   ;
+
+
+// configure redis session store for storing session data
+var redisSessionStore = new RedisStore({
+    host: config.redis.host
+  , port: config.redis.port
+  // , db: config.redis.username
+  // , pass: config.redis.password
+  , no_ready_check: true
+  , ttl: 60*60  // hour
+});
 
 // Create app
 var app = express();
@@ -62,8 +74,12 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(expressValidator);
   app.use(express.methodOverride());
-  app.use(express.cookieParser('secretofthedarkhorse'));
-  app.use(express.session());
+  app.use(express.cookieParser(config.cookieSecret));
+  app.use(express.session({
+      secret: config.sessionSecret
+    , cookie: { maxAge: 1000*60*60 }
+    , store: redisSessionStore
+  }));
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(flash());
