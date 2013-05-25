@@ -6,8 +6,15 @@
 //   login page.
 
 function gotoLogin (req, res) {
+  // keep the current path in session, and redirect to the current path after use logs in
   req.session.redirectTo = req.path;
-  req.flash('error', 'Please login to continue.');
+
+  // if requesting for quote, show this message
+  if (req.path == '/quote') {
+    req.flash('error', 'Please login or create-account before requesting for quote.')
+  } else {
+    req.flash('error', 'Please login to continue.');    
+  }
   res.redirect('/login');
 };
 

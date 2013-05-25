@@ -35,7 +35,7 @@ block partial
           .controls
             .input-prepend
               .add-on +91 - 
-              input#mobile(type="number", name="user[mobile]", value="#{user.mobile || ''}", placeholder="Mobile No")
+              input#mobile(type="number", name="user[mobile]", value="#{user.mobile || ''}", placeholder="Mobile No", pattern=".{10}", title="Mobile no. must have 10 numbers")
         .control-group
           label.control-label(for="landline") Landline Number
           .controls

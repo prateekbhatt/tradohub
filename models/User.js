@@ -170,25 +170,6 @@ passport.use(new LocalStrategy({
   });
 }));
 
-UserSchema.statics.updatePassword = function updatePassword (userId, password, fn) {
-  User.findOne({ _id: userId }, function (err, user) {
-    if (err) console.log(err);
-    if (user) {
-      user.password = password;
-      user.save(function (err, updated) {
-        fn(err, updated);
-      });
-    }
-  });
-};
-
-UserSchema.methods.updateImex = function updateImex (fid, fn) {
-  this.company.imex = fid;
-  this.save(function (err, updated) {
-    fn(err, updated);
-  })
-};
-
 var User = mongoose.model('User', UserSchema);
 
 module.exports = User;

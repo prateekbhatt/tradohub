@@ -91,9 +91,9 @@ block txns
     .control-group
       label.control-label(for="landline") Landline Number
       .controls
-        input.input-mini(type="number", name="contact[landline][area]", value="#{user.landline.area || ''}", placeholder="Area", required)
+        input.input-mini(type="number", name="contact[landline][area]", value="#{user.landline.area || ''}", placeholder="Area")
         &nbsp;&nbsp;
-        input.input-small#landline(type="number", name="contact[landline][no]", value="#{user.landline.no || ''}", placeholder="Number", required)
+        input.input-small#landline(type="number", name="contact[landline][no]", value="#{user.landline.no || ''}", placeholder="Number")
     
     .form-actions
       button.btn.btn-large.btn-success.span3(type="submit")

@@ -6,6 +6,7 @@ var User = require('../models/User')
   , mailer = require('../helpers/mailer')
   , config = require('config')
   , data = require('../helpers/data')
+  , getExpressErrors = require('../helpers/getExpressErrors')
   ;
 
 function loginPage (req, res) {
@@ -46,7 +47,15 @@ function create (req, res, next) {
     , c = u.company
     , con = u.contact
     ;
-  // console.log(u)
+
+  req.assert('password', 'Password should be between 8 to 20 characters').len(8, 20);
+  var errors =  getExpressErrors(req);
+
+  if (errors) {
+    req.flash('error', errors);
+    return res.redirect(req.path);
+  }
+
   var newUser = {
       email: u.email
     , name: {
@@ -70,13 +79,11 @@ function create (req, res, next) {
     , status: 'notVerified'
   };
 
-  if (u.roles) { newUser.roles = u.roles; }
+  // if (u.roles) { newUser.roles = u.roles; } // admin roles to be assigned later by super admin
 
   User.create(newUser, function (err, usr) {
-    if (err) {
-      // error is handled inside errorHelper.js given by next
-      return next(err);
-    }
+    // error is handled inside errorHelper.js given by next
+    if (err) return next(err);
     if (usr) {
       // send email verification link to user's email
       // Create a token UserToken
@@ -94,8 +101,8 @@ function create (req, res, next) {
 };
 
 function verifyEmail(req, res, next) {
-  var token = req.params.token
-    ;
+  var token = req.params.token;
+
   // Check for a UserToken using the supplied token.
   UserToken.findOne({token: token}, function (err, token) {
     if (err) return next(err);
@@ -128,7 +135,7 @@ function verifyEmail(req, res, next) {
           // send email verified email
           user.msg = msg;
           user.linkUrl = config.baseUrl + 'login';
-          mailer.sendEmailVerified(user)
+          mailer.sendEmailVerified(user);
 
           return res.redirect('/login');
         }
@@ -138,14 +145,13 @@ function verifyEmail(req, res, next) {
 };
 
 function updateAccount (req, res, next) {
-  console.log('inside user update route');
   User.findById(req.user._id, function (err, user) {
     if (err) return next(err);
     
     var u = req.body.user
       , c = req.body.company
       ;
-    console.log(u)
+      
     user.name = {
         first: u.name.first
       , last: u.name.last
@@ -175,17 +181,30 @@ function updateAccount (req, res, next) {
   });
 };
 
-function updatePassword (req, res) {
-  var userId = req.user._id
+function updatePassword (req, res, next) {
+  var uid = req.user._id
     , password = req.body.password
     ;
-  User.updatePassword(userId, password, function (err, updated) {
-    if (err) console.log(err);
-    if (updated) {
-      console.log('updated password')
-      var msg = 'Password Updated';
-      req.flash('success', msg);
-      res.redirect('/account/password');
+
+  req.assert('password', 'Password should be between 8 to 20 characters').len(8, 20);
+  var errors =  getExpressErrors(req);
+
+  if (errors) {
+    req.flash('error', errors);
+    return res.redirect('/account/password');
+  }
+
+  User.findById(uid, function (err, u) {
+    if (err) return next(err);
+    if (u) {
+      u.password = password;
+      u.save(function (err, updated) {
+        if (err) return next(err);
+        if (updated) {
+          req.flash('success', 'Password Updated');
+          return res.redirect('/account');
+        }
+      });
     } else {
       var msg = 'An error occured. Try Again.';
       req.flash('error', msg);
