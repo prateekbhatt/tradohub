@@ -1,0 +1,69 @@
+extends ../layout
+
+block partial
+  .row.form-signin
+    .span5
+      legend CREATE A NEW ACCOUNT
+      include _infoBar
+      br
+      p.text-error Please fill in the information carefully.
+        | We will activate your account after verifying your email, company and
+        | your phone number.
+      br
+      h5 Are you a manufacturer / supplier? 
+        a(href="/partners") Partner With Us.
+
+    .span5.well.pull-right(style="background-color:#F0F0F0;")
+      form(method="POST", action="/register")
+
+        label(for="name") Your Name        
+        input.input-medium#name(type="text", name="name[first]", placeholder="First Name", title="Enter your first name", autofocus, required)
+        input.input-medium.pull-right(type="text", name="name[last]", placeholder="Last Name", title="Enter your last name", required)
+        br
+
+        label(for="email") Your Email
+        input.input-block-level#email(type="email", name="email", placeholder="Email Address", title="Enter a valid email", required)
+        br
+
+        label(for="password") Password
+          .text-error(style="display: inline; font-weight: normal;") &nbsp;(minimum 8 characters)
+        input.input-block-level#password(type="password", name="password", placeholder="Password",  pattern=".{8,}", title="8 characters minimum", required)
+        br
+
+        label(for="company") Company Name
+        input.input-block-level#company(type="text", name="company[name]", placeholder="Company Name", title="Enter your company's name", required)
+
+        label(for="state") State
+        select.select2.input-xlarge#state(name="company[state]", data-placeholder="Select State", title="Select your state", required)
+          option
+          for s in states
+            option(value="#{s}") #{s}
+        br
+        br
+
+        label(for="mobile") Mobile Number
+        .input-prepend
+          span.add-on +91 - 
+          input.input-block-level#mobile(type="number", name="contact[mobile]", placeholder="Mobile No", min="7000000000", max="9999999999",  pattern=".{10}", title="Mobile no. must have 10 numbers", required)
+        br
+
+        label.optional(for="landline") Landline Number
+        input.input-small#landline(type="number", name="contact[landline][area]", placeholder="Area Code")
+        input.input-medium(type="number", name="contact[landline][no]", placeholder="Number")
+        br
+
+        label.optional(for="industry") Industry
+        select.select2.input-xlarge#industry(name="company[industry]", data-placeholder="Select Industry")
+          option
+          for i in industry
+            option(value="#{i}") #{i}
+        br
+        br
+
+        button.btn.btn-block.btn-large.btn-success(type="submit")
+          span Create Account
+        br
+        small By creating an account you agree to our 
+          a(href="/about/terms") Terms 
+          span and 
+          a(href="/about/privacy") Privacy Policy

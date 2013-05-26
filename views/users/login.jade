@@ -1,0 +1,26 @@
+extends ../layout
+block partial
+  .row.form-signin
+    .span5
+      legend Welcome Back
+      include _infoBar
+    .span5.well.pull-right(style="background-color:#F0F0F0;")
+      form(method="POST", action="/login")
+        span
+          strong.lead Log In
+        a.btn.btn-danger.pull-right(href="/register") Create Account
+        br
+        br
+        label(for="email") Email
+        input.input-block-level#email(type="email", name="email", placeholder="Email Address", required, autofocus)
+        br
+
+        p
+          strong Password &nbsp;&nbsp;
+          a(href="/forgot-password") 
+            span Forgot Password?
+        input.input-block-level(type="password", name="password", placeholder="password", required)
+
+        br
+        button.btn.btn-block.btn-large.btn-success(type="submit")
+          span Log In
