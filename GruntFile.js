@@ -51,6 +51,15 @@ module.exports = function (grunt) {
         // the location of the resulting JS file
         dest: SRC_JS + 'tradohub-main.js',
         nonull: true
+      },
+      'tradohub-quote-js': {
+        src: [SRC_JS + 'lib/angular.min.js',
+              SRC_JS + 'lib/ui-bootstrap.min.js',
+              SRC_JS + 'lib/ui-select2.js',
+              SRC_JS + 'app2.js'],
+        // the location of the resulting JS file
+        dest: SRC_JS + 'tradohub-quote.js',
+        nonull: true
       }
     },
     cssmin: {
@@ -80,6 +89,11 @@ module.exports = function (grunt) {
         files: {
           'public/js/tradohub-main.min.js': ['<%= concat["tradohub-main-js"].dest %>']
         }
+      },
+      'tradohub-quote-js': {
+        files: {
+          'public/js/tradohub-quote.min.js': ['<%= concat["tradohub-quote-js"].dest %>']
+        }
       }
     },
     s3: {
@@ -100,6 +114,11 @@ module.exports = function (grunt) {
             src: SRC_JS + 'tradohub-main.min.js',
             dest: 'static/js/tradohub-main.min.js',
             gzip: true
+          },
+          {
+            src: SRC_JS + 'tradohub-quote.min.js',
+            dest: 'static/js/tradohub-quote.min.js',
+            gzip: true
           }
         ]
       }
@@ -116,5 +135,6 @@ module.exports = function (grunt) {
   
   grunt.registerTask('main-css', ['less', 'cssmin:tradohub-main-css']);
   grunt.registerTask('main-js', ['concat:tradohub-main-js', 'uglify:tradohub-main-js']);
+  grunt.registerTask('quote-js', ['concat:tradohub-quote-js', 'uglify:tradohub-quote-js']);
 
 };
