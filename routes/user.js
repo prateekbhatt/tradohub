@@ -10,28 +10,28 @@ var User = require('../models/User')
   ;
 
 function loginPage (req, res) {
-  res.render('auth/login', { error: req.flash('error'), success: req.flash('success') });    
+  res.render('users/login', { error: req.flash('error'), success: req.flash('success') });    
 };
 
 function registerPage (req, res) {
   res.locals.states = data.states;
   res.locals.industry = data.industry;
-  res.render('auth/register', { error: req.flash('error') });
+  res.render('users/register', { error: req.flash('error') });
 };
 
 function passwordForgotPage (req, res) {
-  res.render('auth/forgot', { error: req.flash('error') });
+  res.render('users/forgot', { error: req.flash('error') });
 };
 
 function accountPage (req, res) {
   res.locals.user = req.user;
   res.locals.states = data.states;
-  res.render('account/account',
+  res.render('users/account',
     { error: req.flash('error'), success: req.flash('success') });
 };
 
 function passwordPage (req, res) {
-  res.render('account/password', 
+  res.render('users/password', 
     {error: req.flash('error'), success: req.flash('success')});
 };
 

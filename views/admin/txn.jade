@@ -1,14 +1,9 @@
 extends index
 
-block script
-  script(src="/js/lib/angular.min.js")
-  script(src="/js/lib/ui-bootstrap.min.js")  
-  script(src="/js/app2.js")
-  // script
-  //   function payTU (value){
-  //     var terms = document.getElementById('paymentTerms')
-  //     terms.value = value;
-  //   };
+//- block script
+  // script(src="/js/lib/angular.min.js")
+  // script(src="/js/lib/ui-bootstrap.min.js")  
+  // script(src="/js/app2.js")
 
 block admin
   
@@ -42,20 +37,6 @@ block admin
 
   if (txn.payMode == 'RTGS' && txn.bank.name)
     include ../txns/_showBankDetail
-          //- a.btn.btn-info(href="#payModal", role="button", data-toggle="modal") #{txn.payMode}
-          //- #payModal(class="modal hide", tabindex="-1", role="dialog", aria-labelledby="payModalLabel", aria-hidden="true")
-          //-   form(method="POST", action="/admin/orders/#{txn.tid}/paymentTerms")
-          //-     .modal-header
-          //-       button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
-          //-       .lead(id="payModalLabel") Change Payment Mode
-          //-     .modal-body
-          //-       select.input-xlarge(name="payMode")
-          //-         option(value="") Select New Mode
-          //-         each term, i in paymentTerms
-          //-           option(value=i) #{i}
-          //-     .modal-footer
-          //-       input.btn.btn-info(type="submit", value="Update")
-          //-       button.btn(data-dismiss="modal", aria-hidden="true") Cancel
       
   .row
     .span4.well

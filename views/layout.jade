@@ -4,7 +4,7 @@ html(lang="en", ng-app='tradohub')
     meta(charset="utf-8")
     title Tradohub.com
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='stylesheet', href='#{mainCss}')
+    link(rel='stylesheet', href='#{staticFiles.mainCss}')
     link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet', type='text/css')
 
   body
@@ -18,7 +18,7 @@ html(lang="en", ng-app='tradohub')
       
       #push
       
-    script(type="text/javascript", src="#{mainJs}")
+    script(type="text/javascript", src="#{staticFiles.mainJs}")
     block script
 
     //- Select2 search bar start

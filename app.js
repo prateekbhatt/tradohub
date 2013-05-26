@@ -20,8 +20,6 @@ var express = require('express')
 var redisSessionStore = new RedisStore({
     host: config.redis.host
   , port: config.redis.port
-  // , db: config.redis.username
-  // , pass: config.redis.password
   , no_ready_check: true
   , ttl: 60*60  // hour
 });
@@ -87,9 +85,7 @@ app.configure(function(){
   // add user to res.locals to make it available in layout.jade
   app.use(function (req, res, next) {
     app.locals.pretty = config.prettyHtml;
-    res.locals.mainCss = config.mainCss;
-    res.locals.mainJs = config.mainJs;
-    res.locals.logoUrl = config.logoUrl;
+    res.locals.staticFiles = config.staticFiles;
     res.locals.user = req.user ? { 'email': req.user.email, 'name': req.user.name } : null;
     next();
   });
