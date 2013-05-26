@@ -11,7 +11,7 @@ function gotoLogin (req, res) {
 
   // if requesting for quote, show this message
   if (req.path == '/quote') {
-    req.flash('error', 'Please login or create-account before requesting for quote.')
+    req.flash('error', 'You must login or create-account to request for quote.')
   } else {
     req.flash('error', 'Please login to continue.');    
   }

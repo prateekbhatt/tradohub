@@ -114,6 +114,10 @@ body {
   margin-bottom: 5px;
   font-weight: 600;
 }
+.form-signin .input-append .add-on,
+.form-signin .input-prepend .add-on {
+  height: 20px;
+}
 /* dashboard */
 .side-nav {
   padding: 10px 10px 10px;
