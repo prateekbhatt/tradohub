@@ -10,21 +10,21 @@ block partial
         | without taking the burden of marketing, logistics and other related activities.
 
     .span5.well.pull-right(style="background-color:#F0F0F0;")
-      form(method="POST", action="/partners")
+      form(method="POST", action="/contact")
 
         label(for="company") Company Name
         input.input-block-level#company(type="text", name="company[name]", placeholder="Company Name", required, autofocus)
         br
 
         label(for="country") Country
-        select.select2.input-block-level#country(name="company[country]", data-placeholder="Select Country")
+        select.select2.input-xlarge#country(name="company[country]", data-placeholder="Select Country")
           option(value="IND") India
           for c in countryList
             option(value="#{c['alpha-3']}") #{c['name']}
         br
 
         label(for="industry") Industry
-        select.select2.input-block-level#industry(name="company[industry]", data-placeholder="Select Industry")
+        select.select2.input-xlarge#industry(name="company[industry]", data-placeholder="Select Industry")
           option
           for i in industry
             option(value="#{i}") #{i}

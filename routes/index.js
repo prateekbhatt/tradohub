@@ -31,7 +31,8 @@ exports.partnersPage = function (req, res) {
     { success: req.flash('success'), error: req.flash('error') });
 };
 
-exports.partners = function (req, res) {
+// relays all messages to admin email
+exports.contact = function (req, res) {
   var user = {
         name: {
             first: 'Tradohub'
@@ -39,11 +40,11 @@ exports.partners = function (req, res) {
         }
       , email: config.mailer._from
     };
-  user.company = req.body.company;
-  user.contact = req.body.contact;
-  console.log('inside partners post index');
-  console.log(user);
-  mailer.sendPartnerRequest(user);
-  req.flash('success', 'Thank you for your interest. We will get back to you soon.');
+  user.msg = req.body;
+  // user.contact = req.body.contact;
+  // console.log('inside partners post index');
+  // console.log(user);
+  mailer.sendAdmin(user);
+  req.flash('success', 'Thank you. We will get back to you soon.');
   res.redirect('/');
 };

@@ -178,11 +178,11 @@ module.exports.sendAccountStatus = function(user) {
 /**
  * Send partnership request to admin mail
  */
-module.exports.sendPartnerRequest = function(user) {
+module.exports.sendAdmin = function(user) {
   console.log(user);
   var mailer = new Mailer(user);
-  mailer._subject = 'Tradohub: New Partnership Request';
-  mailer._template = 'partnerRequest.jade';
+  mailer._subject = 'Tradohub: New Request';
+  mailer._template = 'admin.jade';
   mailer.send();
   return mailer;
 }

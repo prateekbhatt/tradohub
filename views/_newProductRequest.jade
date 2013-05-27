@@ -3,20 +3,31 @@ strong
     br
     a(href="#proReqModal", role="button", data-toggle="modal")  Let us know and we will get it for you !
 #proReqModal.text-center(class="modal hide", tabindex="-1", role="dialog", aria-labelledby="proReqModalLabel", aria-hidden="true")
-  //- form(method="POST", action="/admin/orders/")
-  //- .modal-header
-    //- .lead(id="proReqModalLabel") Need a different product ?
-  .modal-body
-    button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
-    iframe(src="https://docs.google.com/forms/d/1rRnp-QBvAJAFusmBLBF4d7aIkTJj2V0tbJax0fA7aE4/viewform?embedded=true", width="460", height="500", frameborder="0", marginheight="0", marginwidth="0") Loading...
-    //-   select.input-xlarge(name="proReq")
-    //-     option(value="") Select Industry
-    //-     each i in ['Agriculture', 'Food', 'Construction', 'Automobile']
-    //-       option(value=i)= i
+  form.form-horizontal(method="POST", action="/contact")
+    .modal-header
+      button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
+      .lead(id="proReqModalLabel") Need a different product ?
+    .modal-body
+      //- iframe(src="https://docs.google.com/forms/d/1rRnp-QBvAJAFusmBLBF4d7aIkTJj2V0tbJax0fA7aE4/viewform?embedded=true", width="460", height="500", frameborder="0", marginheight="0", marginwidth="0") Loading...
+      
+      .control-group
+        label.control-label(for="industry") Industry
+        .controls
+          select.input-xlarge#industry(name="product[industry]")
+            option Select Industry
+            each i in ['Polymers', 'Metals', 'Chemicals', 'Construction', 'Automobile', 'Agriculture', 'Food']
+              option(value=i)= i
+      
+      .control-group
+        label.control-label(for="productName") Product Name
+        .controls
+          input.input-xlarge#productName(type="text", name="product[name]", placeholder="Product Name")
 
-    //-   br
-    //-   input.input-xlarge(type="text", placeholder="Product Name")
-    //-   input.input-xlarge(type="email", placeholder="Your email (optional)")
-    //- .modal-footer
-    //-   input.btn.btn-primary.btn-large(type="submit", value="Submit")
-    //-   button.btn.btn-large(data-dismiss="modal", aria-hidden="true") Cancel
+      .control-group
+        label.control-label(for="email") Your Email
+        .controls
+          input.input-xlarge(type="email", name="product[email]", placeholder="Your Email (optional)")
+
+    .modal-footer
+      input.btn.btn-success(type="submit", value="Submit")
+      button.btn(data-dismiss="modal", aria-hidden="true") Cancel

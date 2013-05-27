@@ -13,7 +13,7 @@ function gotoLogin (req, res) {
   if (req.path == '/quote') {
     req.flash('error', 'You must login or create-account to request for quote.')
   } else {
-    req.flash('error', 'Please login to continue.');    
+    req.flash('error', 'Please login or create-account to continue.');    
   }
   res.redirect('/login');
 };

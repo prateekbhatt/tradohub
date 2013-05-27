@@ -1,0 +1,8 @@
+extends layout
+
+block message
+  p We have received a new request.
+  p
+    strong Message
+      br
+      !=JSON.stringify(user.msg)

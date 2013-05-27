@@ -9,10 +9,10 @@ html(lang="en", ng-app='tradohub')
 
   body
     #wrap
-      include _navbar
+      include partials/_navbar
       #content-wrap
         .container
-          include _flash
+          include partials/_flashMessage
           block partial
         block indexPage
       
@@ -28,14 +28,14 @@ html(lang="en", ng-app='tradohub')
     //- select2 end
 
     //- Freshdesk Support Widget start
-    include _freshDesk
+    include partials/_freshDesk
 
     //- Freshdesk end
 
     //- Google analytics start
-    include _googleAnalytics
+    include partials/_googleAnalytics
     //- google analytics end
 
     #footer
       .container
-        include _footer
+        include partials/_footer

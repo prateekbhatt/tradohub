@@ -4,10 +4,10 @@ block indexPage
     .container
       br
       br
-      h2 Empowering small businesses to succeed in India
+      h2 Empowering small enterprises to succeed in India
       br
       p.lead 
-        span Join together with other small businesses, and procure your raw materials
+        span Join together with other small enterprises, and procure your raw materials
         br 
         span 
         em(style="border-bottom: 2px solid white;") at low prices that only large companies get.    
@@ -18,81 +18,69 @@ block indexPage
     br
   br
   .container
-    .row.well
+    .well
       .row
-        .span12
-          cats = ['Aluminum', 'Copper', 'Engineering Polymers', 'Commodity Polymers', 'Nickel']
-          - for c in category
-            - for cat in cats
-                if c.name == cat
-                  .pointSpan
-                    #points
-                      ul.unstyled
-                        p
-                          strong= c.name
-                        for p in c.products
-                          li
-                            a(href="/products/#{p.url}") #{p.name}
-                  - break
+        //- .span12
+        cats = ['Aluminum', 'Copper', 'Engineering Polymers', 'Commodity Polymers', 'Nickel']
+        - for c in category
+          - for cat in cats
+              if c.name == cat
+                .pointSpan
+                  #points
+                    ul.unstyled
+                      p
+                        strong= c.name
+                      for p in c.products
+                        li
+                          a(href="/products/#{p.url}") #{p.name}
+                - break
       .row
-        .span12.text-center
+        .text-center
           a(href="/products")
             h4 See All Products &rarr;
-          hr
-        .span5.offset1.text-center
+      //- hr
+    .well
+      .row
+        .span6.text-center
           include _newProductRequest
         .span5.text-center
           strong
             p Are you a manufacturer / supplier ?
               br
-              a(href="/partners") Partner with Us.
+              a(href="/partners") Partner with Us
 
-    .row.well
+    .well
       legend.text-center How it works ?
-      .row
-        .span12
-          img(src="img/tradohub-hiw.png")
-          //- .pointSpan
-          //-   h5 You Request Quote
-          //- .pointSpan
-          //-   h5 We aggregate demand
-          //- .pointSpan
-          //-   h5 We negotiate price with manufacturer
-          //- .pointSpan
-          //-   h5 You make payment
-          //- .pointSpan
-          //-   h5 We deliver the product at your factory / warehouse
+      img(src="img/tradohub-hiw.png")
 
-    .row.well
+    .well
       legend.text-center Why buy with us ?
-      .row
-        .span12.text-center
-          
-          .pointSpan
-            h5 Increase profit margins
-            small Get competitive prices for all products.
-          
-          .pointSpan
-            h5 Compete with big companies
-            small We group orders from small businesses like you and negotiate 
-              | better prices from manufacturers / producers.
-          
-          .pointSpan
-            h5 Direct from manufacturer / producer
-            small We supply your raw materials directly from the the manufacturer / producer.
-          
-          .pointSpan
-            h5 Online procurement platform
-            small Now you can manage all your raw material procurement easily on our platform.
-          
-          .pointSpan
-            h5 Loyalty programs
-            small We have exciting loyalty programs, to empower you grow even faster.
-      .row
-        .span12.text-center
-          hr
-          a(href='#', onclick="javascript:FreshWidget.show();")
-            h4 Still got questions ?
+      .row.text-center
+        
+        .pointSpan
+          h5 Increase profit margins
+          p Get competitive prices for all products.
+        
+        .pointSpan
+          h5 Compete with big companies
+          p We group orders from small businesses like you and negotiate 
+            | better prices from manufacturers / producers.
+        
+        .pointSpan
+          h5 Direct from manufacturer / producer
+          p We supply your raw materials directly from the the manufacturer / producer.
+        
+        .pointSpan
+          h5 Online procurement platform
+          p Now you can manage all your raw material procurement easily on our platform.
+        
+        .pointSpan
+          h5 Loyalty programs
+          p We have exciting loyalty programs, to empower you grow even faster.
+      hr
+      .row.text-center
+        a(href='#', onclick="javascript:FreshWidget.show();")
+          h4 Still got questions ?
       //- .row
       //-   .span12.text-center
       //-     a(href="#")

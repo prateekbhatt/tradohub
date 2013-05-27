@@ -7,14 +7,14 @@ block partial
       //- include _infoBar
       //- br
       //- .well
-      p.text-error Please fill in the information carefully.
+      p.text-error 
         | We will activate your account after verifying your email, 
         | registered company name, and your phone number.
-      br
-      .well
-        h5 Are you a manufacturer / supplier ?
-          br
-          a(href="/partners") Partner With Us
+      //- br
+      //- .well
+      h5 Are you a manufacturer / supplier ?
+        br
+        a(href="/partners") Partner With Us
 
     .span5.well.pull-right(style="background-color:#F0F0F0;")
       form(method="POST", action="/register")

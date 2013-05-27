@@ -1,13 +1,13 @@
 extends index
 block products
-  legend Products
+  .lead Products
   - var l = category.length
   - var n = Math.floor(l/2)
   .row
     .span4
       for c, i in category
         if (i < l-n)
-          .well
+          .well(style="padding: 2px 19px;")
             h5= c.name
             ul.unstyled
               for p in c.products
@@ -15,7 +15,7 @@ block products
     .span4
       for c, i in category
         if (i >= l-n)
-          .well
+          .well(style="padding: 2px 19px;")
             h5= c.name
             ul.unstyled
               for p in c.products

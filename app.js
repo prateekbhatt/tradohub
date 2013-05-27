@@ -143,7 +143,7 @@ app.get('/', routes.index.index);
 app.get('/about', routes.index.about);
 app.get('/about/:page', routes.index.pages);
 app.get('/partners', routes.index.partnersPage);
-app.post('/partners', routes.index.partners);
+app.post('/contact', routes.index.contact);
 
 // Product API routes
 app.get('/products', routes.product.list);

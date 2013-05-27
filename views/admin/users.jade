@@ -7,32 +7,33 @@ block admin
       tr
         th User
         th Company
-        th Imex File
         th Status
-        th Activate/Block
+        th Action
     tbody
       for u in users
+        p= u
         tr
           td
             p #{u.email}
             p #{u.name.first + ' ' + u.name.last}
-            p #{u.phone}
+            p #{u.mobile}
+            p #{u.landline}
           td 
             p #{u.company}
-          td #{u.company.imex}
           td #{u.status}
           td
-            if (u.status == 'notVerified')
-              span Email not verified
-            else if (u.status == 'verified')
-              form(method="POST", action="/admin/users/#{u._id}/activated")
-                input(type="hidden", name="_method", value="PUT")
-                input.btn.btn-primary(type="submit", value="Activate")
-            else if (u.status == 'activated')
-              form(method="POST", action="/admin/users/#{u._id}/blocked")
-                input(type="hidden", name="_method", value="PUT")
-                input.btn.btn-danger(type="submit", value="Block")
-            else if (u.status == 'blocked')
-              form(method="POST", action="/admin/users/#{u._id}/activated")
-                input(type="hidden", name="_method", value="PUT")
-                input.btn.btn-warning(type="submit", value="Unblock")
+            case u.status
+              when 'notVerified'
+                span Email not verified
+              when 'verified'
+                form(method="POST", action="/admin/users/#{u._id}/activated")
+                  input(type="hidden", name="_method", value="PUT")
+                  input.btn.btn-primary(type="submit", value="Activate")
+              when 'activated'
+                form(method="POST", action="/admin/users/#{u._id}/blocked")
+                  input(type="hidden", name="_method", value="PUT")
+                  input.btn.btn-danger(type="submit", value="Block")
+              when 'blocked'
+                form(method="POST", action="/admin/users/#{u._id}/activated")
+                  input(type="hidden", name="_method", value="PUT")
+                  input.btn.btn-warning(type="submit", value="Unblock")
