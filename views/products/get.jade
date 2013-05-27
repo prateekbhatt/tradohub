@@ -8,8 +8,14 @@ block products
   hr
   .row
     .span5      
-      p #{product.description}
+      p(style="text-align: justify;") #{product.description}
+      //- br
 
+      if (specs && specs.title.length)
+        h5 Specifications
+        ul
+          for t in specs.title
+            li= t
     .span4
       if (imageUrl)
         img(src="#{imageUrl}", alt="#{product.name}", width="290px")
@@ -18,11 +24,6 @@ block products
     hr
     .row
       .span9
-        h5 Specifications
-        ul
-          for t in specs.title
-            li= t
-        br
         table.table.table-bordered.table-striped.table-hover.table-condensed
           for c in specs.columns
             th= c

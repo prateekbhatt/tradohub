@@ -66,3 +66,36 @@ module.exports['copper-rods'] = {
     , [ '16 mm.', '16mm+-0.38mm', '+-0.38mm', '>100% IACS',  '>30%', '<1000 Ao', '<350', '928/1432', '2.25T/1T' ]
   ]
 }
+
+module.exports['polyethylene-pe'] = {
+    "title": []
+  , "columns": [ 'Type', 'Use' ]
+  , "rows": [
+      [ 'HDPE', 'Grades specially designed to meet demanding applications like high-pressure pipes, telecom ducts, carrier bags, woven sacks, and injection and blow moulded products.' ]
+    , [ 'Octene & Butene grade LLDPE', 'Grades used extensively in specialty films, milk & edible oil packaging, lamination films, cast films, stretch films and other applications like rotational moulding and injection moulded products.' ]
+    , [ 'LDPE', 'Grades find extensive use in heavy-duty films, lamination films, extrusion coating & moulding applications.' ]
+  ]
+}
+
+module.exports['polypropylene-pp'] = {
+    "title": ['Our main 3 grades of PP are given in the table that follows.']
+  , "columns": [ 'Type', 'Use' ]
+  , "rows": [
+      [ 'Homopolymer', 'Available in a wide range of melt flows. Carefully designed to suit the requirements of various applications like injection and blow moulding, IPP and BOPP films, woven sacks, FIBC and fibres.' ]
+    , [ 'Random Copolymer', 'Grades designed to meet critical requirements of injection and blow moulded clear containers, pipes and fittings and ISBM bottles.' ]
+    , [ 'Impact Copolymer', 'Grades tailored to meet the requirements of various applications like automotive, appliances, furniture, paint pails, caps and closures, luggage, crates and compounding.' ]
+  ]
+}
+
+module.exports['polyvinyl-chloride-pvc'] = {
+    "title": ['Grades of PVC find application in various industries as given in the table below.']
+  , "columns": [ 'Industry', 'Products' ]
+  , "rows": [
+      [ 'Agriculture', '(rigid pipes and fittings, flexible tubes, hoses)']
+    , [ 'Building & Construction', '(doors, windows, partitions / floor / wall coverings)']
+    , [ 'Packaging', '(bottles & containers, blister packaging)']
+    , [ 'Electricals& Electronics', '(wires, cables, electrical conduits)']
+    , [ 'HealthCare', '(blood bags, tubing, heart catheters, IV fluid bags)']
+    , [ 'Consumer Goods', '(toys, sports goods and footwear)']
+  ]
+}

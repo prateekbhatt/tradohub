@@ -8,6 +8,7 @@ var mongoose = require('mongoose')
   , fileValidate = require('../helpers/fileValidate')
   , fs = require('fs')
   , bucket = config.aws.prodBucket // image files always updated on production bucket
+  , slugify = require('../helpers/slugify')
   ;
 
 // create fileclient to upload and remove product images to aws s3
@@ -29,7 +30,7 @@ var ProductSchema = mongoose.Schema({
 ProductSchema.plugin(troop.timestamp, {modifiedPath: 'updated', useVirtual: false});
 
 ProductSchema.pre('save', function(next) {
-  this.url = this.name.toLowerCase().split(' ').join('-');
+  this.url = slugify(this.name);
   return next();
 });
 
