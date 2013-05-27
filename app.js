@@ -84,9 +84,9 @@ app.configure(function(){
   app.use(flash());
   // add user to res.locals to make it available in layout.jade
   app.use(function (req, res, next) {
-    app.locals.pretty = config.prettyHtml;
     res.locals.staticFiles = config.staticFiles;
     res.locals.user = req.user ? { 'email': req.user.email, 'name': req.user.name } : null;
+    res.locals.title = 'Tradohub.com : Buy polymers, plastics and metals of best quality at low prices in India';
     next();
   });
   // middleware to pass products and category to all views 
@@ -135,7 +135,7 @@ app.configure('development', function(){
 // Locals (available inside all templates)
 
 app.locals({
-  title: 'TRADOHUB'
+    pretty: config.prettyHtml
 });
 
 // Routes are defined here
@@ -148,7 +148,7 @@ app.post('/contact', routes.index.contact);
 // Product API routes
 app.get('/products', routes.product.list);
 app.get('/products/:url', routes.product.get);
-app.get('/offers', routes.product.offers);
+// app.get('/offers', routes.product.offers);
 
 
 app.get('/quote', loggedIn, activated, routes.txn.quotePage);
