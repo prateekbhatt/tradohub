@@ -21,7 +21,7 @@ module.exports = {
       mainCss: '/css/tradohub-main.min.css'
     , mainJs: '/js/tradohub-main.min.js'
     , quoteJs: '/js/tradohub-quote.min.js'
-    , logoUrl: '/img/tradohub-logo.png'
+    , logoUrl: '/img/tradohub-blue-logo.png'
     
   }
 }
