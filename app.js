@@ -65,7 +65,7 @@ app.configure(function(){
   app.set('port', process.env.PORT || 8000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.use(express.favicon());
+  app.use(express.favicon(__dirname + '/public/img/favicon.ico', { maxAge: 2592000000 }));
   app.use(express.logger('dev'));
   app.use(express.limit('1mb'));
   app.use(express.bodyParser());
