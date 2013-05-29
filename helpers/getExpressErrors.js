@@ -5,8 +5,8 @@
 
 module.exports = function getExpressErrors (req) {
   var errors = req.validationErrors();
-
-  if (errors.length) {
+  console.log(errors)
+  if (errors && errors.length) {
     var e = [];
     for (var i in errors) {
       e.push(errors[i].msg);

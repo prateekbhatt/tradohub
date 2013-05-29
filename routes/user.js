@@ -48,11 +48,12 @@ function create (req, res, next) {
   var u = req.body
     , c = u.company
     , con = u.contact
+    , password = req.body.password
     ;
+  // console.log(password, '\n')
 
   req.assert('password', 'Password should be between 8 to 20 characters').len(8, 20);
   var errors =  getExpressErrors(req);
-
   if (errors) {
     req.flash('error', errors);
     return res.redirect(req.path);
@@ -220,6 +221,9 @@ function updatePassword (req, res, next) {
 */
 
 function passwordForgot (req, res, next) {
+
+  var email = req.body.email;
+
   req.onValidationError(function (msg) {
     //Redirect to `/password/forgot` if email is bogus
     req.flash('error', msg);
@@ -229,7 +233,7 @@ function passwordForgot (req, res, next) {
 
   if (!req.validationErrors()) {
     // get the user
-    User.findOne({ email: req.body.email }, function (err, usr) {
+    User.findOne({ email: email }, function (err, usr) {
       if (err) {
         return next(err);
       }
