@@ -11,7 +11,7 @@ module.exports = {
   , mailer: {
       _from: 'Tradohub Support <support@tradohub.com>'
     , _replyTo: 'Tradohub Support <support@tradohub.com>'
-      debug: false
+    ,  debug: false
   }
   , prettyHtml: false
 }
