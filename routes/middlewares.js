@@ -33,6 +33,23 @@ exports.isAdmin =  function isAdmin (req, res, next) {
   gotoLogin(req, res);
 };
 
+exports.hasRole = function hasRole (role) {
+
+  return function(req, res, next) {
+    // if user is logged in
+    if (req.isAuthenticated()) {
+      // if user has permissions
+      if (req.user.hasRole(role)) return next();
+      // else show forbidden error
+      return res.render('403');
+    } else {
+      // redirect user to login page
+      gotoLogin(req, res);
+    }
+  }
+
+};
+
 exports.activated = function activated (req, res, next) {
   var status = req.user.status;
   

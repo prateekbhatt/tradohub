@@ -32,7 +32,7 @@ console.log('\n\nNode Environment: ', process.env.NODE_ENV);
 // Import route middleware
 
 var loggedIn = require('./routes/middlewares').loggedIn
-  , isAdmin = require('./routes/middlewares').isAdmin
+  , hasRole = require('./routes/middlewares').hasRole
   , activated = require('./routes/middlewares').activated
   ;
 
@@ -189,30 +189,33 @@ app.post('/account/password', loggedIn, routes.user.updatePassword);
 // Admin Routes
 // TODO: Admin Checks
 
-app.get('/admin/category', isAdmin, admin.category.list);
-app.get('/admin/category/:url', isAdmin, admin.category.get);
-app.post('/admin/category', isAdmin, admin.category.create);
-app.put('/admin/category/:id', isAdmin, admin.category.update);
+app.get('/admin/category', hasRole('admin'), admin.category.list);
+app.get('/admin/category/:url', hasRole('admin'), admin.category.get);
+app.post('/admin/category', hasRole('admin'), admin.category.create);
+app.put('/admin/category/:id', hasRole('admin'), admin.category.update);
 
-app.get('/admin/products', isAdmin, admin.product.list);
-app.get('/admin/products/:url', isAdmin, admin.product.get);
-app.post('/admin/products', isAdmin, admin.product.create);
-app.put('/admin/products/:id', isAdmin, admin.product.update);
-app.put('/admin/products/:id/image', isAdmin, admin.product.updateImage);
-app.delete('/admin/products/:id', isAdmin, admin.product.remove);
+app.get('/admin/products', hasRole('admin'), admin.product.list);
+app.get('/admin/products/:url', hasRole('admin'), admin.product.get);
+app.post('/admin/products', hasRole('admin'), admin.product.create);
+app.put('/admin/products/:id', hasRole('admin'), admin.product.update);
+app.put('/admin/products/:id/image', hasRole('admin'), admin.product.updateImage);
+app.delete('/admin/products/:id', hasRole('admin'), admin.product.remove);
 
-app.get('/admin/orders', isAdmin, admin.txn.list);
-app.get('/admin/orders/:tid', isAdmin, admin.txn.get);
-app.post('/admin/orders/:tid/products/:pid/quote', isAdmin, admin.txn.updateQuote);
+app.get('/admin/orders', hasRole('admin'), admin.txn.list);
+app.get('/admin/orders/:tid', hasRole('admin'), admin.txn.get);
+app.post('/admin/orders/:tid/products/:pid/quote', hasRole('admin'), admin.txn.updateQuote);
 // app.post('/admin/orders/:tid/shippingTerms', admin.txn.updateShippingTerms);
 // app.post('/admin/orders/:tid/paymentTerms', admin.txn.updatePaymentTerms);
-app.post('/admin/orders/:tid/send', isAdmin, admin.txn.sendQuote);
-app.put('/admin/orders/:tid/:status', isAdmin, admin.txn.updateStatus);
-app.delete('/admin/orders/:tid', isAdmin, admin.txn.remove);
+app.post('/admin/orders/:tid/send', hasRole('admin'), admin.txn.sendQuote);
+app.put('/admin/orders/:tid/:status', hasRole('admin'), admin.txn.updateStatus);
+app.delete('/admin/orders/:tid', hasRole('admin'), admin.txn.remove);
 
-app.get('/admin/users', isAdmin, admin.user.list);
-app.get('/admin/users/:id', isAdmin, admin.user.get);
-app.put('/admin/users/:id/:status', isAdmin, admin.user.updateStatus);
+app.get('/admin/users', hasRole('admin'), admin.user.list);
+app.get('/admin/users/:id', hasRole('admin'), admin.user.get);
+app.put('/admin/users/:id/:status', hasRole('admin'), admin.user.updateStatus);
+
+app.get('/admin/invite', hasRole('invite'), admin.user.invitePage);
+app.post('/admin/invite', hasRole('invite'), admin.user.sendInvite);
 
 // Start server
 http.createServer(app).listen(app.get('port'), function(){

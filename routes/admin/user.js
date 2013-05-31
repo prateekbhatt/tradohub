@@ -57,8 +57,34 @@ function get (req, res, next) {
   });
 };
 
+function invitePage (req, res, next) {
+  res.render('admin/invite',
+    { error: req.flash('error'), success: req.flash('success') });
+};
+
+function sendInvite (req, res, next) {
+  var user = {}
+    , email = req.body.email
+    , company = req.body.company
+    ;
+  user.email = email;
+  user.company = company;
+  user.title = 'Welcome to INDIA\'s first group buying platform for SMEs' ;
+  if (user.email) {
+    mailer.sendInvite(user);
+    req.flash('success', 'Sending mail invitation.');    
+  } else {
+    req.flash('error', 'Failed. Try Again.');
+  }
+  res.redirect('/admin/invite');
+};
+
+
+
 module.exports = {
     get: get
   , list: list
   , updateStatus: updateStatus
+  , invitePage: invitePage
+  , sendInvite: sendInvite
 };

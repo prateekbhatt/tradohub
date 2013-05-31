@@ -18,7 +18,7 @@ var nodemailer = require('nodemailer')
   ;
 
 /**
- * Mailer pseudo class.
+ * Mailer pseudo class.000
  * 
  * @param user 
  *  
@@ -79,19 +79,18 @@ Mailer.prototype = {
   },
   
   /**
-   * Sends the actual email message.
+   * Sends the actual email message with Jade template.
    */
   send: function() {
     var data = this.data;
     var userdata = this.userdata;
-    var debug = this._debug;
     var transport = this.transport;
     jade.renderFile(this.templatePath + this._template, { user: userdata }, function(err, file) {
       if(err) console.log(err);
       data.html = file;
       // data.body = file;
       transport.sendMail(data, function (err, responseStatus) {
-        if(debug) {
+        if(true) {
           if (err) {
             console.log(err);
           } else if (responseStatus) {
@@ -183,6 +182,20 @@ module.exports.sendAdmin = function(user) {
   var mailer = new Mailer(user);
   mailer._subject = 'Tradohub: New Request';
   mailer._template = 'admin.jade';
+  mailer.send();
+  return mailer;
+}
+
+/**
+ * Send partnership request to admin mail
+ */
+module.exports.sendInvite = function(user) {
+  var mailer = new Mailer(user)
+    , company = user.company || ''
+    , title = user.title
+    ;
+  mailer._subject = company ? company + ' : ' + title : title;
+  mailer._template = 'invite2.jade';
   mailer.send();
   return mailer;
 }

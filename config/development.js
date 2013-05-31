@@ -11,10 +11,7 @@ module.exports = {
     , prodBucket: 'tradohub' // used only to upload static files through grunt js
   }
   , mailer: {
-      _from: 'Tradohub Support <support@tradohub.com>'
-    , _replyTo: 'Tradohub Support <support@tradohub.com>'
-    , templatePath: __dirname + '/../views/emails/'
-    , debug: true
+      debug: true
   }
   , prettyHtml: true
   , staticFiles: {

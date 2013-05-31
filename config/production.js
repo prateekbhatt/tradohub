@@ -9,6 +9,8 @@ module.exports = {
     , bucket: 'tradohub'
   }
   , mailer: {
+      _from: 'Tradohub Support <support@tradohub.com>'
+    , _replyTo: 'Tradohub Support <support@tradohub.com>'
       debug: false
   }
   , prettyHtml: false

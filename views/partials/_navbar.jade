@@ -7,6 +7,7 @@
         //-   strong(style="color: #0064cd; font-size: 20px;") tradohub
         //-     span(style="color:#777; font-size: 14px;") .com
       ul.nav.pull-left
+        li: a(href='/about') About Us
         li.dropdown
           a.dropdown-toggle(data-toggle="dropdown", href="/products", onclick="location = '/products'") Products
             b.caret
@@ -21,7 +22,7 @@
             li: a(href="/products") All Products
 
       form.navbar-search.pull-left
-        select.select2.search-bar#single(onchange="location = this.options[this.selectedIndex].value;", data-placeholder="Search Products")
+        select.select2#single(style="width: 250px;", onchange="location = this.options[this.selectedIndex].value;", data-placeholder="Search Products")
           option
           for c in category
             for p in c.products

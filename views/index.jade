@@ -1,27 +1,41 @@
 extends layout
 block indexPage
   .jumbotron
-    .container
-      br
-      br
-      h2 Empowering small enterprises to succeed in India
-      br
-      p.lead 
-        span Join together with other small enterprises, and procure your raw materials
-        br 
-        span 
-        em(style="border-bottom: 2px solid white;") at low prices that only large companies get.    
+    .dotted
+      .container
+        br
+        .row
+          .span6.offset1(style="text-align: left;")
+            //- br
+            //- br
+            br
+            h3 Group buying platform for raw material requirements of MSMEs in India
+            
+          .span4.offset1.pull-right
+            div(style="text-align: left;")
+              h4 Increase profit margins
+              h4 Compete with large enterprises
+              h4 Direct, timely delivery
+              h4 Online procurement platform
+              h4 Loyalty programs
+
+        hr
+        .row
+          //- .span6
+          .span12.text-center
+            //- br
+            h4 Register your business to request quotes and get offers
+            br
+            a.btn.btn-success(href="/register") Register your business
 
       br
-      a.btn.btn-large.btn-success(href="/register") Get Started Today
-    br
-    br
+      br
   br
   .container
     .well
       .row
         //- .span12
-        cats = ['Aluminum', 'Copper', 'Engineering Polymers', 'Commodity Polymers', 'Nickel']
+        cats = ['Engineering Polymers', 'Commodity Polymers', 'Aluminum', 'Copper', 'Nickel']
         - for c in category
           - for cat in cats
               if c.name == cat
@@ -62,13 +76,14 @@ block indexPage
           p Get competitive prices for all products.
         
         .pointSpan
-          h5 Compete with big companies
+          h5 Compete with large enterprises
           p We group orders from small businesses like you and negotiate 
             | better prices from manufacturers / producers.
         
         .pointSpan
-          h5 Direct from manufacturer / producer
+          h5 Direct, timely delivery
           p We supply your raw materials directly from the the manufacturer / producer.
+            | We work hard to deliver your products on time everytime.
         
         .pointSpan
           h5 Online procurement platform

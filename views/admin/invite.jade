@@ -1,0 +1,13 @@
+extends ../layout
+block partial
+  .row
+    .span9.offset1.well
+      form(method="POST", action="/admin/invite")
+        legend Send new invite
+        label(for="email") Email Address
+        input#email(type="email", name="email", placeholder="email address", required)
+        br
+        label(for="company") Company Name
+        input#company(type="text", name="company", placeholder="company name")
+        br
+        input.btn.btn-primary(type="submit", value="Send Invite")

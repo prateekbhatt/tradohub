@@ -56,6 +56,10 @@ body {
   background-size: 100% 100%;
   text-shadow: 2px 2px rgb(10, 10, 10);
 }
+.dotted {
+  background-image: url('/img/dotted.png');
+  /*background-size: 100%;  */
+}
 .jumbotron h1 {
   font-size: 100px;
   line-height: 1;
@@ -65,8 +69,9 @@ body {
   line-height: 1.25;
 }
 .jumbotron .btn {
-  font-size: 21px;
-  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 20px;
 }
 
 #points {
