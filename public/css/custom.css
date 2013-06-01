@@ -54,24 +54,29 @@ body {
   background-image: url('https://s3.amazonaws.com/tradohub/static/img/index-back.jpg');
   background-color: #000;
   background-size: 100% 100%;
-  text-shadow: 2px 2px rgb(10, 10, 10);
+  text-shadow: 0px 2px 2px #333;
 }
 .dotted {
   background-image: url('/img/dotted.png');
-  /*background-size: 100%;  */
+  background-image: url('https://s3.amazonaws.com/tradohub/static/img/dotted.png');
+  padding: 10px;
 }
 .jumbotron h1 {
   font-size: 100px;
   line-height: 1;
+}
+.jumbotron hr {
+  margin: 0px;
+  border-bottom: none;
 }
 .jumbotron .lead {
   font-size: 24px;
   line-height: 1.25;
 }
 .jumbotron .btn {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
-  padding: 12px 20px;
+  padding: 10px 20px;
 }
 
 #points {
