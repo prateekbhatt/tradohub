@@ -12,7 +12,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "node_modules/.bin/supervisor app"
+    "start": "node_modules/.bin/supervisor development"
   },
   "dependencies": {
     "express": "3.1.0",
@@ -43,7 +43,6 @@
     "grunt-contrib-uglify": "~0.1.2",
     "grunt-contrib-watch": "~0.3.1",
     "grunt-contrib-less": "~0.5.0",
-    "connect-flash": "~0.1.0",
     "mocha": "~1.9.0",
     "grunt-s3": "~0.2.0-alpha.1",
     "grunt-contrib-cssmin": "~0.6.0"
