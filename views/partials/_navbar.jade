@@ -1,40 +1,47 @@
 .navbar.navbar-fixed-top
   .navbar-inner
     .container
-      a.brand(href='/')
-        img(src="#{staticFiles.logoUrl}", alt="tradohub.com", title="tradohub.com", width="130px;", style="margin-top:-10px;")
-        //- em
-        //-   strong(style="color: #0064cd; font-size: 20px;") tradohub
-        //-     span(style="color:#777; font-size: 14px;") .com
-      ul.nav.pull-left
-        li: a(href='/about') About Us
-        li.dropdown
-          a.dropdown-toggle(data-toggle="dropdown", href="/products", onclick="location = '/products'") Products
-            b.caret
-          ul.dropdown-menu
-            for c in category
-              li.dropdown-submenu
-                a(href="#")= c.name
-                ul.dropdown-menu
-                  for p in c.products
-                    li: a(href="/products/#{p.url}")= p.name
-            li.divider
-            li: a(href="/products") All Products
+      //- .row
+      //-   .span12
+      //-     ul.nav.pull-right
+      //-       li: a(href='/login') Login
+      //-       li: a(href='/register') Register
+      .row
+        .span12
+          a.brand(href='/')
+            img(src="#{staticFiles.logoUrl}", alt="tradohub.com", title="tradohub.com", width="130px;", style="margin-top:-10px;")
+            //- em
+            //-   strong(style="color: #0064cd; font-size: 20px;") tradohub
+            //-     span(style="color:#777; font-size: 14px;") .com
+          ul.nav.pull-left
+            li: a(href='/about') About Us
+            li.dropdown
+              a.dropdown-toggle(data-toggle="dropdown", href="/products", onclick="location = '/products'") Products
+                b.caret
+              ul.dropdown-menu
+                for c in category
+                  li.dropdown-submenu
+                    a(href="#")= c.name
+                    ul.dropdown-menu
+                      for p in c.products
+                        li: a(href="/products/#{p.url}")= p.name
+                li.divider
+                li: a(href="/products") All Products
 
-      form.navbar-search.pull-left
-        select.select2#single(style="width: 250px;", onchange="location = this.options[this.selectedIndex].value;", data-placeholder="Search Products")
-          option
-          for c in category
-            for p in c.products
-              option(value="/products/#{p.url}") #{p.name}
-      ul.nav.pull-left
-        li: a(href='/quote') Request Quote
+          form.navbar-search.pull-left
+            select.select2#single(style="width: 250px;", onchange="location = this.options[this.selectedIndex].value;", data-placeholder="Search Products")
+              option
+              for c in category
+                for p in c.products
+                  option(value="/products/#{p.url}") #{p.name}
+          ul.nav.pull-left
+            li: a(href='/quote') Request Quote
 
-      if user
-        ul.nav.pull-right
-          li: a(href='/quote') #{user.name.first}
-          li: a(href='/logout') Logout
-      else
-        ul.nav.pull-right
-          li: a(href='/login') Login
-          li: a(href='/register') Register
+          if user
+            ul.nav.pull-right
+              li: a(href='/quote') #{user.name.first}
+              li: a(href='/logout') Logout
+          else
+            ul.nav.pull-right
+              li: a(href='/login') Login
+              li: a(href='/register') Register

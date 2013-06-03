@@ -2,29 +2,44 @@ extends index
 block page
   legend Contact Us
   
-  .btn(onclick="javascript:FreshWidget.show();") Contact Us
+  address
+    strong Tradohub.com
+    br
+    | 602, Rajvi Arcade, Opp. Gurukul Temple, Drive-In Road, Memnagar
+    br
+    | Ahmedabad - 380052, Gujarat, INDIA
+    br
+    br
+    | Business Queries: 
+    a(href="mailto:info@tradohub.com?Subject=Query") info@tradohub.com
+    br
+    | Support Queries: 
+    a(href="mailto:support@tradohub.com?Subject=Query") support@tradohub.com
+    //- <abbr title="Phone">P:</abbr> (123) 456-7890
+
+  legend Send us your query
   form.form-horizontal.span8(method="POST", action="/contact")
+    //- .control-group
+    //-   label.control-label(for="email") Tradohub Email
+    //-   .controls(style="margin-top: 5px;")
+    //-     a(href="mailto:support@tradohub.com?Subject=Query") support@tradohub.com
     .control-group
-      label.control-label(for="email") Tradohub Email
-      .controls
-        a(href="mailto:info@tradohub.com?Subject=Query") info@tradohub.com
-    .control-group
-      label.control-label(for="email") Your Email *
+      label.control-label(for="email") Your Email Address *
       .controls
         input.input-block-level(type="text", id="email", name="email", placeholder="Email Address", required)
     
     .control-group
-      label.control-label(for="subject") Issue Type *
+      label.control-label(for="subject") Query Type *
       .controls
         select.input-block-level(name="subject")
           option Select Type
-          for m in ['Product related query', 'Payment related query', 'Order related query', 'Supplier related query', 'Other query']
+          for m in ['Product related query', 'Order related query', 'Payment related query', 'Supplier partner related query', 'Other query / Feedback / Suggestions']
             option(value="#{m}") #{m}
         
     .control-group
       label.control-label(for="message") Message *
       .controls
-        textarea.input-block-level(type="text", id="message", rows="5", name="message", placeholder="Write your message here...")
+        textarea.input-block-level(type="text", id="message", rows="5", name="message", placeholder="Write your message here...", required)
 
     .form-actions
       input.btn.btn-large.btn-primary(type="submit", value="Send Message")

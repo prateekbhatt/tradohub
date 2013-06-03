@@ -23,16 +23,6 @@ exports.loggedIn = function loggedIn (req, res, next) {
   gotoLogin(req, res);
 };
 
-exports.isAdmin =  function isAdmin (req, res, next) {
-  // make sure the user is logged in.
-  if (req.isAuthenticated()) {
-    // make sure the user has role 'admin'
-    if (req.user.hasRole('admin')) return next();
-    return res.render('403');
-  }
-  gotoLogin(req, res);
-};
-
 exports.hasRole = function hasRole (role) {
 
   return function(req, res, next) {

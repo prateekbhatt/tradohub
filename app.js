@@ -218,6 +218,6 @@ app.get('/admin/invite', hasRole('invite'), admin.user.invitePage);
 app.post('/admin/invite', hasRole('invite'), admin.user.sendInvite);
 
 // Start server
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Server listening on port", app.get('port'));
+http.createServer(app).listen(config.port, function(){
+  console.log("Server listening on port", config.port);
 });
