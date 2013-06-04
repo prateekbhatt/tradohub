@@ -11,7 +11,7 @@ block products
       p(style="text-align: justify;") #{product.description}
       //- br
 
-      if (specs && specs.title.length)
+      if (specs && specs.title && specs.title.length)
         h5 Specifications
         ul
           for t in specs.title
@@ -27,7 +27,7 @@ block products
         img(src="#{imageUrl}", alt="#{product.name}", width="290px")
   
   
-  if (specs)
+  if (specs && specs.columns && specs.columns.length)
     hr
     .row
       .span9
