@@ -8,6 +8,7 @@ module.exports['aluminum-ingots'] = {
       "The composition is as follows in the table."
     , "Aluminum ingots of lower purity (98.5%, 97% and others) are also available on request."
   ]
+  , "brands": ["Tomago (Australia)", "Portland (Australia)", "Alba (Bahrain)", "Mozal"]
   , "columns": [ "Item", "Standard", "Test Result" ]
   , "rows": [
       [ "Al", "99.7MIN", "99.7"]
@@ -33,6 +34,7 @@ module.exports['copper-cathodes'] = {
     , 'Gross weight of each container: 22.20MTS Approx.'
     , 'Packing:  Palletized banded by aluminum bands'
   ]
+  , "brands": [ "BCH", "HMGB", "MICP", "FMS (Spain)", "DJ-A (China)" ]
   , "columns": [ "Element", "Symbol", "Value" ]
   , "rows": [
       [ 'Copper', 'Cu', '99% Min.' ]
@@ -65,6 +67,16 @@ module.exports['copper-rods'] = {
     , [ '12.5 mm.', '12.5mm+-0.38mm', '+-0.38mm', '>100% IACS',  '>30%', '<1000 Ao', '<350',  '9287/1432', '2.25T/1T' ]
     , [ '16 mm.', '16mm+-0.38mm', '+-0.38mm', '>100% IACS',  '>30%', '<1000 Ao', '<350', '928/1432', '2.25T/1T' ]
   ]
+}
+
+module.exports['tin-ingots'] = {
+    "title": []
+  , "brands": [ "Norilsk" ]
+}
+
+module.exports['nickel-cathodes'] = {
+    "title": []
+  , "brands": [ "Yunheng 99.95 (Actual 99.98%)", "Tinindo 99.9%", "MC - 99.9%", "MSC - 99.85%", "ENAF - 99.95%", "Ketapang - 99.92+%" ]
 }
 
 module.exports['polyethylene-pe'] = {

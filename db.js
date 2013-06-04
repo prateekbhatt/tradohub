@@ -15,5 +15,4 @@ module.exports = function dbConnect () {
   db.once('open', function dbCallback() {
     console.log('CONNECTED TO DB', db.name);
   });
-  return db;
 }();

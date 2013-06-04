@@ -16,9 +16,16 @@ block products
         ul
           for t in specs.title
             li= t
+      
+      if (specs && specs.brands && specs.brands.length)
+        h5 Brands
+        ul
+          for brand in specs.brands
+            li= brand
     .span4
       if (imageUrl)
         img(src="#{imageUrl}", alt="#{product.name}", width="290px")
+  
   
   if (specs)
     hr

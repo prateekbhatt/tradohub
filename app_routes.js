@@ -4,9 +4,10 @@ var passport = require('passport');
 
 // Import route middleware
 
-var loggedIn = require('./routes/middlewares').loggedIn
-  , hasRole = require('./routes/middlewares').hasRole
-  , activated = require('./routes/middlewares').activated
+var middleware = require('./routes/middleware')
+  , loggedIn = middleware.loggedIn
+  , hasRole = middleware.hasRole
+  , activated = middleware.activated
   ;
 
 // Import the routes

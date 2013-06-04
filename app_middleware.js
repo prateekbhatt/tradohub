@@ -14,7 +14,6 @@ var express = require('express')
 
 module.exports = function (app) {
 
-
   // configure redis session store for storing session data
   var redisSessionStore = new RedisStore({
       host: config.redis.host
