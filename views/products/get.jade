@@ -19,9 +19,8 @@ block products
       
       if (specs && specs.brands && specs.brands.length)
         h5 Brands
-        ul
-          for brand in specs.brands
-            li= brand
+        //- for brand in specs.brands
+        span #{specs.brands.join(' , ')}
     .span4
       if (imageUrl)
         img(src="#{imageUrl}", alt="#{product.name}", width="290px")
