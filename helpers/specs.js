@@ -71,12 +71,12 @@ module.exports['copper-rods'] = {
 
 module.exports['tin-ingots'] = {
     "title": []
-  , "brands": [ "Norilsk" ]
+  , "brands": [ "Yunheng 99.95 (Actual 99.98%)", "Tinindo 99.9%", "MC - 99.9%", "MSC - 99.85%", "ENAF - 99.95%", "Ketapang - 99.92+%" ]
 }
 
 module.exports['nickel-cathodes'] = {
     "title": []
-  , "brands": [ "Yunheng 99.95 (Actual 99.98%)", "Tinindo 99.9%", "MC - 99.9%", "MSC - 99.85%", "ENAF - 99.95%", "Ketapang - 99.92+%" ]
+  , "brands": [ "Norilsk" ]
 }
 
 module.exports['polyethylene-pe'] = {
