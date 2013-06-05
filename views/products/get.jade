@@ -25,7 +25,7 @@ block products
     .span4
       if (imageUrl)
         img(src="#{imageUrl}", alt="#{product.name}", width="290px")
-  
+      
   
   if (specs && specs.columns && specs.columns.length)
     hr
@@ -40,7 +40,7 @@ block products
                   td= v
   hr
   .row          
-    .span4
+    .span5
       - for c in category
         - if ((c._id).toString() == (product.category._id).toString()) {
             //- if (c.products.length > 1)
@@ -51,5 +51,7 @@ block products
                 li: a(href="/products/#{p.url}") #{p.name}
         -   break;
         - }
-    .span4
+      hr
       include ../_newProductRequest
+    .span4
+      include _requestQuote
