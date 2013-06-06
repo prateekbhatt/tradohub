@@ -1,6 +1,11 @@
-form.well(style="background: #f0f0f0;", method="POST", action="/contact")
-  h5 Subscribe for #{product.name} offers
-  input(type="hidden", name="product", value="#{product.name}")
+form.well(style="padding: 10px;", method="POST", action="/contact")
+
+  - if (typeof(product) != "undefined") {
+    h5 Subscribe for #{product.name} offers
+    input(type="hidden", name="product", value="#{product.name}")
+  - } else {
+    h5 Subscribe for product offers
+  - }
   input.input-block-level(type="email", name="email", placeholder="Email Address (required)", required)
   input.input-block-level(type="text", name="company", placeholder="Company Name (required)", required)
   input.input-block-level(type="text", name="mobile", placeholder="Mobile Number", min="7000000000", max="9999999999",  pattern=".{10}", title="Mobile no. must have 10 numbers")

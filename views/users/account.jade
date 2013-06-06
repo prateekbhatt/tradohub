@@ -7,12 +7,13 @@ extends ../layout
 
 block partial
   .row
-    .span2.well
+    .span3
       include ../_sidenav
 
-    .span9.well
+    .span9
+      br
       form.form-horizontal(method="POST", action="/account")
-        legend Account Settings
+        .lead Account Settings
 
         h5 Password
         p
@@ -43,8 +44,6 @@ block partial
             &nbsp; - &nbsp;
             input.input-medium#landline(type="number", name="user[landline][no]", value="#{user.landline.no || ''}", placeholder="Number")
         
-        br
-        button.btn.btn-primary(type="submit")
-          span Update account
-        &nbsp;&nbsp;
-        a.btn(href="/account") Cancel changes
+        .form-actions
+          button.btn.btn-primary(type="submit") Update account
+          a.btn(href="/account") Cancel changes
