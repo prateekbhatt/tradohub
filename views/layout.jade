@@ -17,6 +17,7 @@ html(lang="en", ng-app='tradohub')
           block partial
         block indexPage
       
+      hr
       #push
       
     script(type="text/javascript", src="#{staticFiles.mainJs}")
@@ -36,8 +37,6 @@ html(lang="en", ng-app='tradohub')
     //- Google analytics start
     include partials/_googleAnalytics
     //- google analytics end
-
     #footer
-      hr
       .container
         include partials/_footer
