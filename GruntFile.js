@@ -47,7 +47,8 @@ module.exports = function (grunt) {
         src: [SRC_JS + 'lib/jquery.js',
               SRC_JS + 'lib/bootstrap.min.js',
               SRC_JS + 'lib/select2.min.js',
-              SRC_JS + 'lib/bootstrap-fileupload.min.js'],
+              SRC_JS + 'lib/bootstrap-fileupload.min.js',
+              SRC_JS + 'custom-main.js'],
         // the location of the resulting JS file
         dest: SRC_JS + 'tradohub-main.js',
         nonull: true
@@ -56,7 +57,7 @@ module.exports = function (grunt) {
         src: [SRC_JS + 'lib/angular.min.js',
               SRC_JS + 'lib/ui-bootstrap.min.js',
               SRC_JS + 'lib/ui-select2.js',
-              SRC_JS + 'app2.js'],
+              SRC_JS + 'custom-quote.js'],
         // the location of the resulting JS file
         dest: SRC_JS + 'tradohub-quote.js',
         nonull: true

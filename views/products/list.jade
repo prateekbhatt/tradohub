@@ -4,7 +4,7 @@ block products
   - var l = category.length
   - var n = Math.floor(l/2)
   .row
-    .span4
+    .span4(style="width: 340px;")
       for c, i in category
         if (i < l-n)
           .well(style="padding: 2px 19px;")
@@ -12,7 +12,8 @@ block products
             ul.unstyled
               for p in c.products
                 li: a(href="/products/#{p.url}") #{p.name}
-    .span4
+    
+    .span4(style="width: 340px;")
       for c, i in category
         if (i >= l-n)
           .well(style="padding: 2px 19px;")
@@ -20,5 +21,6 @@ block products
             ul.unstyled
               for p in c.products
                 li: a(href="/products/#{p.url}") #{p.name}
+  
   br
   include ../_newProductRequest

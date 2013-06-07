@@ -1,11 +1,6 @@
 .navbar.navbar-fixed-top
   .navbar-inner
     .container
-      //- .row
-      //-   .span12
-      //-     ul.nav.pull-right
-      //-       li: a(href='/login') Login
-      //-       li: a(href='/register') Register
       .row
         .span12
           a.brand(href='/')
@@ -39,7 +34,7 @@
 
           if user
             ul.nav.pull-right
-              li: a(href='/quote') #{user.name.first}
+              li: a(href='/account') #{user.name.first}
               li: a(href='/logout') Logout
           else
             ul.nav.pull-right
