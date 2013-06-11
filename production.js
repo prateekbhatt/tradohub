@@ -3,4 +3,8 @@
 // set Node environment to production
 process.env.NODE_ENV = 'production';
 
-require('./server');
+var server = require('./server');
+
+// start server
+
+server.listen();

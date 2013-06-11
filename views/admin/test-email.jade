@@ -1,0 +1,10 @@
+extends ../layout
+block partial
+  .row
+    .span9.offset1.well
+      form(method="POST", action="/admin/testEmail")
+        legend Send new test email
+        label(for="email") Admin Email Address
+        input#email(type="email", name="email", placeholder="email address", required)
+        br
+        input.btn.btn-primary(type="submit", value="Send Email")

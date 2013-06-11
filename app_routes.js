@@ -24,10 +24,12 @@ var admin = {
   , category: require('./routes/admin/category')
   , user: require('./routes/admin/user')
   , txn: require('./routes/admin/txn')
+  , email: require('./routes/admin/email')
 };
 
 module.exports = function (app) {
   // Routes are defined here
+  
   app.get('/', routes.index.index);
   app.get('/about', routes.index.about);
   app.get('/about/:page', routes.index.pages);
@@ -105,4 +107,7 @@ module.exports = function (app) {
 
   app.get('/admin/invite', hasRole('invite'), admin.user.invitePage);
   app.post('/admin/invite', hasRole('invite'), admin.user.sendInvite);
+
+  app.get('/admin/testEmail', hasRole('admin'), admin.email.testEmailPage);
+  app.post('/admin/testEmail', hasRole('admin'), admin.email.sendTestEmail);
 }

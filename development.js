@@ -3,4 +3,8 @@
 // set Node environment to development
 process.env.NODE_ENV = 'development';
 
-require('./server');
+var server = require('./server');
+
+// start server
+
+server.listen();

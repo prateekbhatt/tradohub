@@ -48,7 +48,7 @@ module.exports = function (app) {
     app.use(function (req, res, next) {
       res.locals.staticFiles = config.staticFiles;
       res.locals.user = req.user ? { 'email': req.user.email, 'name': req.user.name } : null;
-      res.locals.title = 'Buy polymers, plastics and metals of best quality at low prices in India : Tradohub.com';
+      res.locals.title = 'Tradohub - Buy polymers, plastics and metals of best quality at low prices in India';
       next();
     });
     // middleware to pass products and category to all views 

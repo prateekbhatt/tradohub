@@ -12,7 +12,7 @@ function get (req, res, next) {
       res.locals.specs = specs[product.url] ? specs[product.url] : null;
       res.locals.imageUrl = product.image ? product.getImagePath() : null;
       res.locals.product = product;
-      res.locals.title = 'Buy ' + product.name + ' of best quality at low prices in India : Tradohub.com';
+      res.locals.title = 'Tradohub - Buy ' + product.name + ' of best quality at low prices in India';
       return res.render('products/get',
         { success: req.flash('success'), error: req.flash('error') });
     }

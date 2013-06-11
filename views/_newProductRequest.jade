@@ -8,12 +8,10 @@ strong
       button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
       .lead(id="proReqModalLabel") Need a different product ?
     .modal-body
-      //- iframe(src="https://docs.google.com/forms/d/1rRnp-QBvAJAFusmBLBF4d7aIkTJj2V0tbJax0fA7aE4/viewform?embedded=true", width="460", height="500", frameborder="0", marginheight="0", marginwidth="0") Loading...
-      
       .control-group
         label.control-label(for="industry") Industry
         .controls
-          select.input-xlarge#industry(name="product[industry]")
+          select.input-xlarge#industry(name="product[industry]", required)
             option Select Industry
             each i in ['Polymers', 'Metals', 'Chemicals', 'Construction', 'Automobile', 'Agriculture', 'Food']
               option(value=i)= i
@@ -21,12 +19,17 @@ strong
       .control-group
         label.control-label(for="productName") Product Name
         .controls
-          input.input-xlarge#productName(type="text", name="product[name]", placeholder="Product Name")
+          input.input-xlarge#productName(type="text", name="product[name]", placeholder="Product Name (required)", required)
+
+      .control-group
+        label.control-label(for="productSpecs") Product Specification
+        .controls
+          input.input-xlarge#productName(type="text", name="product[specs]", placeholder="Product Specification")
 
       .control-group
         label.control-label(for="email") Your Email
         .controls
-          input.input-xlarge(type="email", name="product[email]", placeholder="Your Email (optional)")
+          input.input-xlarge(type="email", name="product[email]", placeholder="Your Email (required)", required)
 
     .modal-footer
       input.btn.btn-success(type="submit", value="Submit")

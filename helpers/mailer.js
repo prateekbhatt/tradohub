@@ -199,3 +199,16 @@ module.exports.sendInvite = function(user) {
   mailer.send();
   return mailer;
 }
+
+/**
+ * For testing purposes only
+ */
+module.exports.sendTestEmail = function(user) {
+  var mailer = new Mailer(user)
+    , title = user.title
+    ;
+  mailer._subject = 'Tradohub Quote for LLDPE';
+  mailer._template = 'quote-with-css.jade';
+  mailer.send();
+  return mailer;
+}
