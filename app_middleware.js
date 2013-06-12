@@ -10,6 +10,9 @@ var express = require('express')
   , loadCategories = require('./helpers/loadCategories')
   , errorHelper = require('./helpers/errorHelper')
   , RedisStore = require('connect-redis')(express)
+  , viewsDir = __dirname + '/views'
+  , favicon = __dirname + '/public/img/favicon.ico'
+  , publicDir = __dirname + '/public'
   ;
 
 module.exports = function (app) {
@@ -25,9 +28,9 @@ module.exports = function (app) {
   // Config settings
   app.configure(function(){
     app.set('port', config.port);
-    app.set('views', __dirname + '/views');
+    app.set('views', viewsDir);
     app.set('view engine', 'jade');
-    app.use(express.favicon(__dirname + '/public/img/favicon.ico', { maxAge: 2592000000 }));
+    app.use(express.favicon(favicon, { maxAge: 2592000000 }));
     app.use(express.logger('dev'));
     app.use(express.limit('1mb'));
     app.use(express.bodyParser());
@@ -58,7 +61,7 @@ module.exports = function (app) {
 
     app.use(errorHelper);
 
-    app.use(require('less-middleware')({ src: __dirname + '/public' }));
+    app.use(require('less-middleware')({ src: publicDir }));
 
     app.use(express.staticCache());
 
@@ -69,7 +72,7 @@ module.exports = function (app) {
       level: 9
     }));
 
-    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express.static(publicDir));
     
     app.use(function(req, res, next){
       res.status(404);
