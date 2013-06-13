@@ -12,7 +12,7 @@ exports.index = function (req, res) {
 };
 
 exports.about = function (req, res) {
-  res.locals.title = 'Tradohub - About company'
+  res.locals.title = 'Tradohub | About company'
   res.render('pages/about',
     { success: req.flash('success'), error: req.flash('error') });
 };
@@ -21,7 +21,7 @@ exports.pages = function (req, res) {
   var page = req.params.page
     , title = page.charAt(0).toUpperCase() + page.substr(1).toLowerCase()
     ;
-  res.locals.title = 'Tradohub - ' + title;
+  res.locals.title = 'Tradohub | ' + title;
   res.render('pages/'+ page,
     { success: req.flash('success'), error: req.flash('error') });
 };
@@ -31,7 +31,7 @@ exports.partnersPage = function (req, res) {
   res.locals.country = data
   res.locals.industry = data.industry;
   res.locals.countryList = countryList;
-  res.locals.title = 'Tradohub - Partner with us and reach the Indian MSME market'
+  res.locals.title = 'Tradohub | Partner with us and reach the Indian MSME market'
   res.render('pages/partners',
     { success: req.flash('success'), error: req.flash('error') });
 };

@@ -69,7 +69,7 @@ function sendInvite (req, res, next) {
     ;
   user.email = email;
   user.company = company;
-  user.title = 'Welcome to INDIA\'s first group buying platform for SMEs' ;
+  user.title = 'Buy raw materials from reputed manufacturers at low price' ;
   if (user.email) {
     mailer.sendInvite(user);
     req.flash('success', 'Sending mail invitation.');    

@@ -10,14 +10,14 @@ var User = require('../models/User')
   ;
 
 function loginPage (req, res) {
-  res.locals.title = 'Tradohub - Log into your account';
+  res.locals.title = 'Tradohub | Log into your account';
   res.render('users/login', { error: req.flash('error'), success: req.flash('success') });    
 };
 
 function registerPage (req, res) {
   res.locals.states = data.states;
   res.locals.industry = data.industry;
-  res.locals.title = 'Tradohub - Create a new account';
+  res.locals.title = 'Tradohub | Create a new account';
   res.render('users/register', { error: req.flash('error') });
 };
 

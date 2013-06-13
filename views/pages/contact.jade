@@ -1,28 +1,29 @@
 extends index
 block page
   .lead Contact Us
-  
-  address
-    strong Tradohub.com
-    br
-    | 602, Rajvi Arcade, Opp. Gurukul Temple, Drive-In Road, Memnagar
-    br
-    | Ahmedabad - 380052, Gujarat, INDIA
-    br
-    br
-    | Business Queries: 
-    a(href="mailto:info@tradohub.com?Subject=Query") info@tradohub.com
-    br
-    | Support Queries: 
-    a(href="mailto:support@tradohub.com?Subject=Query") support@tradohub.com
-    //- <abbr title="Phone">P:</abbr> (123) 456-7890
+  .row
+    .span4
+      address.well
+        strong Tradohub.com
+        br
+        | 602, Rajvi Arcade, Opp. Gurukul Temple, Drive-In Road, Memnagar
+        br
+        | Ahmedabad - 380052, Gujarat, INDIA
+        //- br
+        //- br
+    .span5
+      address.well
+        | Phone: (079) 40325637
+        br
+        br
+        | Business Queries: 
+        a(href="mailto:info@tradohub.com?Subject=Query") info@tradohub.com
+        br
+        | Support Queries: 
+        a(href="mailto:support@tradohub.com?Subject=Query") support@tradohub.com
 
   .lead Send us your query
   form.form-horizontal.span8(method="POST", action="/contact")
-    //- .control-group
-    //-   label.control-label(for="email") Tradohub Email
-    //-   .controls(style="margin-top: 5px;")
-    //-     a(href="mailto:support@tradohub.com?Subject=Query") support@tradohub.com
     .control-group
       label.control-label(for="email") Your Email Address *
       .controls
