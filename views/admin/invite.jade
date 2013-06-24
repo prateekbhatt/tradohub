@@ -5,7 +5,7 @@ block partial
       form(method="POST", action="/admin/invite")
         legend Send new invite
         label(for="email") Email Address
-        input#email(type="email", name="email", placeholder="email address", required)
+        input#email(type="email", name="email", placeholder="email address", autofocus, required)
         br
         label(for="company") Company Name
         input#company(type="text", name="company", placeholder="company name")

@@ -1,8 +1,8 @@
 // Put below in a file in your *test* folder, ie: test/sampletest.js:
 
-var assert = require('assert'),
-Browser = require('zombie'),
-browser = new Browser();
+var assert = require('assert')
+  , loadCategories = require('../helpers/loadCategories')
+  ;
 
 describe('Loads pages', function(){
 

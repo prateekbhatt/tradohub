@@ -7,12 +7,13 @@ var express = require('express')
   , expressValidator = require('express-validator')
   , flash = require('connect-flash')
   , config = require('config')
-  , loadCategories = require('./helpers/loadCategories')
-  , errorHelper = require('./helpers/errorHelper')
   , RedisStore = require('connect-redis')(express)
-  , viewsDir = __dirname + '/views'
-  , favicon = __dirname + '/public/img/favicon.ico'
-  , publicDir = __dirname + '/public'
+  , rootDir = __dirname + '/..'
+  , loadCategories = require(rootDir + '/helpers/loadCategories')
+  , errorHelper = require(rootDir + '/helpers/errorHelper')
+  , viewsDir = rootDir + '/views'
+  , publicDir = rootDir + '/public'
+  , favicon = publicDir + '/img/favicon.ico'
   ;
 
 module.exports = function (app) {
@@ -27,13 +28,20 @@ module.exports = function (app) {
 
   // Config settings
   app.configure(function(){
+
     app.set('port', config.port);
+    
     app.set('views', viewsDir);
     app.set('view engine', 'jade');
+    
     app.use(express.favicon(favicon, { maxAge: 2592000000 }));
+    
     app.use(express.logger('dev'));
+    
     app.use(express.limit('1mb'));
+    
     app.use(express.bodyParser());
+    
     app.use(expressValidator);
     app.use(express.methodOverride());
     app.use(express.cookieParser(config.cookieSecret));
@@ -46,7 +54,9 @@ module.exports = function (app) {
     
     app.use(passport.initialize());
     app.use(passport.session());
+    
     app.use(flash());
+    
     // add user to res.locals to make it available in layout.jade
     app.use(function (req, res, next) {
       res.locals.staticFiles = config.staticFiles;
@@ -54,6 +64,7 @@ module.exports = function (app) {
       res.locals.title = 'Tradohub | Buy polymers, plastics and metals of best quality at low prices in India';
       next();
     });
+    
     // middleware to pass products and category to all views 
     app.use(loadCategories);
 

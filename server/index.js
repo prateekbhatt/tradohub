@@ -21,12 +21,14 @@ require('./app_routes')(app);
 
 this.server = http.createServer(app);
 
-exports.listen = function () {
+// module.exports = this.server;
+
+module.exports.listen = function () {
   this.server.listen(app.get('port'), function(){
     console.log("Server listening on port", app.get('port'));
   });
 };
 
-exports.close = function (callback) {
+module.exports.close = function (callback) {
   this.server.close(callback);
 };

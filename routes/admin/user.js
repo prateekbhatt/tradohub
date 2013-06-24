@@ -69,7 +69,7 @@ function sendInvite (req, res, next) {
     ;
   user.email = email;
   user.company = company;
-  user.title = 'Buy raw materials from reputed manufacturers at low price' ;
+  user.title = 'Buy raw materials at lowest prices from reputed manufacturers' ;
   if (user.email) {
     mailer.sendInvite(user);
     req.flash('success', 'Sending mail invitation.');    

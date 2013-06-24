@@ -1,10 +1,12 @@
 'use strict';
 
-var passport = require('passport');
+var passport = require('passport')
+  , routesDir = '../routes/'
+  ;
 
 // Import route middleware
 
-var middleware = require('./routes/middleware')
+var middleware = require(routesDir+'middleware')
   , loggedIn = middleware.loggedIn
   , hasRole = middleware.hasRole
   , activated = middleware.activated
@@ -12,19 +14,19 @@ var middleware = require('./routes/middleware')
 
 // Import the routes
 var routes = {
-    index: require('./routes')
-  , user: require('./routes/user')
-  , product: require('./routes/product')
-  , txn: require('./routes/txn')
+    index: require(routesDir)
+  , user: require(routesDir + 'user')
+  , product: require(routesDir + 'product')
+  , txn: require(routesDir + 'txn')
 };
 
 // import admin routes
 var admin = {
-    product: require('./routes/admin/product')
-  , category: require('./routes/admin/category')
-  , user: require('./routes/admin/user')
-  , txn: require('./routes/admin/txn')
-  , email: require('./routes/admin/email')
+    product: require(routesDir + 'admin/product')
+  , category: require(routesDir + 'admin/category')
+  , user: require(routesDir + 'admin/user')
+  , txn: require(routesDir + 'admin/txn')
+  , email: require(routesDir + 'admin/email')
 };
 
 module.exports = function (app) {
