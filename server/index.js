@@ -3,32 +3,57 @@
 // Module dependencies
 var express = require('express')  
   , http = require('http')
+  , async = require('async')
   ;
 
 // Create app
 var app = express();
 
-console.log('\n\nNode Environment: ', process.env.NODE_ENV);
-
-// connect to database
-require('./db')
 // import express configurations
 require('./app_middleware')(app);
+
 // import application routes
 require('./app_routes')(app);
 
 // server
 
-this.server = http.createServer(app);
+var server = http.createServer(app);
 
-// module.exports = this.server;
+module.exports.listen = function (callback) {
 
-module.exports.listen = function () {
-  this.server.listen(app.get('port'), function(){
-    console.log("Server listening on port", app.get('port'));
+  console.log('\nNODE ENVIRONMENT: ', process.env.NODE_ENV);
+
+  async.series([
+    
+    // connect to database
+    function(cb){
+      require('./db')(function(){
+        cb(null);
+      });      
+    },
+
+    // listen to server
+    function(cb){
+      server.listen(app.get('port'), function(){
+        console.log("\nServer listening on port", app.get('port'));
+        cb(null);
+      });      
+    }
+
+  ],
+
+  function(err, result){
+    if (callback) callback();
   });
+
 };
 
-module.exports.close = function (callback) {
-  this.server.close(callback);
+module.exports.close = function () {
+
+  console.log('SHUTTING DOWN SERVER');
+  
+  async.series([
+    server.close(),
+    process.exit()    
+  ]);
 };

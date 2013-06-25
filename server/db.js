@@ -5,7 +5,7 @@ var mongoose = require('mongoose')
   , dbPath = require('config').dbPath
   ;
 
-module.exports = function dbConnect () {
+module.exports = function dbConnect (callback) {
   mongoose.connect(dbPath, function onMongooseError (err) {
     if (err) {
       console.log ('DB CONNECTION ERROR\n\n' + err);
@@ -13,6 +13,7 @@ module.exports = function dbConnect () {
   });
   db.on('error', console.error.bind(console, 'connection error:'));
   db.once('open', function dbCallback() {
-    console.log('CONNECTED TO DB', db.name);
+    console.log('CONNECTED TO DB: ', db.name);
+    if (callback) return callback();
   });
-}();
+};
