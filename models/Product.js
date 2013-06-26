@@ -5,7 +5,7 @@ var Product =  function(){
   var mongoose = require('mongoose')
     , Schema = mongoose.Schema
     , troop = require('mongoose-troop')
-    , config = require('config')
+    , aws = require('config').aws
     , knox = require('knox')
     , fileValidate = require('../helpers/fileValidate')
     , validateFile = require('../helpers/validateFile')
@@ -16,9 +16,9 @@ var Product =  function(){
 
   // create fileclient to upload and remove product images to aws s3
   var client = knox.createClient({
-      key: config.aws.key
-    , secret: config.aws.secret
-    , bucket: config.aws.bucket
+      key: aws.key
+    , secret: aws.secret
+    , bucket: aws.bucket
   });
 
   var ProductSchema = mongoose.Schema({
@@ -38,7 +38,7 @@ var Product =  function(){
   });
 
   ProductSchema.methods.getImagePath = function () {
-    var imagePath = 'https://s3.amazonaws.com/' + bucket + '/static/img/products/' + this.image;
+    var imagePath = 'https://s3.amazonaws.com/' + aws.bucket + '/static/img/products/' + this.image;
     return imagePath;
   };
 
