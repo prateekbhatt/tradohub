@@ -26,7 +26,7 @@ var Product =  function(){
     , description: { type: String }
     , url: { type: String }
     , category: { type: Schema.Types.ObjectId, ref: 'Category' }
-    , image: { type: String }
+    , image: { type: String, default: null }
   });
 
   // adds created and updated timestamps to the document
@@ -38,25 +38,31 @@ var Product =  function(){
   });
 
   ProductSchema.methods.getImagePath = function () {
-    var imagePath = 'https://s3.amazonaws.com/' + aws.bucket + '/static/img/products/' + this.image;
-    return imagePath;
+    if (this.image){
+      var imagePath = 'https://s3.amazonaws.com/' + aws.bucket + '/static/img/products/' + this.image;
+      return imagePath;
+    } else {
+      return null;
+    }
   };
 
   ProductSchema.methods.updateImagePath = function (imagePath, fn) {
     // add imagePath to product image property
-    this.image = imagePath;
-    this.save(function(err, saved){
-      return fn(err, saved);
-    });
+    if (imagePath){
+      this.image = imagePath;
+      this.save(function(err, saved){
+        return fn(err, saved);
+      });      
+    } else {
+      fn(new Error('Invalid Image Path provided'));
+    }
   };
 
-  ProductSchema.statics.uploadImage = function (pid, file, fn) {
+  ProductSchema.statics.updateImage = function (pid, file, fn) {
     var fileExt
       , product
       , imagePath
-      , savedImage
-      , awsPath = 'static/img/products/' + imagePath
-      , headers = { 'x-amz-acl': 'public-read' }
+      , savedImage      
       ;
 
     async.series([
@@ -73,7 +79,7 @@ var Product =  function(){
         Product.findById(pid, function (err, pro){
           if (err) return callback (err);
           product = pro;
-          imagePath = product.url + validExt;
+          imagePath = product.url + fileExt;
           callback();
         });
       },
@@ -83,7 +89,7 @@ var Product =  function(){
           var oldImage = 'static/img/products/' + product.image;
 
           client.deleteFile(oldImage, function (err, res) {
-            console.log('\ndeleted old image file', res.statusCode);
+            console.log('\ndeleted old image file:', oldImage, res.statusCode);
             callback();
           });
         } else {
@@ -92,9 +98,15 @@ var Product =  function(){
       },
       // upload new image file to s3
       function (callback){
+        
+        var awsPath = 'static/img/products/' + imagePath
+          , headers = { 'x-amz-acl': 'public-read' }
+          ;
+
         client.putFile(file.path, awsPath, headers, function (err, res){
           if (err) return callback(err);
           if (res.statusCode == 200){
+            console.log('uploaded new image', awsPath)
             callback();
           }
         })
@@ -113,50 +125,6 @@ var Product =  function(){
       if (err) return fn(err, null);
       fn(err, savedImage);
     })
-  };
-
-  ProductSchema.statics.updateImage = function (pid, file, fn) {
-    Product.findById(pid, function (err, product) {
-      var validExt = fileValidate(file.name)
-        , imagePath = product.url + validExt
-        , awsPath = 'static/img/products/' + imagePath
-        , headers = { 'x-amz-acl': 'public-read' }
-        ;
-      
-      if (!validExt) {
-        return fn(new Error('Please upload a valid image type. Only jpg/jpef format allowed.'))
-      }
-      // upload new image file
-      client.putFile(file.path, awsPath, headers, function (err, res) {
-
-        console.log('\n\ninside Product put file')
-        console.log(err)
-        console.log(file.path, awsPath)
-        // console.log(res)
-
-        if (res.statusCode == 200) {
-          
-          console.log('\nfile', awsPath, 'uploaded to s3');
-          // if product already has an image, delete that image
-          if (product.image != imagePath) {
-            var oldImage = 'static/img/products/' + product.image;
-
-            client.deleteFile(oldImage, function (err, res) {
-              console.log('\ndeleted old image file', res.statusCode)
-            });
-          }
-
-          product.updateImagePath(imagePath, function (err, saved) {
-            return fn(err, saved);
-          });
-
-        } else {
-          console.log('failed to upload file', imagePath, 'to s3');
-          return fn(new Error('Failed to upload file.'));
-        }
-
-      });
-    });
   };
 
   var _model = mongoose.model('Product', ProductSchema);

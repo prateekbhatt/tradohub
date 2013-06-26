@@ -2,7 +2,6 @@
 
 var Product = require('../../models/Product')
   , Category = require('../../models/Category')
-  // , File = require('../../models/File')
   ;
 
 function get (req, res, next) {
@@ -35,25 +34,9 @@ function create (req, res, next) {
     , description: req.body.description
   };
 
-  // var file = req.files ? req.files.image : null
-  //   , fileType = 'products'
-  //   , permission = 'public'
-  //   ;
-
   Product.create(product, function (err, savedP) {
     if (err) return next(err);
     if (savedP) {
-
-      // upload image file to aws ses
-      // File.create(file, fileType, permission, function (err, savedF) {
-      //   if (err) console.log(err);
-      //   if (savedF) {
-      //     savedP.image = savedF._id;
-      //     savedP.save(function (err, imageSaved) {
-      //       console.log('image updated!\n\n');              
-      //     });
-      //   }
-      // });
 
       Category.findById(savedP.category, function (err, c) {
         if (err) return next(err);
