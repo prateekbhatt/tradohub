@@ -4,9 +4,7 @@ module.exports = {
     baseUrl: 'http://tradohub.com/'
   , dbPath: 'mongodb://localhost/tradohub'
   , aws: {
-      key: 'AKIAICEIHBPNOCUWGVUQ'
-    , secret: '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'
-    , bucket: 'tradohub'
+    bucket: 'tradohub'
   }
   , mailer: {
       _from: 'Tradohub.com <support@tradohub.com>'

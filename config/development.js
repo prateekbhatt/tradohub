@@ -3,12 +3,8 @@
 module.exports = {
     baseUrl: 'http://localhost:8000/'
   , dbPath: 'mongodb://localhost/amdavad'
-  , adminMail: 'prattbhatt@gmail.com'
   , aws: {
-      key: 'AKIAICEIHBPNOCUWGVUQ'
-    , secret: '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'
-    , bucket: 'tradohub1'
-    , prodBucket: 'tradohub' // used only to upload static files through grunt js
+    bucket: 'devdev424242'
   }
   , mailer: {
       debug: true

@@ -4,6 +4,7 @@
 var express = require('express')  
   , http = require('http')
   , async = require('async')
+  , db = require('./db')
   ;
 
 // Create app
@@ -27,7 +28,7 @@ module.exports.listen = function (callback) {
     
     // connect to database
     function(cb){
-      require('./db')(function(){
+      db.connect(function(){
         cb(null);
       });      
     },

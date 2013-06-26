@@ -30,10 +30,10 @@ var Category = function(){
           , index = p.indexOf(productId)
           ;
         p.splice(index, 1);
-        c.save(function (err, s) {
+        c.save(function (err, cat) {
           if (err) return fn(err);
           if (!err) {
-            return fn(null, true);          
+            return fn(null, cat);          
           }
         });
       }
@@ -44,10 +44,10 @@ var Category = function(){
     Category.findById(categoryId, function (err, c) {
       if (err) return fn(err);
       c.products.push(productId);
-      c.save(function (err, saved) {
+      c.save(function (err, cat) {
         if (err) return fn(err);
-        if (saved) {
-          return fn(null, true);
+        if (cat) {
+          return fn(null, cat);
         }
       });
     });
