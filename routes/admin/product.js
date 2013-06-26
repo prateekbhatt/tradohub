@@ -38,14 +38,22 @@ function create (req, res, next) {
     if (err) return next(err);
     if (savedP) {
 
-      Category.findById(savedP.category, function (err, c) {
+      // Add product to category
+      Category.addProduct(savedP.category, savedP._id, function (err, c) {
         if (err) return next(err);
-        if (!c.products || !c.products.length) c.products = [];
-        c.products.push(savedP._id);
-        c.save(function (err, savedC) {
-          res.redirect('/admin/products');
-        });
+        if (c) {
+          return res.redirect('/admin/products');              
+        }
       });
+
+      // Category.findById(savedP.category, function (err, c) {
+      //   if (err) return next(err);
+      //   if (!c.products || !c.products.length) c.products = [];
+      //   c.products.push(savedP._id);
+      //   c.save(function (err, savedC) {
+      //     res.redirect('/admin/products');
+      //   });
+      // });
     } else {
       return res.redirect('/admin/products');
     }

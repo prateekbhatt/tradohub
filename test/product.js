@@ -4,11 +4,16 @@ var should = require('should')
   , path = require('path')
   , rootDir = path.join(__dirname, '..')
   , Product = require(path.join(rootDir, 'models', 'Product'))
+  , Category = require(path.join(rootDir, 'models', 'Category'))
   , db = require(path.join(rootDir, 'server', 'db'))
   ;
 
 describe('Product', function(){
-
+  var currentProduct
+    , currentCategory
+    ;
+  
+  
   before(function(done){
     db.connect(done);
   });
@@ -18,18 +23,62 @@ describe('Product', function(){
   });
 
   beforeEach(function(done){
-    Product.create({
-      name: 'test Product'
-      , description: 'test product description'
-    },
-    function(err, saved){
-      currentProduct = saved;
+
+    async.series([
+
+      // seed category
+      function (cb){
+        Category.create({
+          name: 'test Category'
+          , description: 'test description'
+        },
+        function(err, saved){
+          currentCategory = saved;
+          cb();
+        });
+      },
+
+      // seed product
+      function (cb){
+        Product.create({
+          name: 'test Product'
+          , description: 'test product description'
+          , category: currentCategory._id
+        },
+        function(err, saved){
+          currentProduct = saved;
+          cb();
+        });        
+      }
+    ],
+    function (err, result){
+      should.not.exist(err);
       done();
     });
+
   });
 
   afterEach(function(done){
-    Product.remove({}, function(){
+    async.parallel([
+
+      // remove products
+      function (cb){
+        Product.remove({}, function(err){
+          if (err) return cb(err);
+          cb();
+        }); 
+      },
+
+      // remove categories
+      function (cb){
+        Category.remove({}, function(err){
+          if (err) return cb(err);
+          cb();
+        });
+      }
+    ],
+    function (err, result){
+      should.not.exist(err);
       done();
     });
   });
@@ -38,11 +87,13 @@ describe('Product', function(){
     Product.create({
       name: 'Second test product'
       , description: 'awesome product mama'
+      , category: currentCategory._id
     },
     function (err, savedProduct){
       should.not.exist(err);
       savedProduct.should.have.property('name', 'Second test product');
       savedProduct.should.have.property('description', 'awesome product mama');
+      savedProduct.should.have.property('category', currentCategory._id);
     });
   });
 
@@ -61,7 +112,7 @@ describe('Product', function(){
       currentProduct.should.have.property('image', null);
       currentProduct.updateImagePath('helo.jpeg', function (err, savedProduct){
         should.not.exist(err);
-        savedProduct.should.have.property('image', 'helo.jpeg');
+        savedProduct.image.should.equal('helo.jpeg');
       });
     });
 
