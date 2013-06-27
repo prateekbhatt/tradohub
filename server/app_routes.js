@@ -68,7 +68,6 @@ module.exports = function (app) {
   
   app.get('/logout', routes.user.getLogout);
 
-
   // Account routes
 
   app.get('/account', loggedIn, routes.user.getAccount);

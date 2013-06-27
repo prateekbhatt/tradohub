@@ -51,9 +51,11 @@ function postLogin (req, res, next){
 
     function (err, result){
       if (err) {
+
         req.flash('error', 'Invalid email or password');
-        res.redirect('/login');
+        res.redirect('/login');      
       } else {
+
         var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/quote';
         // redirecTo set in loggedIn middleware
         delete req.session.redirectTo; 
@@ -182,33 +184,52 @@ function getAccountPassword (req, res) {
 function postAccountPassword (req, res, next) {
   var uid = req.user._id
     , password = req.body.password
+    , currentUser
     ;
 
-  req.assert('password', 'Password should be between 8 to 20 characters').len(8, 20);
-  var errors =  getExpressErrors(req);
+  async.series([
 
-  if (errors) {
-    req.flash('error', errors);
-    return res.redirect('/account/password');
-  }
-
-  User.findById(uid, function (err, u) {
-    if (err) return next(err);
-    if (u) {
-      u.password = password;
-      u.save(function (err, updated) {
-        if (err) return next(err);
-        if (updated) {
-          req.flash('success', 'Password Updated');
-          return res.redirect('/account');
+      // password validation
+      function (cb){
+        req.assert('password', 'Password should be between 8 to 20 characters').len(8, 20);
+        var err =  getExpressErrors(req);
+        if (err) {
+          req.flash('error', err);
+          cb(err);
+        } else {
+          cb();
         }
-      });
-    } else {
-      var msg = 'An error occured. Try Again.';
-      req.flash('error', msg);
-      res.redirect('/account/password');
+      },
+
+      // get user
+      function (cb){
+        User.findById(uid, function (err, u){
+          if (err) return cb(err);
+          currentUser = u;
+          cb();
+        });
+      },
+
+      // update password
+      function (cb){
+        currentUser.password = password;
+        currentUser.save(function (err, updated){
+          if (err) return cb(err);
+          cb();
+        })
+      }
+    ],
+
+    function (err, result){
+
+      if (err) {
+        res.redirect('/account/password');
+      } else {
+        req.flash('success', 'Password Updated');
+        res.redirect('/account');
+      }
     }
-  });
+  );
 };
 
 function getPasswordForgot (req, res) {
