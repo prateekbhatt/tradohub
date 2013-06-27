@@ -1,6 +1,8 @@
 'use strict';
 
-var User = require('../models/User')
+var passport = require('passport')
+  , async = require('async')
+  , User = require('../models/User')
   , UserToken = require('../models/UserToken')
   , countryList = require('../helpers/countryList')
   , mailer = require('../helpers/mailer')
@@ -41,6 +43,53 @@ function logout (req, res) {
   req.logout();
   req.flash('success', 'You have been logged out.')
   res.redirect('/');
+};
+
+function postLogin (req, res, next){
+
+  var currentUser;
+  async.series(
+    [
+      // authenticate user
+      function (cb){
+        passport.authenticate('local', function (err, user, info){
+          if (err) return cb(err);
+          currentUser = user;
+          cb();
+        })(req, res, next);
+      },
+
+      // check if authenticated
+      function (cb){
+        if (!currentUser) {
+          cb(new Error('Authentication failed.'));
+        } else {
+          cb();
+        }
+      },
+      
+      // login user
+      function (cb){
+        req.logIn(currentUser, function (err){
+          if (err) return cb(err);
+          cb();
+        })
+      }
+
+    ],
+
+    function (err, result){
+      if (err) {
+        req.flash('error', 'Invalid email or password');
+        res.redirect('/login');
+      } else {
+        var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/quote';
+        // redirecTo set in loggedIn middleware
+        delete req.session.redirectTo; 
+        res.redirect(redirectTo);
+      }
+    }
+  );
 };
 
 function create (req, res, next) {
@@ -297,6 +346,7 @@ module.exports = {
   , passwordForgotPage: passwordForgotPage
   , accountPage: accountPage
   , passwordPage: passwordPage
+  , postLogin: postLogin
   , logout: logout
   , create: create
   , verifyEmail: verifyEmail

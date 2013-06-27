@@ -1,7 +1,7 @@
 'use strict';
 
-var passport = require('passport')
-  , routesDir = '../routes/'
+var routesDir = '../routes/'
+  , passport = require('passport')
   ;
 
 // Import route middleware
@@ -63,13 +63,7 @@ module.exports = function (app) {
   app.get('/logout', routes.user.logout);
 
   app.post('/register', routes.user.create);
-  app.post('/login',
-    passport.authenticate('local', { failureRedirect: '/login', failureFlash: 'Invalid email or password' }),
-    function(req, res) {
-      var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/quote'; // redirecTo set in loggedIn middleware
-      delete req.session.redirectTo; 
-      res.redirect(redirectTo);
-    });
+  app.post('/login', routes.user.postLogin);
 
   // Account routes
 

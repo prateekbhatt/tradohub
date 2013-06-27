@@ -9,6 +9,7 @@ var validate = require('mongoose-validator').validate
   , SALT_WORK_FACTOR = 10
   , Schema = mongoose.Schema
   , troop = require('mongoose-troop')
+  , async = require('async')
   ;
 
 var emailValidator = [
@@ -97,43 +98,6 @@ UserSchema.methods.hasRole = function (role) {
   return false;
 };
 
-// Passport session setup.
-//   To support persistent login sessions, Passport needs to be able to
-//   serialize users into and deserialize users out of the session. Typically,
-//   this will be as simple as storing the user ID when serializing, and finding
-//   the user by ID when deserializing.
-//
-//   Both serializer and deserializer edited for Remember Me functionality
-// passport.serializeUser(function(user, done) {
-//   console.log('SERIALIZING USER NOW!');
-//   var createAccessToken = function () {
-//     var token = user.generateRandomToken();
-//     User.findOne( { accessToken: token }, function (err, existingUser) {
-//       if (err) { return done( err ); }
-//       if (existingUser) {
-//         createAccessToken(); // Run the function again - the token has to be unique!
-//       } else {
-//         user.set('accessToken', token);
-//         user.save( function (err) {
-//           if (err) return done(err);
-//           return done(null, user.get('accessToken'));
-//         })
-//       }
-//     });
-//   };
-
-//   if ( user._id ) {
-//     createAccessToken();
-//   }
-// });
-
-// passport.deserializeUser(function(token, done) {
-//   User.findOne( {accessToken: token } , function (err, user) {
-//     done(err, user);
-//   });
-// });
-
-
 // serialize sessions
 passport.serializeUser(function(user, done) {
   done(null, user.id)
@@ -148,8 +112,7 @@ passport.deserializeUser(function(id, done) {
 // Use the LocalStrategy within Passport.
 //   Strategies in passport require a `verify` function, which accept
 //   credentials (in this case, a email and password), and invoke a callback
-//   with a user object.  In the real world, this would query a database;
-//   however, in this example we are using a baked-in set of users.
+//   with a user object.  In the real world, this would query a database.
 passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
