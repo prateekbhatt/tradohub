@@ -58,6 +58,19 @@ var Product =  function(){
     }
   };
 
+  ProductSchema.methods.deleteImage = function (fn){
+    if (this.image){
+      var imagePath = 'static/img/products/' + this.image;
+
+      client.deleteFile(imagePath, function (err, res) {
+        console.log('\ndeleted product image file:', imagePath, res.statusCode);
+        fn();
+      });
+    } else {
+      fn();
+    }
+  };
+
   ProductSchema.statics.updateImage = function (pid, file, fn) {
     var fileExt
       , product
@@ -85,16 +98,7 @@ var Product =  function(){
       },
       // delete image file if exists
       function (callback){
-        if (product.image){
-          var oldImage = 'static/img/products/' + product.image;
-
-          client.deleteFile(oldImage, function (err, res) {
-            console.log('\ndeleted old image file:', oldImage, res.statusCode);
-            callback();
-          });
-        } else {
-          callback();
-        }
+        product.deleteImage(callback);
       },
       // upload new image file to s3
       function (callback){

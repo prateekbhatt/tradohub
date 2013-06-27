@@ -1,6 +1,6 @@
 var should = require('should')
   , path = require('path')
-  , rootDir = path.join(__dirname, '..')
+  , rootDir = path.join(__dirname, '../..')
   , server = require(path.join(rootDir, 'server'))
   , Category = require(path.join(rootDir, 'models', 'Category'))
   , db = require(path.join(rootDir, 'server', 'db'))
