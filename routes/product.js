@@ -36,13 +36,7 @@ function list (req, res, next) {
     });
 };
 
-function offers (req, res, next) {
-  res.render('products/offers',
-    { success: req.flash('success'), error: req.flash('error') });
-};
-
 module.exports = {
     get: get
   , list: list
-  , offers: offers
 };

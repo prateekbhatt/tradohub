@@ -149,48 +149,6 @@ function update (req, res, next) {
   )
 };
 
-//   Product.findById(productId, function (err, p) {
-
-//     if (err) return next(err);
-//     var categoryUpdated = false
-//       , oldCategory = p.category
-//       , newCategory = req.body.category
-//       ;
-
-//     p.name = req.body.name;
-//     p.description = req.body.description;
-
-//     if (!oldCategory || (oldCategory.toString() != req.body.category.toString())) {
-//       p.category = newCategory;
-//       categoryUpdated = true;
-//       console.log('\n\ncategoryUpdated\n');      
-//     }
-    
-//     p.save(function (err, savedP) {
-//       if (err) return next(err);
-//       if (savedP && categoryUpdated) {
-
-//         // Remove product from old category
-//         Category.removeProduct(oldCategory, p._id, function (err, removed) {
-//           if (removed) {
-//             console.log('Product ', p.name, ' removed from ', oldCategory, ' category');
-//           }
-//         });
-
-//         // Add product to new category
-//         Category.addProduct(savedP.category, savedP._id, function (err, c) {
-//           if (err) return next(err);
-//           if (c) {
-//             return res.redirect('/admin/products');              
-//           }
-//         });
-//       } else {
-//         return res.redirect('/admin/products');
-//       }
-//     });
-//   });
-// };
-
 function updateImage (req, res, next) {
   var pid = req.params.id
     , file = req.files ? req.files.image : null
@@ -250,21 +208,6 @@ function remove (req, res, next){
   );
 
 };
-
-// function remove (req, res, next) {
-//   Product.findByIdAndRemove(req.params.id, function(err, p) {
-//     if (err) return next(err);
-//     if (p) {
-//       Category.removeProduct(p.category, p._id, function (err, r) {
-//         if (r) {
-//           return res.redirect('/admin/products');          
-//         }
-//       });
-//     } else {
-//       return res.redirect('/admin/products');      
-//     }
-//   });
-// };
 
 module.exports = {
     get: get

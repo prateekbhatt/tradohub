@@ -41,7 +41,6 @@ module.exports = function (app) {
   // Product API routes
   app.get('/products', routes.product.list);
   app.get('/products/:url', routes.product.get);
-  // app.get('/offers', routes.product.offers);
 
 
   app.get('/quote', loggedIn, activated, routes.txn.quotePage);
