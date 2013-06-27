@@ -11,38 +11,9 @@ var passport = require('passport')
   , getExpressErrors = require('../helpers/getExpressErrors')
   ;
 
-function loginPage (req, res) {
+function getLogin (req, res) {
   res.locals.title = 'Tradohub | Log into your account';
   res.render('users/login', { error: req.flash('error'), success: req.flash('success') });    
-};
-
-function registerPage (req, res) {
-  res.locals.states = data.states;
-  res.locals.industry = data.industry;
-  res.locals.title = 'Tradohub | Create a new account';
-  res.render('users/register', { error: req.flash('error') });
-};
-
-function passwordForgotPage (req, res) {
-  res.render('users/forgot', { error: req.flash('error') });
-};
-
-function accountPage (req, res) {
-  res.locals.user = req.user;
-  res.locals.states = data.states;
-  res.render('users/account',
-    { error: req.flash('error'), success: req.flash('success') });
-};
-
-function passwordPage (req, res) {
-  res.render('users/password', 
-    {error: req.flash('error'), success: req.flash('success')});
-};
-
-function logout (req, res) {
-  req.logout();
-  req.flash('success', 'You have been logged out.')
-  res.redirect('/');
 };
 
 function postLogin (req, res, next){
@@ -92,7 +63,14 @@ function postLogin (req, res, next){
   );
 };
 
-function create (req, res, next) {
+function getRegister (req, res) {
+  res.locals.states = data.states;
+  res.locals.industry = data.industry;
+  res.locals.title = 'Tradohub | Create a new account';
+  res.render('users/register', { error: req.flash('error') });
+};
+
+function postRegister (req, res, next) {
 
   var u = req.body
     , c = u.company
@@ -152,7 +130,167 @@ function create (req, res, next) {
   });
 };
 
-function verifyEmail(req, res, next) {
+function getAccount (req, res) {
+  res.locals.user = req.user;
+  res.locals.states = data.states;
+  res.render('users/account',
+    { error: req.flash('error'), success: req.flash('success') });
+};
+
+function postAccount (req, res, next) {
+  User.findById(req.user._id, function (err, user) {
+    if (err) return next(err);
+    
+    var u = req.body.user
+      , c = req.body.company
+      ;
+      
+    user.name = {
+        first: u.name.first
+      , last: u.name.last
+    };
+    
+    user.company = {
+        name: c.name
+      , street: c.street
+      , city: c.city
+      , state: c.state
+      , country: 'IND'
+      , zip: c.zip
+    };
+    user.mobile = u.mobile;
+    user.landline = {
+        area: u.landline.area
+      , no: u.landline.no
+    };
+
+    user.save(function (err, updated) {
+      if (err) {
+        return next(err);
+      }
+      req.flash('success', 'Account updated successfully.');
+      return res.redirect('/account');
+    });
+  });
+};
+
+function getAccountPassword (req, res) {
+  res.render('users/password', 
+    {error: req.flash('error'), success: req.flash('success')});
+};
+
+function postAccountPassword (req, res, next) {
+  var uid = req.user._id
+    , password = req.body.password
+    ;
+
+  req.assert('password', 'Password should be between 8 to 20 characters').len(8, 20);
+  var errors =  getExpressErrors(req);
+
+  if (errors) {
+    req.flash('error', errors);
+    return res.redirect('/account/password');
+  }
+
+  User.findById(uid, function (err, u) {
+    if (err) return next(err);
+    if (u) {
+      u.password = password;
+      u.save(function (err, updated) {
+        if (err) return next(err);
+        if (updated) {
+          req.flash('success', 'Password Updated');
+          return res.redirect('/account');
+        }
+      });
+    } else {
+      var msg = 'An error occured. Try Again.';
+      req.flash('error', msg);
+      res.redirect('/account/password');
+    }
+  });
+};
+
+function getPasswordForgot (req, res) {
+  res.render('users/forgot', { error: req.flash('error') });
+};
+
+/*
+* POST /password/forgot
+*/
+
+function postPasswordForgot (req, res, next) {
+
+  var email = req.body.email;
+
+  req.onValidationError(function (msg) {
+    //Redirect to `/password/forgot` if email is bogus
+    req.flash('error', msg);
+    res.redirect('/password/forgot');
+  });
+  req.check('email', 'Please enter a valid email').len(1).isEmail();
+
+  if (!req.validationErrors()) {
+    // get the user
+    User.findOne({ email: email }, function (err, usr) {
+      if (err) {
+        return next(err);
+      }
+      if (!usr) {
+        var msg = 'There is no account with this email.'
+        req.flash('error', msg);
+        return res.redirect('/password/forgot');
+      }
+      // Create a token UserToken
+      UserToken.new(usr._id, function (err, token) {
+        // build the reset url:
+        // http://localhost:3000/password/forgot/12345TOKEN
+        usr.resetUrl = config.baseUrl + 'forgot-password/' + token.token;
+        
+        mailer.sendForgotPassword(usr);
+          // redirect to password_rest success page.
+        req.flash('success', 'Check your Email to reset password')
+        return res.redirect('/');
+      });
+    });      
+  }
+};
+
+/*
+* POST /password/forgot/<token>
+* checks token, logs in user and redirects him to password reset page
+*
+*/
+
+function getPasswordForgotToken (req, res, next) {
+  // Check for a UserToken using the supplied token.
+  UserToken.findOne({token: req.params.token}, function (err, token) {
+    if (err) return next(err);
+    if (!token) {
+      req.flash('error', 'Invalid Token. Try Again.');
+      return res.redirect('/forgot-password');
+    }
+    // get the user
+    User.findOne({ _id: token.uid }, function (err, user) {
+      if (err) return next(err);
+      if (!user) {
+        req.flash('error', 'User Not Found. Try Again.');
+        return res.redirect('/forgot-password');
+      }
+      console.log('inside getPasswordForgotCheck UserToken', user)
+      // log the user in
+      req.logIn(user, function (err) {
+        if (err) return next(err);
+        // redirect the user to a password reset form
+        // remove all tokens of the user
+        UserToken.remove({ uid: token.uid }).exec();
+        return res.redirect('/account/password');
+      });
+    });
+  });
+};
+
+function getVerifyEmail(req, res, next) {
   var token = req.params.token;
 
   // Check for a UserToken using the supplied token.
@@ -196,162 +334,31 @@ function verifyEmail(req, res, next) {
   });
 };
 
-function updateAccount (req, res, next) {
-  User.findById(req.user._id, function (err, user) {
-    if (err) return next(err);
-    
-    var u = req.body.user
-      , c = req.body.company
-      ;
-      
-    user.name = {
-        first: u.name.first
-      , last: u.name.last
-    };
-    
-    user.company = {
-        name: c.name
-      , street: c.street
-      , city: c.city
-      , state: c.state
-      , country: 'IND'
-      , zip: c.zip
-    };
-    user.mobile = u.mobile;
-    user.landline = {
-        area: u.landline.area
-      , no: u.landline.no
-    };
-
-    user.save(function (err, updated) {
-      if (err) {
-        return next(err);
-      }
-      req.flash('success', 'Account updated successfully.');
-      return res.redirect('/account');
-    });
-  });
+function getLogout (req, res) {
+  req.logout();
+  req.flash('success', 'You have been logged out.')
+  res.redirect('/');
 };
 
-function updatePassword (req, res, next) {
-  var uid = req.user._id
-    , password = req.body.password
-    ;
-
-  req.assert('password', 'Password should be between 8 to 20 characters').len(8, 20);
-  var errors =  getExpressErrors(req);
-
-  if (errors) {
-    req.flash('error', errors);
-    return res.redirect('/account/password');
-  }
-
-  User.findById(uid, function (err, u) {
-    if (err) return next(err);
-    if (u) {
-      u.password = password;
-      u.save(function (err, updated) {
-        if (err) return next(err);
-        if (updated) {
-          req.flash('success', 'Password Updated');
-          return res.redirect('/account');
-        }
-      });
-    } else {
-      var msg = 'An error occured. Try Again.';
-      req.flash('error', msg);
-      res.redirect('/account/password');
-    }
-  });
-};
-
-/*
-* POST /password/forgot
-*/
-
-function passwordForgot (req, res, next) {
-
-  var email = req.body.email;
-
-  req.onValidationError(function (msg) {
-    //Redirect to `/password/forgot` if email is bogus
-    req.flash('error', msg);
-    res.redirect('/password/forgot');
-  });
-  req.check('email', 'Please enter a valid email').len(1).isEmail();
-
-  if (!req.validationErrors()) {
-    // get the user
-    User.findOne({ email: email }, function (err, usr) {
-      if (err) {
-        return next(err);
-      }
-      if (!usr) {
-        var msg = 'There is no account with this email.'
-        req.flash('error', msg);
-        return res.redirect('/password/forgot');
-      }
-      // Create a token UserToken
-      UserToken.new(usr._id, function (err, token) {
-        // build the reset url:
-        // http://localhost:3000/password/forgot/12345TOKEN
-        usr.resetUrl = config.baseUrl + 'forgot-password/' + token.token;
-        
-        mailer.sendForgotPassword(usr);
-          // redirect to password_rest success page.
-        req.flash('success', 'Check your Email to reset password')
-        return res.redirect('/');
-      });
-    });      
-  }
-};
-
-/*
-* POST /password/forgot/<token>
-* checks token, logs in user and redirects him to password reset page
-*
-*/
-
-function passwordForgotCheck (req, res, next) {
-  // Check for a UserToken using the supplied token.
-  UserToken.findOne({token: req.params.token}, function (err, token) {
-    if (err) return next(err);
-    if (!token) {
-      req.flash('error', 'Invalid Token. Try Again.');
-      return res.redirect('/forgot-password');
-    }
-    // get the user
-    User.findOne({ _id: token.uid }, function (err, user) {
-      if (err) return next(err);
-      if (!user) {
-        req.flash('error', 'User Not Found. Try Again.');
-        return res.redirect('/forgot-password');
-      }
-      console.log('inside passwordForgotCheck UserToken', user)
-      // log the user in
-      req.logIn(user, function (err) {
-        if (err) return next(err);
-        // redirect the user to a password reset form
-        // remove all tokens of the user
-        UserToken.remove({ uid: token.uid }).exec();
-        return res.redirect('/account/password');
-      });
-    });
-  });
-};
 
 module.exports = {
-    loginPage: loginPage
-  , registerPage: registerPage
-  , passwordForgotPage: passwordForgotPage
-  , accountPage: accountPage
-  , passwordPage: passwordPage
+    getLogin: getLogin
   , postLogin: postLogin
-  , logout: logout
-  , create: create
-  , verifyEmail: verifyEmail
-  , updateAccount: updateAccount
-  , updatePassword: updatePassword
-  , passwordForgot: passwordForgot
-  , passwordForgotCheck: passwordForgotCheck
+
+  , getRegister: getRegister
+  , postRegister: postRegister
+
+  , getAccount: getAccount
+  , postAccount: postAccount
+  
+  , getAccountPassword: getAccountPassword
+  , postAccountPassword: postAccountPassword
+  
+  , getPasswordForgot: getPasswordForgot
+  , postPasswordForgot: postPasswordForgot
+  , getPasswordForgotToken: getPasswordForgotToken
+
+  , getVerifyEmail: getVerifyEmail
+
+  , getLogout: getLogout
 };

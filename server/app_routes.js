@@ -54,23 +54,27 @@ module.exports = function (app) {
 
   // Auth Routes
 
-  app.get('/login', routes.user.loginPage);
-  app.get('/register', routes.user.registerPage);
-  app.get('/forgot-password', routes.user.passwordForgotPage);
-  app.get('/forgot-password/:token', routes.user.passwordForgotCheck);
-  app.post('/forgot-password', routes.user.passwordForgot);
-  app.get('/verify-email/:token', routes.user.verifyEmail);
-  app.get('/logout', routes.user.logout);
-
-  app.post('/register', routes.user.create);
+  app.get('/login', routes.user.getLogin);
   app.post('/login', routes.user.postLogin);
+
+  app.get('/register', routes.user.getRegister);
+  app.post('/register', routes.user.postRegister);
+  
+  app.get('/forgot-password', routes.user.getPasswordForgot);
+  app.get('/forgot-password/:token', routes.user.getPasswordForgotToken);
+  app.post('/forgot-password', routes.user.postPasswordForgot);
+
+  app.get('/verify-email/:token', routes.user.getVerifyEmail);
+  
+  app.get('/logout', routes.user.getLogout);
+
 
   // Account routes
 
-  app.get('/account', loggedIn, routes.user.accountPage);
-  app.post('/account', loggedIn, routes.user.updateAccount);
-  app.get('/account/password', loggedIn, routes.user.passwordPage);
-  app.post('/account/password', loggedIn, routes.user.updatePassword);
+  app.get('/account', loggedIn, routes.user.getAccount);
+  app.post('/account', loggedIn, routes.user.postAccount);
+  app.get('/account/password', loggedIn, routes.user.getAccountPassword);
+  app.post('/account/password', loggedIn, routes.user.postAccountPassword);
 
   // Admin Routes
   // TODO: Admin Checks
