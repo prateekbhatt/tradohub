@@ -187,8 +187,8 @@ function postAccountPassword (req, res, next) {
     , currentUser
     ;
 
-  async.series([
-
+  async.series(
+    [
       // password validation
       function (cb){
         req.assert('password', 'Password should be between 8 to 20 characters').len(8, 20);
@@ -242,40 +242,85 @@ function getPasswordForgot (req, res) {
 
 function postPasswordForgot (req, res, next) {
 
-  var email = req.body.email;
+  var email = req.body.email
+    , currentUser
+    ;
 
-  req.onValidationError(function (msg) {
-    //Redirect to `/password/forgot` if email is bogus
-    req.flash('error', msg);
-    res.redirect('/password/forgot');
-  });
-  req.check('email', 'Please enter a valid email').len(1).isEmail();
+  async.series(
+    [
+      function (cb){
+        req.assert('email', 'Please enter a valid email').len(1,64).isEmail();
+        var err = getExpressErrors(req);
+        if (err) {
+          req.flash('error', err);
+          return cb(err);
+        }
+        cb();
+      },
 
-  if (!req.validationErrors()) {
-    // get the user
-    User.findOne({ email: email }, function (err, usr) {
+      function (cb){
+        User.findOne({ email: email }, function (err, u){
+          if (err) return cb(err);
+          if (!u) {
+            req.flash('error', 'Oops! There is no account with this email.');
+            return cb(new Error('There is no account with this email.'));
+          } else {
+            currentUser = u;
+            cb();            
+          }
+        });
+      },
+
+      function (cb){
+        UserToken.new(currentUser._id, function (err, token){
+          if (err) return cb(err);
+          currentUser.resetUrl = config.baseUrl + 'forgot-password/' + token.token;
+          mailer.sendForgotPassword(currentUser);
+          cb();
+        });
+      }
+    ],
+
+    function (err, result){
       if (err) {
-        return next(err);
+        res.redirect('/forgot-password');
+      } else {
+        req.flash('success', 'Check your email to reset password.');
+        res.redirect('/');
       }
-      if (!usr) {
-        var msg = 'There is no account with this email.'
-        req.flash('error', msg);
-        return res.redirect('/password/forgot');
-      }
-      // Create a token UserToken
-      UserToken.new(usr._id, function (err, token) {
-        // build the reset url:
-        // http://localhost:3000/password/forgot/12345TOKEN
-        usr.resetUrl = config.baseUrl + 'forgot-password/' + token.token;
-        
-        mailer.sendForgotPassword(usr);
-          // redirect to password_rest success page.
-        req.flash('success', 'Check your Email to reset password')
-        return res.redirect('/');
-      });
-    });      
-  }
+    }
+  );
 };
+  // req.onValidationError(function (msg) {
+  //   //Redirect to `/password/forgot` if email is bogus
+  //   req.flash('error', msg);
+  //   res.redirect('/password/forgot');
+  // });
+
+  // if (!req.validationErrors()) {
+  //   // get the user
+  //   User.findOne({ email: email }, function (err, usr) {
+  //     if (err) {
+  //       return next(err);
+  //     }
+  //     if (!usr) {
+  //       var msg = 'There is no account with this email.'
+  //       req.flash('error', msg);
+  //       return res.redirect('/password/forgot');
+  //     }
+  //     // Create a token UserToken
+  //     UserToken.new(usr._id, function (err, token) {
+  //       // build the reset url:
+  //       // http://localhost:3000/password/forgot/12345TOKEN
+  //       usr.resetUrl = config.baseUrl + 'forgot-password/' + token.token;
+        
+  //       mailer.sendForgotPassword(usr);
+  //         // redirect to password_rest success page.
+  //       req.flash('success', 'Check your Email to reset password')
+  //       return res.redirect('/');
+  //     });
+  //   });      
+  // }
 
 /*
 * POST /password/forgot/<token>
