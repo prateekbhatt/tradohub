@@ -50,11 +50,22 @@ module.exports.listen = function (callback) {
 };
 
 module.exports.close = function () {
-
-  console.log('SHUTTING DOWN SERVER');
   
-  async.series([
-    server.close(),
-    process.exit()    
-  ]);
+  async.series(
+    [
+      function (cb){
+        server.close();
+        cb();
+      },
+
+      function (cb){
+        process.exit();
+        cb();
+      }
+    ],
+
+    function (err){
+      console.log('Server Shut Down');
+    }
+  );
 };

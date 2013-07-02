@@ -101,8 +101,11 @@ describe('Product', function(){
     currentProduct.should.have.property('url', 'test-product');
   });
 
-  it('should add #created and #updated fields', function(){
+  it('should add #created field', function(){
     currentProduct.should.have.property('created');
+  });
+
+  it('should add #updated field', function(){
     currentProduct.should.have.property('updated');
   });
 

@@ -248,6 +248,7 @@ function postPasswordForgot (req, res, next) {
 
   async.series(
     [
+      // check if valid email is provided
       function (cb){
         req.assert('email', 'Please enter a valid email').len(1,64).isEmail();
         var err = getExpressErrors(req);
@@ -258,6 +259,7 @@ function postPasswordForgot (req, res, next) {
         cb();
       },
 
+      // check if user with email exists, and assign user to variable
       function (cb){
         User.findOne({ email: email }, function (err, u){
           if (err) return cb(err);
@@ -271,6 +273,7 @@ function postPasswordForgot (req, res, next) {
         });
       },
 
+      // create a new token and send email
       function (cb){
         UserToken.new(currentUser._id, function (err, token){
           if (err) return cb(err);
@@ -291,36 +294,6 @@ function postPasswordForgot (req, res, next) {
     }
   );
 };
-  // req.onValidationError(function (msg) {
-  //   //Redirect to `/password/forgot` if email is bogus
-  //   req.flash('error', msg);
-  //   res.redirect('/password/forgot');
-  // });
-
-  // if (!req.validationErrors()) {
-  //   // get the user
-  //   User.findOne({ email: email }, function (err, usr) {
-  //     if (err) {
-  //       return next(err);
-  //     }
-  //     if (!usr) {
-  //       var msg = 'There is no account with this email.'
-  //       req.flash('error', msg);
-  //       return res.redirect('/password/forgot');
-  //     }
-  //     // Create a token UserToken
-  //     UserToken.new(usr._id, function (err, token) {
-  //       // build the reset url:
-  //       // http://localhost:3000/password/forgot/12345TOKEN
-  //       usr.resetUrl = config.baseUrl + 'forgot-password/' + token.token;
-        
-  //       mailer.sendForgotPassword(usr);
-  //         // redirect to password_rest success page.
-  //       req.flash('success', 'Check your Email to reset password')
-  //       return res.redirect('/');
-  //     });
-  //   });      
-  // }
 
 /*
 * POST /password/forgot/<token>
@@ -329,76 +302,166 @@ function postPasswordForgot (req, res, next) {
 */
 
 function getPasswordForgotToken (req, res, next) {
+
+  var token = req.params.token
+    , currentUserId
+    , currentUser
+    ;
+
   // Check for a UserToken using the supplied token.
-  UserToken.findOne({token: req.params.token}, function (err, token) {
-    if (err) return next(err);
-    if (!token) {
-      req.flash('error', 'Invalid Token. Try Again.');
-      return res.redirect('/forgot-password');
-    }
-    // get the user
-    User.findOne({ _id: token.uid }, function (err, user) {
-      if (err) return next(err);
-      if (!user) {
-        req.flash('error', 'User Not Found. Try Again.');
-        return res.redirect('/forgot-password');
+  
+  async.series(
+    [
+      // find token and assign currentUserId
+      function (cb){
+        UserToken.findOne({ token: token }, function (err, tok){
+          if (err) return cb(err);
+          
+          if (!tok) {
+            return cb(new Error('Invalid Token'));
+          } else {
+            currentUserId = tok.uid;
+            cb();
+          }
+        });
+      },
+      // find and assign currentUser
+      function (cb){
+        User.findById(currentUserId, function (err, u){
+          if (err) return cb(err);
+          console.log(currentUserId)
+          currentUser = u;
+          cb();
+        });
+      },
+
+      // login user automatically
+      function (cb){
+        req.logIn(currentUser, function (err){
+          if (err) return cb(err);
+          cb();
+        });
       }
-      console.log('inside getPasswordForgotCheck UserToken', user)
-      // log the user in
-      req.logIn(user, function (err) {
-        if (err) return next(err);
-        // redirect the user to a password reset form
-        // remove all tokens of the user
-        UserToken.remove({ uid: token.uid }).exec();
-        return res.redirect('/account/password');
-      });
-    });
-  });
+    ],
+
+    // redirect user
+    function (err){
+      if (err) {
+        req.flash('error', 'Invalid attempt. Try again to reset password.');
+        res.redirect('/forgot-password');
+      } else {
+        res.redirect('/account/password');
+      }
+    }
+  );
 };
 
 function getVerifyEmail(req, res, next) {
-  var token = req.params.token;
+  var token = req.params.token
+    , currentUserId
+    , currentUser
+    ;
 
-  // Check for a UserToken using the supplied token.
-  UserToken.findOne({token: token}, function (err, token) {
-    if (err) return next(err);
-    if (!token) {
-      req.flash('error', 'Invalid Token. Try Again.');
-      return res.redirect('/register');
-    }
-    // get the user
-    User.findById(token.uid, function (err, user) {
-      if (err) return next(err);
-      if (!user) {
-        req.flash('error', 'User Not Found. Try Again.');
-        return res.redirect('/register');
+  async.series(
+    [
+      function (cb){
+        UserToken.findOne({token: token}, function (err, tok){
+          if (err) return cb(err);
+          if (!tok){
+            req.flash('error', 'Invalid attempt. Try again');
+            return cb(new Error('Invalid email verification attempt.'));
+          } else {
+            currentUserId = tok.uid;
+            cb();
+          }
+        });
+      },
+
+      function (cb){
+        User.findById(currentUserId, function (err, u){
+          if (err) return cb(err);
+          currentUser = u;
+          cb();
+        });
+      },
+
+      function (cb){
+        currentUser.status = 'verified';
+        currentUser.save(function (err, saved){
+          if (err) return cb(err);
+          cb();
+        });
+      },
+
+      function (cb){
+        // remove all tokens of the user
+        UserToken.remove({ uid: currentUserId }).exec();
+
+        // send email verified email
+        currentUser.msg = msg;
+        currentUser.linkUrl = config.baseUrl + 'login';
+        mailer.sendEmailVerified(user);
+        cb();
       }
-      user.status = 'verified';
-      user.save(function (err, saved) {
-        if (err) return next(err);
-        if (saved) {
-          var msg = 'Your email has been verified. \
-            You may login now to update your phone and company details. \
-            We will activate your account within a day, after verifying your \
-            phone and company details. You will be able to request quotes and \
-            make orders after account activation.';
+    ],
 
-          req.flash('success', msg);
+    function (err, result){
+      if (err) {
+        req.flash('error', 'Invalid Attempt. Try Again.');
+        return res.redirect('/register');
+      } else {
+        var msg = 'Your email has been verified. \
+          You may login now to update your phone and company details. \
+          We will activate your account within a day, after verifying your \
+          phone and company details. You will be able to request quotes and \
+          make orders after account activation.';
 
-          // remove all tokens of the user
-          UserToken.remove({ uid: token.uid }).exec();
+        req.flash('success', msg);
+        return res.redirect('/login');
+      }
+    }
+  );
 
-          // send email verified email
-          user.msg = msg;
-          user.linkUrl = config.baseUrl + 'login';
-          mailer.sendEmailVerified(user);
-
-          return res.redirect('/login');
-        }
-      });
-    });
-  });
 };
+  // // Check for a UserToken using the supplied token.
+  // UserToken.findOne({token: token}, function (err, token) {
+  //   if (err) return next(err);
+  //   if (!token) {
+  //     req.flash('error', 'Invalid Token. Try Again.');
+  //     return res.redirect('/register');
+  //   }
+  //   // get the user
+  //   User.findById(token.uid, function (err, user) {
+  //     if (err) return next(err);
+  //     if (!user) {
+  //       req.flash('error', 'User Not Found. Try Again.');
+  //       return res.redirect('/register');
+  //     }
+  //     user.status = 'verified';
+  //     user.save(function (err, saved) {
+  //       if (err) return next(err);
+  //       if (saved) {
+  //         var msg = 'Your email has been verified. \
+  //           You may login now to update your phone and company details. \
+  //           We will activate your account within a day, after verifying your \
+  //           phone and company details. You will be able to request quotes and \
+  //           make orders after account activation.';
+
+  //         req.flash('success', msg);
+
+  //         // remove all tokens of the user
+  //         UserToken.remove({ uid: token.uid }).exec();
+
+  //         // send email verified email
+  //         user.msg = msg;
+  //         user.linkUrl = config.baseUrl + 'login';
+  //         mailer.sendEmailVerified(user);
+
+  //         return res.redirect('/login');
+  //       }
+  //     });
+  //   });
+  // });
 
 function getLogout (req, res) {
   req.logout();
