@@ -36,7 +36,8 @@
     "connect-redis": "~1.4.5",
     "bcrypt": "~0.7.5",
     "connect-flash": "~0.1.1",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "juice": "~0.4.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

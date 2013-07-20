@@ -15,6 +15,7 @@ var nodemailer = require('nodemailer')
   , jade = require('jade')
   , path = require('path')
   , config = require('config')
+  , juice = require('juice')
   ;
 
 /**
@@ -77,29 +78,37 @@ Mailer.prototype = {
       , generateTextFromHTML: true
     }
   },
-  
+  /**
+   * Renders an inlined html template from the jade template
+   */
+  jadeToInlinedHtml: function(fn) {
+    var userdata = this.userdata;
+    jade.renderFile(this.templatePath + this._template, { locals: userdata }, function(err, htmlFile){
+      if (err) return fn(err);
+      juice.juiceContent(htmlFile, { url: config.baseUrl} , function (err, inlinedHtml){
+        return fn(err, inlinedHtml);
+      });
+    });
+  },
+
+
   /**
    * Sends the actual email message with Jade template.
    */
   send: function() {
     var data = this.data;
-    var userdata = this.userdata;
     var transport = this.transport;
-    jade.renderFile(this.templatePath + this._template, { user: userdata }, function(err, file) {
-      if(err) console.log(err);
-      data.html = file;
-      // data.body = file;
-      transport.sendMail(data, function (err, responseStatus) {
-        if(true) {
-          if (err) {
-            console.log(err);
-          } else if (responseStatus) {
-            console.log('[SUCCESSFULL EMAIL SENT TO]: ' + userdata.email);
-            console.log(responseStatus.message);
-          }
+    this.jadeToInlinedHtml(function (err, html){
+      if (err) return console.log(err);
+      data.html = html;
+      transport.sendMail(data, function (err, responseStatus){
+        // if (err) console.log(err);
+        if (responseStatus) {
+          console.log('[SUCCESSFULL EMAIL SENT TO]: ' + data.to);
+          console.log(responseStatus.message);
         }
-      });
-    });
+      })
+    })
   },
   
   /**
@@ -195,7 +204,7 @@ module.exports.sendInvite = function(user) {
     , title = user.title
     ;
   mailer._subject = company ? company + ' : ' + title : title;
-  mailer._template = 'invite2.jade';
+  mailer._template = 'zurb.jade';
   mailer.send();
   return mailer;
 }

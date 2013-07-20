@@ -16,13 +16,11 @@ describe('index page', function(){
     server.listen(done);
   });
 
-  after(function(){
-    server.close();
-  });
-
-  it('should open index page', function(){
+  it('should open index page', function(done){
     browser.visit(config.baseUrl, function(){
-      should.ok(browser.success);
+      should.exist(browser.text('title'));
+      done();
     });
   });
+
 });
