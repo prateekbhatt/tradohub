@@ -10,11 +10,4 @@ module.exports = {
       debug: true
   }
   , prettyHtml: true
-  , staticFiles: {
-      mainCss: '/css/tradohub-main.min.css'
-    , mainJs: '/js/tradohub-main.min.js'
-    , quoteJs: '/js/tradohub-quote.min.js'
-    , logoUrl: '/img/tradohub-blue-logo.png'
-    
-  }
 }
