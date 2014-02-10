@@ -5,7 +5,7 @@ strong
 #proReqModal.text-center(class="modal hide", tabindex="-1", role="dialog", aria-labelledby="proReqModalLabel", aria-hidden="true")
   form.form-horizontal(method="POST", action="/contact")
     .modal-header
-      button(type="button", class="close", data-dismiss="modal", aria-hidden="true")×
+      button(type="button", class="close", data-dismiss="modal", aria-hidden="true") ×
       .lead(id="proReqModalLabel") Need a different product ?
     .modal-body
       .control-group
@@ -15,7 +15,7 @@ strong
             option Select Industry
             each i in ['Polymers', 'Metals', 'Chemicals', 'Construction', 'Automobile', 'Agriculture', 'Food']
               option(value=i)= i
-      
+
       .control-group
         label.control-label(for="productName") Product Name
         .controls

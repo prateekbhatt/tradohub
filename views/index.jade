@@ -20,7 +20,7 @@ block indexPage
           .span3.text-center(style="text-align: left;")
             br
             br
-            
+
             a.btn.btn-primary(href="/register")
               | Register your business
             h5 to request quotes and get offers
@@ -28,20 +28,30 @@ block indexPage
   br
   .container
     .well
+      //- .row
+      //-   cats = ['Engineering Polymers', 'Commodity Polymers', 'Aluminum', 'Copper', 'Nickel']
+      //-   - for c in category
+      //-     - for cat in cats
+      //-         if c.name == cat
+      //-           .pointSpan
+      //-             #points
+      //-               ul.unstyled
+      //-                 p
+      //-                   strong= c.name
+      //-                 for p in c.products
+      //-                   li
+      //-                     a(href="/products/#{p.url}") #{p.name}
+      //-           - break
       .row
-        cats = ['Engineering Polymers', 'Commodity Polymers', 'Aluminum', 'Copper', 'Nickel']
         - for c in category
-          - for cat in cats
-              if c.name == cat
-                .pointSpan
-                  #points
-                    ul.unstyled
-                      p
-                        strong= c.name
-                      for p in c.products
-                        li
-                          a(href="/products/#{p.url}") #{p.name}
-                - break
+          .pointSpan
+            #points
+              ul.unstyled
+                p
+                  strong= c.name
+                for p in c.products
+                  li
+                    a(href="/products/#{p.url}") #{p.name}
       .row
         .text-center
           a(href="/products")
@@ -64,25 +74,25 @@ block indexPage
     .well
       legend.text-center Why buy with us ?
       .row.text-center
-        
+
         .pointSpan
           h5 Increase profit margins
           p Get competitive prices for all products.
-        
+
         .pointSpan
           h5 Compete with large enterprises
-          p We group orders from small businesses like you and negotiate 
+          p We group orders from small businesses like you and negotiate
             | better prices from manufacturers / producers.
-        
+
         .pointSpan
           h5 Direct, timely delivery
           p We supply your raw materials directly from the the manufacturer / producer.
             | We work hard to deliver your products on time everytime.
-        
+
         .pointSpan
           h5 Online procurement platform
           p Now you can manage all your raw material procurement easily on our platform.
-        
+
         .pointSpan
           h5 Loyalty programs
           p We have exciting loyalty programs, to empower you grow even faster.
@@ -95,4 +105,3 @@ block indexPage
       //-     a(href="#")
       //-       hr
       //-       h4 Learn More &rarr;
-    

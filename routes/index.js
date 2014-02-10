@@ -6,9 +6,22 @@ var data = require('../helpers/data')
   , mailer = require('../helpers/mailer')
   ;
 
+/**
+ * Models
+ */
+var Category = require('../models/Category');
+
 exports.index = function (req, res) {
-  res.render('index',
-    { success: req.flash('success'), error: req.flash('error') });
+  Category
+    .find({})
+    .populate('products')
+    .sort({'name': 1})
+    .exec(function (err, category) {
+      if (err) return next(err);
+      res.locals.category = category;
+      res.render('index',
+        { success: req.flash('success'), error: req.flash('error') });
+    });
 };
 
 exports.about = function (req, res) {
